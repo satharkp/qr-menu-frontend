@@ -10,13 +10,19 @@ export default function MenuSection() {
   const [menuPrice, setMenuPrice] = useState("");
   const [menuCategory, setMenuCategory] = useState("");
   const [prepTime, setPrepTime] = useState("");
-  const [portions, setPortions] = useState([]);
+  const [portions, setPortions] = useState([
+    { label: "", price: "" },
+  ]);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
   const token = localStorage.getItem("token");
   const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
   const restaurantId = payload?.restaurantId;
+
+  useEffect(() => {
+    if (restaurantId) fetchMenu();
+  }, [restaurantId]);
 
   if (!token || !restaurantId) {
     return (
@@ -25,10 +31,6 @@ export default function MenuSection() {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (restaurantId) fetchMenu();
-  }, [restaurantId]);
 
   const fetchMenu = async () => {
     try {
@@ -79,16 +81,38 @@ export default function MenuSection() {
 
       if (measurementType === "UNIT") {
         formData.append("price", Number(menuPrice));
+        
+      } else if (measurementType === "PORTION") {
+        const validPortions = portions
+          .filter(p => p.label && p.price)
+          .map(p => ({
+            label: p.label,
+            price: Number(p.price),
+          }));
+
+        if (validPortions.length === 0) {
+          return alert("At least one portion with label and price is required");
+        }
+
+        formData.append("portions", JSON.stringify(validPortions));
+        formData.append("price", 0);
       }
 
       if (imageFile) {
         formData.append("image", imageFile);
       }
 
+      console.log("CREATING ITEM PAYLOAD:", {
+        name: menuName,
+        measurementType,
+        category: menuCategory,
+        prepTime: Number(prepTime || 0),
+        restaurantId,
+      });
+
       await axios.post(`${API_BASE}/menu`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -97,12 +121,16 @@ export default function MenuSection() {
       setMenuCategory("");
       setPrepTime("");
       setMeasurementType("UNIT");
+      setPortions([{ label: "", price: "" }]);
       setImageFile(null);
       setPreview(null);
 
       fetchMenu();
     } catch (err) {
-      alert("Failed to create menu item");
+      console.error("Create menu item error:", err.response?.data || err.message);
+      const errorMsg = err.response?.data?.message || err.message;
+      const subErrors = err.response?.data?.errors?.map(e => `\n- ${e.field}: ${e.message}`).join("") || "";
+      alert(`Failed to create menu item: ${errorMsg}${subErrors}`);
     }
   };
 
@@ -132,8 +160,61 @@ export default function MenuSection() {
             className="border p-2 rounded"
             placeholder="Price"
             value={menuPrice}
+            type="number"
             onChange={(e) => setMenuPrice(e.target.value)}
           />
+        )}
+
+        {measurementType === "PORTION" && (
+          <div className="col-span-full space-y-2">
+            {portions.map((portion, index) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  className="border p-2 rounded flex-1"
+                  placeholder="Portion Label (e.g. Half, Full, Large)"
+                  value={portion.label}
+                  onChange={(e) => {
+                    const updated = [...portions];
+                    updated[index].label = e.target.value;
+                    setPortions(updated);
+                  }}
+                />
+
+                <input
+                  className="border p-2 rounded w-32"
+                  type="number"
+                  placeholder="Price"
+                  value={portion.price}
+                  onChange={(e) => {
+                    const updated = [...portions];
+                    updated[index].price = e.target.value;
+                    setPortions(updated);
+                  }}
+                />
+
+                <button
+                  type="button"
+                  className="text-red-500 font-bold px-2"
+                  onClick={() => {
+                    const updated = portions.filter((_, i) => i !== index);
+                    setPortions(updated.length ? updated : [{ label: "", price: "" }]);
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              className="text-sm text-orange-600 font-semibold"
+              onClick={() =>
+                setPortions([...portions, { label: "", price: "" }])
+              }
+            >
+              + Add Portion
+            </button>
+          </div>
         )}
 
         <input
@@ -228,9 +309,21 @@ export default function MenuSection() {
             </div>
             <div>
               <p className="font-medium">{item.name}</p>
-              <p className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500">
                 {item.category} • Prep {item.prepTime || 0} min
-              </p>
+                {item.measurementType === "PORTION" && item.portions && item.portions.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {item.portions.map((p, idx) => (
+                      <span key={idx} className="bg-orange-50 text-orange-600 border border-orange-100 px-2 py-0.5 rounded text-[10px] font-bold">
+                        {p.label}: {p.price}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {item.measurementType === "UNIT" && (
+                  <span className="ml-2 font-bold text-orange-600">Price: {item.price}</span>
+                )}
+              </div>
             </div>
 
             <div className="flex gap-2">
