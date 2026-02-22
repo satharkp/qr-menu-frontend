@@ -187,7 +187,7 @@ export default function MenuPage() {
     <div className="min-h-screen bg-greenleaf-bg pb-32 font-sans selection:bg-greenleaf-secondary/30">
 
       {/* Fixed Call Waiter Button */}
-      <div className="fixed top-6 right-6 z-[100] w-[200px]]">
+      <div className="fixed top-6 right-6 z-[100] w-auto">
         <CallWaiterButton tableId={resolvedTableId} />
       </div>
 
@@ -195,14 +195,14 @@ export default function MenuPage() {
 
       <div className="max-w-5xl mx-auto px-6 md:px-10 -mt-10 relative z-20">
         {/* Category Quick Links (Sticky) */}
-        <div className="sticky top-4 z-[30] mb-8 flex gap-3 overflow-x-auto pb-4 hide-scrollbar">
+        <div className="sticky top-4 z-40 mb-8 flex gap-3 overflow-x-auto pb-4 hide-scrollbar">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`whitespace-nowrap px-6 py-2.5 rounded-2xl shadow-sm border text-xs uppercase tracking-widest transition-all active:scale-95 shadow-floating font-black ${activeCategory === cat
-                  ? "bg-greenleaf-primary text-white border-greenleaf-primary ring-4 ring-greenleaf-primary/10"
-                  : "bg-white/80 backdrop-blur-md border-greenleaf-accent text-greenleaf-text hover:bg-greenleaf-primary hover:text-white"
+                ? "bg-greenleaf-primary text-white border-greenleaf-primary ring-4 ring-greenleaf-primary/10"
+                : "bg-white/80 backdrop-blur-md border-greenleaf-accent text-greenleaf-text hover:bg-greenleaf-primary hover:text-white"
                 }`}
             >
               {cat}
