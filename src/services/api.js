@@ -1,7 +1,5 @@
-export const API_BASE =
-  import.meta.env.VITE_API_URL || "http://localhost:5050/api";
-export const SOCKET_URL =
-  import.meta.env.VITE_SOCKET_URL || "http://localhost:5050";
+export const API_BASE = "https://qr-res.onrender.com/api";
+export const SOCKET_URL = "https://qr-res.onrender.com";
 
 export const fetchMenuByTable = async (tableId) => {
   const res = await fetch(`${API_BASE}/public/table/${tableId}`);
