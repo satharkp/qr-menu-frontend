@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchMenuByTable } from "../services/api";
+import { io } from "socket.io-client";
+import { fetchMenuByTable, SOCKET_URL } from "../services/api";
 import RestaurantHeader from "../components/RestaurantHeader";
 import MenuCategory from "../components/MenuCategory";
 import MenuItem from "../components/MenuItem";
@@ -17,6 +18,7 @@ export default function MenuPage() {
   const [restaurant, setRestaurant] = useState(null);
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("All");
 
   useEffect(() => {
     if (!resolvedTableId) {
@@ -49,43 +51,108 @@ export default function MenuPage() {
     loadMenu();
   }, [resolvedTableId]);
 
+  // Socket.io for real-time menu updates
+  useEffect(() => {
+    if (!restaurant?.restaurantId) return;
+
+    const socket = io(SOCKET_URL);
+    socket.emit("joinRestaurant", restaurant.restaurantId);
+
+    socket.on("menu-item-created", (newItem) => {
+      if (newItem.available) {
+        setMenu((prev) => [...prev, newItem]);
+      }
+    });
+
+    socket.on("menu-item-updated", (updatedItem) => {
+      setMenu((prev) => {
+        const exists = prev.find(i => i._id === updatedItem._id);
+
+        if (!updatedItem.available) {
+          return prev.filter(i => i._id !== updatedItem._id);
+        }
+
+        if (exists) {
+          return prev.map(i => i._id === updatedItem._id ? updatedItem : i);
+        } else {
+          return [...prev, updatedItem];
+        }
+      });
+    });
+
+    socket.on("menu-item-deleted", (deletedId) => {
+      setMenu((prev) => prev.filter(i => i._id !== deletedId));
+    });
+
+    return () => socket.disconnect();
+  }, [restaurant?.restaurantId]);
+
   const increaseQty = (item) => {
-    const existing = cart.find((c) => c._id === item._id);
+    const isPortion = item.measurementType === "PORTION";
+    const cartItemId = isPortion ? `${item._id}-${item.selectedPortion?.label}` : item._id;
+    const itemPrice = isPortion ? item.selectedPortion?.price : item.price;
+
+    const existing = cart.find((c) =>
+      isPortion
+        ? (c._id === item._id && c.selectedPortion?.label === item.selectedPortion?.label)
+        : c._id === item._id
+    );
 
     if (existing) {
       setCart(
         cart.map((c) =>
-          c._id === item._id ? { ...c, quantity: c.quantity + 1 } : c
+          (isPortion
+            ? (c._id === item._id && c.selectedPortion?.label === item.selectedPortion?.label)
+            : c._id === item._id)
+            ? { ...c, quantity: c.quantity + 1 }
+            : c
         )
       );
     } else {
-      setCart([...cart, { ...item, quantity: 1 }]);
+      setCart([...cart, { ...item, price: itemPrice, quantity: 1, cartItemId }]);
     }
   };
 
   const decreaseQty = (item) => {
-    const existing = cart.find((c) => c._id === item._id);
+    const isPortion = item.measurementType === "PORTION";
+    const existing = cart.find((c) =>
+      isPortion
+        ? (c._id === item._id && c.selectedPortion?.label === item.selectedPortion?.label)
+        : c._id === item._id
+    );
 
     if (!existing) return;
 
     if (existing.quantity === 1) {
-      setCart(cart.filter((c) => c._id !== item._id));
+      setCart(cart.filter((c) =>
+        isPortion
+          ? !(c._id === item._id && c.selectedPortion?.label === item.selectedPortion?.label)
+          : c._id !== item._id
+      ));
     } else {
       setCart(
         cart.map((c) =>
-          c._id === item._id ? { ...c, quantity: c.quantity - 1 } : c
+          (isPortion
+            ? (c._id === item._id && c.selectedPortion?.label === item.selectedPortion?.label)
+            : c._id === item._id)
+            ? { ...c, quantity: c.quantity - 1 }
+            : c
         )
       );
     }
   };
 
-  const getQty = (id) => {
-    const item = cart.find((c) => c._id === id);
+  const getQty = (id, portionLabel = null) => {
+    const item = cart.find((c) =>
+      portionLabel
+        ? (c._id === id && c.selectedPortion?.label === portionLabel)
+        : c._id === id
+    );
     return item ? item.quantity : 0;
   };
 
   const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + (item.price || 0) * item.quantity,
     0
   );
 
@@ -113,8 +180,8 @@ export default function MenuPage() {
   }
 
   const categories = Array.isArray(menu)
-    ? [...new Set(menu.map((m) => m.category))]
-    : [];
+    ? ["All", ...new Set(menu.map((m) => m.category))]
+    : ["All"];
 
   return (
     <div className="min-h-screen bg-greenleaf-bg pb-32 font-sans selection:bg-greenleaf-secondary/30">
@@ -132,26 +199,51 @@ export default function MenuPage() {
           {categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => document.getElementById(`cat-${cat}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-              className="whitespace-nowrap bg-white/80 backdrop-blur-md px-6 py-2.5 rounded-2xl shadow-sm border border-greenleaf-accent text-greenleaf-text font-bold text-xs uppercase tracking-widest hover:bg-greenleaf-primary hover:text-white transition-all active:scale-95 shadow-floating"
+              onClick={() => setActiveCategory(cat)}
+              className={`whitespace-nowrap px-6 py-2.5 rounded-2xl shadow-sm border text-xs uppercase tracking-widest transition-all active:scale-95 shadow-floating font-black ${activeCategory === cat
+                  ? "bg-greenleaf-primary text-white border-greenleaf-primary ring-4 ring-greenleaf-primary/10"
+                  : "bg-white/80 backdrop-blur-md border-greenleaf-accent text-greenleaf-text hover:bg-greenleaf-primary hover:text-white"
+                }`}
             >
               {cat}
             </button>
           ))}
         </div>
 
-        <div className="space-y-12">
-          {categories.map((cat) => (
-            <div key={cat} id={`cat-${cat}`} className="animate-in fade-in slide-in-from-bottom-10 duration-700">
-              <MenuCategory title={cat}>
+        <div className="space-y-12 min-h-[50vh]">
+          {activeCategory === "All" ? (
+            // Show grouped by category when "All" is selected
+            [...new Set(menu.map(m => m.category))].map((cat) => (
+              <div key={cat} id={`cat-${cat}`} className="animate-in fade-in slide-in-from-bottom-10 duration-700">
+                <MenuCategory title={cat}>
+                  <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
+                    {menu
+                      .filter((item) => item.category === cat)
+                      .map((item) => (
+                        <MenuItem
+                          key={item._id}
+                          item={item}
+                          getQty={getQty}
+                          onAdd={increaseQty}
+                          onRemove={decreaseQty}
+                        />
+                      ))}
+                  </div>
+                </MenuCategory>
+              </div>
+            ))
+          ) : (
+            // Show only the selected category
+            <div className="animate-in fade-in slide-in-from-bottom-10 duration-700">
+              <MenuCategory title={activeCategory}>
                 <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
                   {menu
-                    .filter((item) => item.category === cat)
+                    .filter((item) => item.category === activeCategory)
                     .map((item) => (
                       <MenuItem
                         key={item._id}
                         item={item}
-                        qty={getQty(item._id)}
+                        getQty={getQty}
                         onAdd={increaseQty}
                         onRemove={decreaseQty}
                       />
@@ -159,7 +251,7 @@ export default function MenuPage() {
                 </div>
               </MenuCategory>
             </div>
-          ))}
+          )}
 
           {menu.length === 0 && (
             <div className="text-center py-32 bg-white rounded-[3rem] border border-dashed border-greenleaf-accent">

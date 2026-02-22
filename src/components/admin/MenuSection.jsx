@@ -42,7 +42,6 @@ export default function MenuSection() {
       );
 
       setMenuItems(res.data || []);
-      console.log("MENU ITEMS:", res.data);
     } catch (err) {
       console.error("Failed to fetch menu", err);
       setMenuItems([]);
@@ -81,7 +80,7 @@ export default function MenuSection() {
 
       if (measurementType === "UNIT") {
         formData.append("price", Number(menuPrice));
-        
+
       } else if (measurementType === "PORTION") {
         const validPortions = portions
           .filter(p => p.label && p.price)
@@ -102,13 +101,6 @@ export default function MenuSection() {
         formData.append("image", imageFile);
       }
 
-      console.log("CREATING ITEM PAYLOAD:", {
-        name: menuName,
-        measurementType,
-        category: menuCategory,
-        prepTime: Number(prepTime || 0),
-        restaurantId,
-      });
 
       await axios.post(`${API_BASE}/menu`, formData, {
         headers: {
@@ -280,8 +272,6 @@ export default function MenuSection() {
           >
             <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
               {(() => {
-                console.log("ITEM IMAGE DEBUG:", item);
-
                 const imageUrl = item.imageUrl || item.image || item.photo;
 
                 if (!imageUrl) {
@@ -300,7 +290,6 @@ export default function MenuSection() {
                     alt={item.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      console.log("IMAGE LOAD FAILED:", src);
                       e.currentTarget.style.display = "none";
                     }}
                   />

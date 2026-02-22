@@ -16,14 +16,13 @@ export default function CheckoutPage() {
   }
 
   const handlePayment = async (method) => {
-    console.log("Payment method:", method);
 
     try {
       const orderData = {
         tableId,
         items: cart.map(item => ({
           menuItemId: item._id,
-          name: item.name,
+          name: item.selectedPortion ? `${item.name} (${item.selectedPortion.label})` : item.name,
           price: item.price,
           quantity: item.quantity
         })),
@@ -75,10 +74,10 @@ export default function CheckoutPage() {
           ) : (
             <div className="space-y-4">
               {cart.map((item) => (
-                <div key={item._id} className="flex justify-between items-center group">
+                <div key={item.cartItemId || item._id} className="flex justify-between items-center group">
                   <div className="flex flex-col">
                     <span className="text-lg font-bold text-greenleaf-text group-hover:text-greenleaf-primary transition-colors">
-                      {item.name}
+                      {item.name} {item.selectedPortion && <span className="text-sm font-normal opacity-60">({item.selectedPortion.label})</span>}
                     </span>
                     <span className="text-[10px] uppercase font-black tracking-tighter opacity-40">Unit Price: ₹{item.price}</span>
                   </div>

@@ -95,7 +95,6 @@ export default function WaiterPage() {
     socket.on("order-updated", fetchOrders);
     socket.on("new-order", fetchOrders);
     socket.on("waiter-called", (data) => {
-      console.log("Waiter called event received:", data);
       // data is persistent notification object
       setWaiterCalls((prev) => {
         if (prev.find(c => c._id === data._id)) return prev;
