@@ -25,6 +25,8 @@ export default function PendingConfirmationPage() {
 
     try {
       const data = await fetchOrderById(orderId);
+console.log("FULL ORDER:", data);
+console.log("ORDER ITEMS:", data?.items);
 
       if (data && data._id) {
         setOrder(data);

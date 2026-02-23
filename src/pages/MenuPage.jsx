@@ -274,7 +274,7 @@ export default function MenuPage() {
 
       {/* GLOBAL PORTION SELECTOR MODAL - Fixes Z-Index Issues */}
       {selectedItemForPortions && (
-        <div className="fixed inset-0 z-[1000] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-300">
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setSelectedItemForPortions(null)}
