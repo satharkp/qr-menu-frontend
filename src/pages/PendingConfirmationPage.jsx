@@ -101,18 +101,34 @@ console.log("ORDER ITEMS:", data?.items);
         <div className="border rounded-xl p-4 mb-4 text-left">
           <p className="font-semibold mb-2">Order Details</p>
 
-          {Array.isArray(order.items) && order.items.map((item, index) => (
-            <div key={index} className="flex justify-between text-sm">
-              <span>
-                {item.name} × {item.quantity}
-              </span>
-              <span>₹{item.price * item.quantity}</span>
-            </div>
-          ))}
+          {Array.isArray(order.items) && order.items.map((item, index) => {
+            const price = Number(item.price ?? item.selectedPortionPrice ?? 0);
+            const quantity = Number(item.quantity ?? 1);
+            const lineTotal = price * quantity;
+
+            return (
+              <div key={index} className="flex justify-between text-sm">
+                <span>
+                  {item.name} × {quantity}
+                </span>
+                <span>₹{lineTotal}</span>
+              </div>
+            );
+          })}
 
           <div className="border-t mt-2 pt-2 font-semibold flex justify-between">
             <span>Total</span>
-            <span>₹{order.total}</span>
+            <span>
+              ₹{
+                Array.isArray(order.items)
+                  ? order.items.reduce((sum, item) => {
+                      const price = Number(item.price ?? item.selectedPortionPrice ?? 0);
+                      const quantity = Number(item.quantity ?? 1);
+                      return sum + price * quantity;
+                    }, 0)
+                  : 0
+              }
+            </span>
           </div>
         </div>
 
