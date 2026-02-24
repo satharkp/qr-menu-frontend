@@ -1,6 +1,9 @@
 export const API_BASE = "https://qr-res.onrender.com/api";
 export const SOCKET_URL = "https://qr-res.onrender.com";
 
+// export const API_BASE = "http://localhost:5050/api";
+// export const SOCKET_URL = "http://localhost:5050";
+
 export const fetchMenuByTable = async (tableId) => {
   const res = await fetch(`${API_BASE}/public/table/${tableId}`);
   return res.json();

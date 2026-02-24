@@ -1,4 +1,6 @@
 import { createOrder } from "../services/api";
+import axios from "axios";
+import { API_BASE } from "../services/api";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 
 export default function CheckoutPage() {
@@ -28,8 +30,8 @@ export default function CheckoutPage() {
   }
 
   const handlePayment = async (method) => {
-
     try {
+      // First create order in database
       const orderData = {
         tableId,
         items: cart.map(item => ({
@@ -41,16 +43,58 @@ export default function CheckoutPage() {
       };
 
       const order = await createOrder(orderData);
-
-      // Save order id locally for pending page
       localStorage.setItem("lastOrderId", order._id);
 
+      // CASH → direct pending confirmation
       if (method === "CASH") {
         navigate("/pending-confirmation");
-      } else {
-        // Assume other methods redirect somewhere else or to a success page
-        navigate("/pending-confirmation");
+        return;
       }
+
+      // ONLINE PAYMENT (UPI / CARD)
+      const { data: razorpayOrder } = await axios.post(
+        `${API_BASE}/payments/razorpay/order`,
+        {
+          amount: calculatedTotal,
+        }
+      );
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "Greenleaf Restaurant",
+        description: "Order Payment",
+        order_id: razorpayOrder.id,
+
+        handler: async function (response) {
+          try {
+            await axios.post(`${API_BASE}/payments/razorpay/verify`, {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: order._id,
+            });
+
+            navigate("/pending-confirmation");
+          } catch (err) {
+            console.error("Payment verification failed", err);
+            alert("Payment verification failed");
+          }
+        },
+
+        prefill: {
+          name: "Customer",
+        },
+
+        theme: {
+          color: "#1f2937",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
     } catch (err) {
       console.error("Order creation failed", err);
       alert("Failed to place order. Please try again.");
