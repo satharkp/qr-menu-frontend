@@ -45,9 +45,9 @@ export default function CheckoutPage() {
       const order = await createOrder(orderData);
       localStorage.setItem("lastOrderId", order._id);
 
-      // CASH → direct pending confirmation
+      // CASH → direct menu with tracker
       if (method === "CASH") {
-        navigate("/pending-confirmation");
+        navigate(`/table/${tableId}`);
         return;
       }
 
@@ -76,7 +76,7 @@ export default function CheckoutPage() {
               orderId: order._id,
             });
 
-            navigate("/pending-confirmation");
+            navigate(`/table/${tableId}`);
           } catch (err) {
             console.error("Payment verification failed", err);
             alert("Payment verification failed");

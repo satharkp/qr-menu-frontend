@@ -7,6 +7,7 @@ import MenuCategory from "../components/MenuCategory";
 import MenuItem from "../components/MenuItem";
 import CartFloating from "../components/CartFloating";
 import CallWaiterButton from "../components/customer/CallWaiterButton";
+import OrderTracker from "../components/OrderTracker";
 
 
 export default function MenuPage() {
@@ -270,6 +271,11 @@ export default function MenuPage() {
         cart={cart}
         total={total}
         onPlaceOrder={placeOrder}
+      />
+
+      <OrderTracker
+        restaurantId={restaurant?.restaurantId}
+        tableNumber={restaurant?.tableNumber}
       />
 
       {/* GLOBAL PORTION SELECTOR MODAL - Fixes Z-Index Issues */}
