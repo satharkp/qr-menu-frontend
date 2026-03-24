@@ -39,11 +39,11 @@ const OrderTracker = ({ restaurantId, tableNumber }) => {
       const validOrders = fetchedOrders.filter(o => o !== null && o.status !== "SERVED");
       setOrders(validOrders);
 
-      // Update activeOrderIds in localStorage if some were SERVED
+      // Update activeOrderIds state AND localStorage if some were SERVED or NOT FOUND
       const validIds = validOrders.map(o => o._id);
       if (validIds.length !== activeOrderIds.length) {
         localStorage.setItem("activeOrderIds", JSON.stringify(validIds));
-        setActiveOrderIds(validIds);
+        setActiveOrderIds(validIds); // CRITICAL: Stop the retry loop by updating state
       }
 
       // Calculate time left for each

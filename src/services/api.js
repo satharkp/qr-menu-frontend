@@ -23,6 +23,7 @@ export const createOrder = async (data) => {
 
 export const fetchOrderById = async (orderId) => {
   const res = await fetch(`${API_BASE}/orders/${orderId}`);
+  if (!res.ok) throw new Error("Order not found");
   return res.json();
 };
 
