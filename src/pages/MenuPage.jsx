@@ -188,21 +188,16 @@ export default function MenuPage() {
   return (
     <div className="min-h-screen bg-greenleaf-bg pb-32 font-sans selection:bg-greenleaf-secondary/30">
 
-      {/* Fixed Call Waiter Button */}
-      <div className="fixed top-6 right-6 z-[100] w-auto">
-        <CallWaiterButton tableId={resolvedTableId} />
-      </div>
+      <RestaurantHeader restaurant={restaurant} tableId={resolvedTableId} />
 
-      <RestaurantHeader restaurant={restaurant} />
-
-      <div className="max-w-5xl mx-auto px-6 md:px-10 -mt-10 relative z-20">
+      <div className="max-w-5xl mx-auto px-4 md:px-10 -mt-8 md:-mt-10 relative z-20">
         {/* Category Quick Links (Sticky) */}
-        <div className="sticky top-4 z-40 mb-8 flex gap-3 overflow-x-auto pb-4 hide-scrollbar">
+        <div className="sticky top-4 z-40 mb-6 md:mb-8 flex gap-2 md:gap-3 overflow-x-auto pb-4 hide-scrollbar">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`whitespace-nowrap px-6 py-2.5 rounded-2xl shadow-sm border text-xs uppercase tracking-widest transition-all active:scale-95 shadow-floating font-black ${activeCategory === cat
+              className={`whitespace-nowrap px-4 py-2 md:px-6 md:py-2.5 rounded-xl md:rounded-2xl shadow-sm border text-[10px] md:text-xs uppercase tracking-widest transition-all active:scale-95 shadow-floating font-black ${activeCategory === cat
                 ? "bg-greenleaf-primary text-white border-greenleaf-primary ring-4 ring-greenleaf-primary/10"
                 : "bg-white/80 backdrop-blur-md border-greenleaf-accent text-greenleaf-text hover:bg-greenleaf-primary hover:text-white"
                 }`}

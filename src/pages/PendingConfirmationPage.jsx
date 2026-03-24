@@ -89,56 +89,56 @@ export default function PendingConfirmationPage() {
         </div>
       )}
 
-      <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-floating p-10 border border-greenleaf-accent relative z-10">
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 mx-auto mb-6 bg-greenleaf-bg rounded-2xl flex items-center justify-center border border-greenleaf-accent shadow-sm">
-            <span className="text-3xl">👨‍🍳</span>
+      <div className="w-full max-w-xl bg-white rounded-[2rem] md:rounded-[3rem] shadow-floating p-6 md:p-10 border border-greenleaf-accent relative z-10 text-center md:text-left">
+        <div className="text-center mb-6 md:mb-10">
+          <div className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 bg-greenleaf-bg rounded-xl md:rounded-2xl flex items-center justify-center border border-greenleaf-accent shadow-sm">
+            <span className="text-2xl md:text-3xl">👨‍🍳</span>
           </div>
-          <h1 className="text-4xl font-serif font-black text-greenleaf-text tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-serif font-bold text-greenleaf-text tracking-tight">
             Order Received
           </h1>
-          <p className="text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-2">Currently being processed</p>
+          <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-1 md:mt-2">Currently being processed</p>
         </div>
 
         {/* Wait Time Display */}
-        <div className="bg-greenleaf-primary rounded-2xl p-6 mb-8 shadow-premium shadow-greenleaf-primary/20 flex items-center justify-between overflow-hidden relative">
-          <div className="relative z-10">
-            <span className="text-[10px] font-black uppercase tracking-widest text-white/70 block mb-1">Estimated Wait Time</span>
-            <span className="text-3xl font-serif font-black text-white">
-              {order?.estimatedWaitTime || 15} <span className="text-sm font-normal ml-1 opacity-80 italic">mins</span>
+        <div className="bg-greenleaf-primary rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 md:mb-8 shadow-premium shadow-greenleaf-primary/20 flex items-center justify-between overflow-hidden relative">
+          <div className="relative z-10 text-left">
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white/70 block mb-0.5 md:mb-1">Estimated Wait Time</span>
+            <span className="text-2xl md:text-3xl font-serif font-bold text-white leading-tight">
+              {order?.estimatedWaitTime || 15} <span className="text-xs md:text-sm font-normal ml-1 opacity-80 italic">mins</span>
             </span>
           </div>
-          <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center animate-pulse">
-            <span className="text-2xl">⏳</span>
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-white/10 rounded-full flex items-center justify-center animate-pulse">
+            <span className="text-xl md:text-2xl">⏳</span>
           </div>
         </div>
 
         {/* Order Summary */}
-        <div className="bg-greenleaf-bg rounded-[2rem] p-8 mb-8 border border-greenleaf-accent">
-          <h2 className="text-[10px] font-black uppercase tracking-widest text-greenleaf-primary mb-6 flex items-center gap-2">
+        <div className="bg-greenleaf-bg rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 mb-6 md:mb-8 border border-greenleaf-accent">
+          <h2 className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-greenleaf-primary mb-4 md:mb-6 flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-greenleaf-primary rounded-full"></span>
             Your Curation
           </h2>
 
-          <div className="space-y-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+          <div className="space-y-3 md:space-y-4 max-h-48 md:max-h-60 overflow-y-auto pr-2 custom-scrollbar">
             {order?.items?.map((item, index) => (
               <div key={index} className="flex justify-between items-center group">
-                <div className="flex flex-col">
-                  <span className="text-lg font-bold text-greenleaf-text">
-                    {item.name} {item.portion && <span className="text-sm font-normal opacity-60">({item.portion})</span>}
+                <div className="flex flex-col text-left">
+                  <span className="text-base md:text-lg font-bold text-greenleaf-text">
+                    {item.name} {item.portion && <span className="text-xs md:text-sm font-normal opacity-60">({item.portion})</span>}
                   </span>
-                  <span className="text-[10px] uppercase font-black tracking-tighter opacity-40">
+                  <span className="text-[8px] md:text-[10px] uppercase font-black tracking-tighter opacity-40">
                     Quantity: {item.quantity}
                   </span>
                 </div>
-                <span className="text-sm font-black text-greenleaf-primary">₹{Number(item.price) * Number(item.quantity)}</span>
+                <span className="text-xs md:text-sm font-bold text-greenleaf-primary whitespace-nowrap">₹{Number(item.price) * Number(item.quantity)}</span>
               </div>
             ))}
           </div>
 
-          <div className="border-t border-greenleaf-accent mt-6 pt-6 flex justify-between items-center">
-            <span className="text-[10px] font-black uppercase tracking-widest text-greenleaf-muted">Total Paid</span>
-            <span className="text-2xl font-serif font-black text-greenleaf-text">₹{order?.total || 0}</span>
+          <div className="border-t border-greenleaf-accent mt-4 md:mt-6 pt-4 md:pt-6 flex justify-between items-center">
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-greenleaf-muted">Total Paid</span>
+            <span className="text-xl md:text-2xl font-serif font-bold text-greenleaf-text">₹{order?.total || 0}</span>
           </div>
         </div>
 
@@ -146,12 +146,12 @@ export default function PendingConfirmationPage() {
         <button
           onClick={handleCallWaiter}
           disabled={callingWaiter}
-          className="w-full bg-greenleaf-secondary hover:bg-greenleaf-secondary/90 disabled:bg-gray-200 transition-all text-white py-5 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.25em] shadow-xl shadow-greenleaf-secondary/20 active:scale-95 flex items-center justify-center gap-2"
+          className="w-full bg-greenleaf-secondary hover:bg-greenleaf-secondary/90 disabled:bg-gray-200 transition-all text-white py-4 md:py-5 rounded-xl md:rounded-[1.5rem] font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.25em] shadow-xl shadow-greenleaf-secondary/20 active:scale-95 flex items-center justify-center gap-2"
         >
           {callingWaiter ? (
-            <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full"></div>
+            <div className="animate-spin h-3 w-3 md:h-4 md:w-4 border-2 border-white/50 border-t-white rounded-full"></div>
           ) : (
-            <><span>🛎️</span> Request Waiter Assistance</>
+            <><span className="text-sm md:text-base">🛎️</span> Request Waiter Assistance</>
           )}
         </button>
 

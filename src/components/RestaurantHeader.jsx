@@ -1,8 +1,9 @@
 import React from 'react';
+import CallWaiterButton from './customer/CallWaiterButton';
 
-const RestaurantHeader = ({ restaurant }) => {
+const RestaurantHeader = ({ restaurant, tableId }) => {
   return (
-    <div className="relative bg-greenleaf-primary text-white pt-12 pb-20 px-6 mb-8 shadow-premium overflow-hidden rounded-b-[3rem]">
+    <div className="relative bg-greenleaf-primary text-white pt-8 pb-14 md:pt-12 md:pb-20 px-6 mb-8 shadow-premium overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3rem]">
       {/* Botanical Decorative Elements */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-greenleaf-secondary/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
       <div className="absolute top-10 right-10 opacity-10 pointer-events-none">
@@ -17,12 +18,17 @@ const RestaurantHeader = ({ restaurant }) => {
       </div>
 
       <div className="relative z-10 text-center max-w-2xl mx-auto">
-        {/* Animated Icon Container */}
-        <div className="w-20 h-20 mx-auto mb-6 bg-white/10 backdrop-blur-md rounded-[2rem] flex items-center justify-center border border-white/20 shadow-2xl animate-float">
-          <span className="text-4xl">🌿</span>
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-[2rem] flex items-center justify-center border border-white/20 shadow-2xl animate-float">
+            <span className="text-4xl">🌿</span>
+          </div>
+
+          <div className="w-auto animate-in slide-in-from-left-4 duration-1000">
+            <CallWaiterButton tableId={tableId} isHeaderMode />
+          </div>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-serif font-bold text-white tracking-tight drop-shadow-lg mb-4">
+        <h1 className="text-3xl md:text-5xl font-serif font-bold text-white tracking-tight drop-shadow-lg mb-4">
           {restaurant?.restaurantName || "Greenleaf Dining"}
         </h1>
 

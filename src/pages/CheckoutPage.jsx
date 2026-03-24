@@ -107,20 +107,20 @@ export default function CheckoutPage() {
       {/* Decorative botanical elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-greenleaf-primary/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
 
-      <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-floating p-12 border border-greenleaf-accent relative z-10 animate-in fade-in zoom-in-95 duration-700">
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 mx-auto mb-6 bg-greenleaf-bg rounded-2xl flex items-center justify-center border border-greenleaf-accent shadow-sm">
-            <span className="text-3xl">🛍️</span>
+      <div className="w-full max-w-xl bg-white rounded-[2rem] md:rounded-[3rem] shadow-floating p-6 md:p-12 border border-greenleaf-accent relative z-10 animate-in fade-in zoom-in-95 duration-700">
+        <div className="text-center mb-6 md:mb-10">
+          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 bg-greenleaf-bg rounded-xl md:rounded-2xl flex items-center justify-center border border-greenleaf-accent shadow-sm">
+            <span className="text-2xl md:text-3xl">🛍️</span>
           </div>
-          <h1 className="text-4xl font-serif font-black text-greenleaf-text tracking-tight">
+          <h1 className="text-2xl md:text-4xl font-serif font-bold text-greenleaf-text tracking-tight">
             Checkout
           </h1>
-          <p className="text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-2">Finalize Your Selection</p>
+          <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-1 md:mt-2">Finalize Your Selection</p>
         </div>
 
         {/* Order Summary */}
-        <div className="bg-greenleaf-bg rounded-[2rem] p-8 mb-8 border border-greenleaf-accent">
-          <h2 className="text-[10px] font-black uppercase tracking-widest text-greenleaf-primary mb-6 flex items-center gap-2">
+        <div className="bg-greenleaf-bg rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 mb-6 md:mb-8 border border-greenleaf-accent">
+          <h2 className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-greenleaf-primary mb-4 md:mb-6 flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-greenleaf-primary rounded-full"></span>
             Order Summary
           </h2>
@@ -131,15 +131,15 @@ export default function CheckoutPage() {
               {cart.map((item) => (
                 <div key={item.cartItemId || item._id} className="flex justify-between items-center group">
                   <div className="flex flex-col">
-                    <span className="text-lg font-bold text-greenleaf-text group-hover:text-greenleaf-primary transition-colors">
-                      {item.name} {item.selectedPortion && <span className="text-sm font-normal opacity-60">({item.selectedPortion.label})</span>}
+                    <span className="text-base md:text-lg font-bold text-greenleaf-text group-hover:text-greenleaf-primary transition-colors">
+                      {item.name} {item.selectedPortion && <span className="text-xs md:text-sm font-normal opacity-60">({item.selectedPortion.label})</span>}
                     </span>
-                    <span className="text-[10px] uppercase font-black tracking-tighter opacity-40">
+                    <span className="text-[8px] md:text-[10px] uppercase font-black tracking-tighter opacity-40">
                       Unit Price: ₹{item.selectedPortion ? item.selectedPortion.price : item.price}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-8 h-8 rounded-lg bg-white border border-greenleaf-accent flex items-center justify-center text-xs font-black">
+                  <div className="flex items-center gap-2 md:gap-4">
+                    <span className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-white border border-greenleaf-accent flex items-center justify-center text-[10px] md:text-xs font-black">
                       x{item.quantity}
                     </span>
                   </div>
@@ -150,9 +150,9 @@ export default function CheckoutPage() {
         </div>
 
         {/* Total */}
-        <div className="flex justify-between items-center bg-greenleaf-primary rounded-2xl p-6 mb-10 shadow-premium shadow-greenleaf-primary/20">
-          <span className="text-[10px] font-black uppercase tracking-widest text-white/70">Total Investment</span>
-          <span className="text-3xl font-serif font-black text-white">₹{calculatedTotal.toFixed(2)}</span>
+        <div className="flex justify-between items-center bg-greenleaf-primary rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 md:mb-10 shadow-premium shadow-greenleaf-primary/20">
+          <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white/70">Total Investment</span>
+          <span className="text-2xl md:text-3xl font-serif font-black text-white">₹{calculatedTotal.toFixed(2)}</span>
         </div>
 
         {/* Payment Buttons */}
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
           <button
             disabled={!cart.length}
             onClick={() => handlePayment("CASH")}
-            className="w-full bg-greenleaf-secondary hover:bg-greenleaf-secondary/90 disabled:bg-gray-200 transition-all text-white py-5 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.25em] shadow-xl shadow-greenleaf-secondary/20 active:scale-95"
+            className="w-full bg-greenleaf-secondary hover:bg-greenleaf-secondary/90 disabled:bg-gray-200 transition-all text-white py-4 md:py-5 rounded-[1.25rem] md:rounded-[1.5rem] font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.25em] shadow-xl shadow-greenleaf-secondary/20 active:scale-95"
           >
             Pay at Counter (Cash)
           </button>
