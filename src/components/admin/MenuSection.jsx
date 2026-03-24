@@ -15,6 +15,7 @@ export default function MenuSection() {
   ]);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
 
   const token = localStorage.getItem("token");
   const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
@@ -65,7 +66,50 @@ export default function MenuSection() {
     }
   };
 
-  const createMenuItem = async () => {
+  const resetForm = () => {
+    setMenuName("");
+    setMenuPrice("");
+    setMenuCategory("");
+    setPrepTime("");
+    setMeasurementType("UNIT");
+    setPortions([{ label: "", price: "" }]);
+    setImageFile(null);
+    setPreview(null);
+    setEditingItem(null);
+  };
+
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setMenuName(item.name);
+    setMenuCategory(item.category);
+    setPrepTime(item.prepTime || "");
+    setMeasurementType(item.measurementType);
+
+    if (item.measurementType === "UNIT") {
+      setMenuPrice(item.price);
+      setPortions([{ label: "", price: "" }]);
+    } else {
+      setMenuPrice("");
+      setPortions(item.portions.map(p => ({ label: p.label, price: p.price })));
+    }
+
+    const imageUrl = item.imageUrl || item.image || item.photo;
+    if (imageUrl) {
+      const src = imageUrl.startsWith("http")
+        ? imageUrl
+        : imageUrl.startsWith("/uploads")
+          ? `${SOCKET_URL}${imageUrl}`
+          : `${SOCKET_URL}/uploads/${imageUrl}`;
+      setPreview(src);
+    } else {
+      setPreview(null);
+    }
+
+    setImageFile(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSubmit = async () => {
     if (!menuName || !menuCategory) {
       return alert("Name and category required");
     }
@@ -101,34 +145,49 @@ export default function MenuSection() {
         formData.append("image", imageFile);
       }
 
+      if (editingItem) {
+        await axios.put(`${API_BASE}/menu/${editingItem._id}`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        await axios.post(`${API_BASE}/menu`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
 
-      await axios.post(`${API_BASE}/menu`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setMenuName("");
-      setMenuPrice("");
-      setMenuCategory("");
-      setPrepTime("");
-      setMeasurementType("UNIT");
-      setPortions([{ label: "", price: "" }]);
-      setImageFile(null);
-      setPreview(null);
-
+      resetForm();
       fetchMenu();
     } catch (err) {
-      console.error("Create menu item error:", err.response?.data || err.message);
+      console.error("Menu save error:", err.response?.data || err.message);
       const errorMsg = err.response?.data?.message || err.message;
-      const subErrors = err.response?.data?.errors?.map(e => `\n- ${e.field}: ${e.message}`).join("") || "";
-      alert(`Failed to create menu item: ${errorMsg}${subErrors}`);
+      alert(`Failed to save menu item: ${errorMsg}`);
     }
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow max-w-5xl">
-      <h2 className="text-xl font-semibold mb-4">Menu Management</h2>
+    <div className="bg-white p-8 rounded-[2.5rem] shadow-premium max-w-5xl border border-greenleaf-accent">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-2xl font-serif font-black text-greenleaf-primary">
+            {editingItem ? "Edit Menu Selection" : "Menu Management"}
+          </h2>
+          <p className="text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-1">
+            {editingItem ? `Updating: ${editingItem.name}` : "Curating your restaurant's culinary offerings"}
+          </p>
+        </div>
+        {editingItem && (
+          <button
+            onClick={resetForm}
+            className="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors"
+          >
+            Cancel Edit
+          </button>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-6">
         <input
@@ -253,10 +312,10 @@ export default function MenuSection() {
         </div>
 
         <button
-          onClick={createMenuItem}
-          className="bg-orange-600 text-white rounded px-3"
+          onClick={handleSubmit}
+          className={`${editingItem ? "bg-greenleaf-primary" : "bg-orange-600"} text-white rounded-xl px-4 py-3 font-black text-[10px] uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all`}
         >
-          Add Item
+          {editingItem ? "Update Item" : "Add Item"}
         </button>
       </div>
 
@@ -315,7 +374,13 @@ export default function MenuSection() {
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => handleEdit(item)}
+                className="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border border-green-100 hover:bg-green-100 transition-colors"
+              >
+                Edit
+              </button>
               <button
                 onClick={async () => {
                   try {

@@ -109,20 +109,47 @@ export default function TablesSection() {
           <p className="text-gray-500">No tables created yet.</p>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tables.map((t) => (
             <div
               key={t._id}
-              className="relative h-20 flex items-center justify-center rounded-xl border bg-gray-100 font-semibold"
+              className="relative p-6 rounded-[2rem] border border-greenleaf-accent bg-greenleaf-bg flex flex-col items-center justify-center shadow-sm hover:shadow-floating transition-all group overflow-hidden"
             >
               <button
                 onClick={() => deleteTable(t._id)}
-                className="absolute top-1 right-2 text-red-500 font-bold"
+                className="absolute top-4 right-4 text-greenleaf-muted hover:text-red-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                ×
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
               </button>
 
-              Table {t.tableNumber}
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-4 border border-greenleaf-accent shadow-sm">
+                <span className="text-xl">🪑</span>
+              </div>
+
+              <h3 className="text-2xl font-serif font-black text-greenleaf-primary mb-1">
+                Table {t.tableNumber}
+              </h3>
+
+              <div className="mt-2 flex flex-col items-center gap-1 w-full">
+                <p className="text-[10px] uppercase font-black text-greenleaf-muted tracking-widest opacity-60">ID Reference</p>
+                <code className="text-[9px] bg-white px-3 py-1.5 rounded-full border border-greenleaf-accent text-greenleaf-text font-mono select-all">
+                  {t._id}
+                </code>
+              </div>
+
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/table/${t._id}`;
+                  navigator.clipboard.writeText(url);
+                  alert(`Copied URL for Table ${t.tableNumber}:\n${url}`);
+                }}
+                className="mt-6 w-full bg-greenleaf-primary text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-premium active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <span>🔗</span>
+                <span>Copy QR URL</span>
+              </button>
             </div>
           ))}
         </div>
