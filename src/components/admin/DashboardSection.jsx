@@ -30,6 +30,18 @@ export default function DashboardSection() {
     }
   };
 
+  const clearAllOrders = async () => {
+    if (!window.confirm("ARE YOU SURE? This will permanently DELETE all orders for this restaurant! This cannot be undone.")) return;
+    try {
+      await axios.post(`${API_BASE}/orders/clear-all`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("All orders have been cleared successfully.");
+    } catch (err) {
+      alert("Failed to clear orders: " + (err.response?.data?.message || err.message));
+    }
+  };
+
   if (!restaurant) {
     return (
       <div className="bg-white rounded-[2rem] p-12 shadow-floating flex flex-col items-center justify-center border border-greenleaf-accent animate-pulse">
@@ -75,12 +87,18 @@ export default function DashboardSection() {
             </div>
           </div>
 
-          <div className="mt-10 flex gap-4">
+          <div className="mt-10 flex flex-wrap gap-4">
             <button className="bg-greenleaf-primary text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-premium hover:translate-y-[-2px] transition-all">
               Config Asset
             </button>
             <button className="bg-white border border-greenleaf-accent text-greenleaf-text px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-sm hover:bg-greenleaf-accent transition-all">
               View Public Menu
+            </button>
+            <button
+              onClick={clearAllOrders}
+              className="bg-red-500/10 border border-red-500/20 text-red-500 px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-sm hover:bg-red-500 hover:text-white transition-all ml-auto"
+            >
+              Wipe All Orders
             </button>
           </div>
         </div>

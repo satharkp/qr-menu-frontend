@@ -16,8 +16,16 @@ export default function KitchenPage() {
     const saved = localStorage.getItem("kitchenMuted");
     return saved === "true";
   });
+  const [currentTime, setCurrentTime] = useState(new Date());
   const previousOrderIds = useRef([]);
   const notificationAudioRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     notificationAudioRef.current = new Audio("/notification.mp3");
@@ -36,9 +44,20 @@ export default function KitchenPage() {
   }, [volume, muted]);
 
   const getMinutesAgo = (date) => {
-    const diff = Math.floor((Date.now() - new Date(date)) / 60000);
-    if (diff <= 0) return "Just now";
-    return `${diff}m ago`;
+    const diffInMs = Date.now() - new Date(date).getTime();
+    const diffInMins = Math.floor(diffInMs / 60000);
+
+    if (diffInMins < 1) return "Just now";
+    if (diffInMins < 60) return `${diffInMins}m ago`;
+
+    const diffInHours = Math.floor(diffInMins / 60);
+    if (diffInHours < 24) {
+      const remainingMins = diffInMins % 60;
+      return `${diffInHours}h ${remainingMins}m ago`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays}d ago`;
   };
 
   const token = localStorage.getItem("token");
@@ -99,14 +118,34 @@ export default function KitchenPage() {
       });
     });
 
+    socket.on("all-orders-cleared", () => {
+      setOrders([]);
+    });
+
     return () => socket.disconnect();
   }, []);
 
   const updateStatus = async (id, status) => {
-    await axios.patch(`${API_BASE}/orders/${id}/status`, { status }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    fetchOrders();
+    try {
+      await axios.patch(`${API_BASE}/orders/${id}/status`, { status }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (err) {
+      console.error("Failed to update status", err);
+    }
+  };
+
+  const clearOrders = async () => {
+    if (!window.confirm("ARE YOU SURE? This will cancel ALL pending orders for this restaurant!")) return;
+    try {
+      await axios.post(`${API_BASE}/orders/clear-all`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders([]);
+      alert("All pending orders have been cleared.");
+    } catch (err) {
+      alert("Failed to clear orders: " + (err.response?.data?.message || err.message));
+    }
   };
 
   const kitchenStats = useMemo(() => {
@@ -127,7 +166,7 @@ export default function KitchenPage() {
               Operations Center
             </h1>
             <p className={`tracking-widest uppercase font-black mt-4 opacity-60 ${tvMode ? "text-2xl text-white" : "text-sm text-greenleaf-text"}`}>
-              Live Order Stream • {new Date().toLocaleTimeString()}
+              Live Order Stream • {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </p>
           </div>
 
@@ -139,6 +178,15 @@ export default function KitchenPage() {
                 {muted ? "🔇" : "🔊"}
               </button>
             </div>
+
+            {token && JSON.parse(atob(token.split(".")[1])).role === 'admin' && (
+              <button
+                onClick={clearOrders}
+                className={`rounded-3xl font-black uppercase tracking-widest border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all active:scale-95 ${tvMode ? "px-12 py-6 text-xl" : "px-8 py-4 text-xs"}`}
+              >
+                Clear All
+              </button>
+            )}
 
             <button
               onClick={() => {

@@ -18,9 +18,17 @@ const getRoleFromToken = () => {
 
 export default function AdminPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
   const location = useLocation();
   const roleLabel = getRoleFromToken();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const pathSection = location.pathname.split("/")[2] || "dashboard";
@@ -115,7 +123,9 @@ export default function AdminPage() {
             </div>
             <div className="text-right">
               <p className="text-xs font-black text-greenleaf-muted tracking-widest">LOCAL TIME</p>
-              <p className="text-sm font-bold">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+              <p className="text-sm font-bold">
+                {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </p>
             </div>
           </div>
         </div>

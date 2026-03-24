@@ -6,6 +6,7 @@ import imageCompression from "browser-image-compression";
 export default function MenuSection() {
   const [menuItems, setMenuItems] = useState([]);
   const [menuName, setMenuName] = useState("");
+  const [menuDescription, setMenuDescription] = useState("");
   const [measurementType, setMeasurementType] = useState("UNIT");
   const [menuPrice, setMenuPrice] = useState("");
   const [menuCategory, setMenuCategory] = useState("");
@@ -68,6 +69,7 @@ export default function MenuSection() {
 
   const resetForm = () => {
     setMenuName("");
+    setMenuDescription("");
     setMenuPrice("");
     setMenuCategory("");
     setPrepTime("");
@@ -81,6 +83,7 @@ export default function MenuSection() {
   const handleEdit = (item) => {
     setEditingItem(item);
     setMenuName(item.name);
+    setMenuDescription(item.description || "");
     setMenuCategory(item.category);
     setPrepTime(item.prepTime || "");
     setMeasurementType(item.measurementType);
@@ -117,6 +120,7 @@ export default function MenuSection() {
     try {
       const formData = new FormData();
       formData.append("name", menuName);
+      formData.append("description", menuDescription);
       formData.append("measurementType", measurementType);
       formData.append("category", menuCategory);
       formData.append("prepTime", Number(prepTime || 0));
@@ -195,6 +199,13 @@ export default function MenuSection() {
           placeholder="Item name"
           value={menuName}
           onChange={(e) => setMenuName(e.target.value)}
+        />
+
+        <input
+          className="border p-2 rounded col-span-1 md:col-span-2"
+          placeholder="Description (Optional)"
+          value={menuDescription}
+          onChange={(e) => setMenuDescription(e.target.value)}
         />
 
         <select
@@ -355,9 +366,12 @@ export default function MenuSection() {
                 );
               })()}
             </div>
-            <div>
-              <p className="font-medium">{item.name}</p>
-              <div className="text-sm text-gray-500">
+            <div className="flex-1">
+              <p className="font-bold text-greenleaf-primary">{item.name}</p>
+              {item.description && (
+                <p className="text-[10px] text-greenleaf-muted italic line-clamp-1 mb-1">{item.description}</p>
+              )}
+              <div className="text-[10px] font-black uppercase tracking-widest text-greenleaf-muted opacity-60">
                 {item.category} • Prep {item.prepTime || 0} min
                 {item.measurementType === "PORTION" && item.portions && item.portions.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-1">

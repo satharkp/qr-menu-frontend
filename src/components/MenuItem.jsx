@@ -50,9 +50,11 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions }) => {
               </span>
             )}
           </div>
-          <p className="text-greenleaf-muted text-[11px] md:text-sm leading-snug md:leading-relaxed line-clamp-2">
-            {item.description || "A masterfully crafted dish using only the finest seasonal ingredients."}
-          </p>
+          {item.description && (
+            <p className="text-greenleaf-muted text-[11px] md:text-sm leading-snug md:leading-relaxed line-clamp-2">
+              {item.description}
+            </p>
+          )}
         </div>
 
         <div className="mt-2 md:mt-6 flex items-center justify-end">
