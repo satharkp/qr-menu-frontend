@@ -35,7 +35,22 @@ export default function PendingConfirmationPage() {
     try {
       const data = await fetchOrderById(orderId);
       if (data && data._id) {
+        // Table matching check (using lastTableId from localStorage as reference)
+        const currentTableId = localStorage.getItem("lastTableId");
+        const orderTableId = data.tableId?._id || data.tableId;
+
+        if (currentTableId && orderTableId && String(orderTableId) !== String(currentTableId)) {
+          console.log("DEBUG: Pending Order table mismatch. Redirecting...");
+          navigate("/");
+          return;
+        }
         setOrder(data);
+
+        // AUTO-REDIRECT: If order is no longer pending, go back to menu to see the live tracker
+        if (data.status !== "PENDING_CONFIRMATION") {
+          console.log("DEBUG: Order confirmed! Redirecting to menu...");
+          navigate(`/table/${currentTableId}`);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch order", err);

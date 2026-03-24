@@ -18,6 +18,8 @@ export default function WaiterPage() {
   const [waiterCalls, setWaiterCalls] = useState([]);
   const [callHistory, setCallHistory] = useState([]);
   const [orderFilter, setOrderFilter] = useState("ALL"); // ALL, READY
+  const [selectedItemForPortion, setSelectedItemForPortion] = useState(null);
+  const [pendingOrders, setPendingOrders] = useState([]);
 
   // Fetch assigned tables
   const fetchAssignedTables = async () => {
@@ -93,7 +95,17 @@ export default function WaiterPage() {
     socket.emit("joinRestaurant", decoded.restaurantId);
 
     socket.on("order-updated", fetchOrders);
-    socket.on("new-order", fetchOrders);
+    socket.on("new-order", (newOrder) => {
+      fetchOrders();
+      if (newOrder.status === "PENDING_CONFIRMATION") {
+        setPendingOrders(prev => {
+          if (prev.find(o => o._id === newOrder._id)) return prev;
+          return [newOrder, ...prev];
+        });
+        const audio = new Audio("/notification.mp3");
+        audio.play().catch(() => { });
+      }
+    });
     socket.on("waiter-called", (data) => {
       // data is persistent notification object
       setWaiterCalls((prev) => {
@@ -114,10 +126,11 @@ export default function WaiterPage() {
 
   // Derived Stats
   const stats = useMemo(() => {
-    const activeOrders = orders.filter(o => ["PLACED", "CONFIRMED", "READY"].includes(o.status)).length;
+    const activeOrders = orders.filter(o => ["PLACED", "CONFIRMED", "PREPARING", "READY"].includes(o.status)).length;
+    const pendingConfirmation = orders.filter(o => o.status === "PENDING_CONFIRMATION").length;
     const pendingCalls = waiterCalls.length;
     const tablesReady = orders.filter(o => o.status === "READY").length;
-    return { activeOrders, pendingCalls, tablesReady };
+    return { activeOrders, pendingConfirmation, pendingCalls, tablesReady };
   }, [orders, waiterCalls]);
 
   // Table status logic
@@ -126,8 +139,9 @@ export default function WaiterPage() {
     if (isCalling) return "CALLING";
 
     const tableOrders = orders.filter(o => Number(o.tableNumber) === tableNumber);
+    if (tableOrders.some(o => o.status === "PENDING_CONFIRMATION")) return "PENDING";
     if (tableOrders.some(o => o.status === "READY")) return "READY";
-    if (tableOrders.some(o => ["PLACED", "CONFIRMED"].includes(o.status))) return "OCCUPIED";
+    if (tableOrders.some(o => ["PLACED", "CONFIRMED", "PREPARING"].includes(o.status))) return "OCCUPIED";
 
     return "FREE";
   };
@@ -166,19 +180,25 @@ export default function WaiterPage() {
     }
   };
 
-  const addToCart = (item) => {
+  const addToCart = (item, selectedPortion = null) => {
+    const itemId = selectedPortion ? `${item._id}-${selectedPortion.label}` : item._id;
+    const name = selectedPortion ? `${item.name} (${selectedPortion.label})` : item.name;
+    const price = selectedPortion ? selectedPortion.price : item.price;
+    const portionLabel = selectedPortion ? selectedPortion.label : null;
+
     setCart((prev) => {
-      const existing = prev.find((c) => c.menuItemId === item._id);
-      if (existing) return prev.map((c) => c.menuItemId === item._id ? { ...c, quantity: c.quantity + 1 } : c);
-      return [...prev, { menuItemId: item._id, name: item.name, price: item.price, quantity: 1 }];
+      const existing = prev.find((c) => c._id === itemId);
+      if (existing) return prev.map((c) => c._id === itemId ? { ...c, quantity: c.quantity + 1 } : c);
+      return [...prev, { _id: itemId, menuItemId: item._id, name, price, quantity: 1, portion: portionLabel }];
     });
+    setSelectedItemForPortion(null);
   };
 
   const placeWaiterOrder = async () => {
     const table = assignedTables.find(t => t._id === selectedTableId);
     if (!table || cart.length === 0) return;
 
-    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const total = cart.reduce((sum, i) => sum + Number(i.price) * i.quantity, 0);
     try {
       await axios.post(`${API_BASE}/orders`, {
         restaurantId: payload.restaurantId,
@@ -230,15 +250,15 @@ export default function WaiterPage() {
           </div>
 
           <div
-            onClick={() => { setViewMode("ORDERS"); setOrderFilter("READY"); }}
-            className="bg-white p-6 rounded-3xl shadow-premium border border-greenleaf-accent flex items-center justify-between overflow-hidden relative group cursor-pointer hover:shadow-floating transition-all active:scale-95"
+            onClick={() => { setViewMode("ORDERS"); setOrderFilter("PENDING"); }}
+            className={`${stats.pendingConfirmation > 0 ? 'bg-amber-50 animate-pulse border-amber-200' : 'bg-white border-greenleaf-accent'} p-6 rounded-3xl shadow-premium border flex items-center justify-between overflow-hidden relative group cursor-pointer hover:shadow-floating transition-all active:scale-95`}
           >
             <div>
-              <p className="text-sm font-sans text-greenleaf-muted uppercase tracking-wider font-bold">Ready to Serve</p>
-              <h3 className="text-3xl font-serif text-greenleaf-primary mt-1">{stats.tablesReady}</h3>
+              <p className="text-sm font-sans text-greenleaf-muted uppercase tracking-wider font-bold">Needs Confirm</p>
+              <h3 className={`text-3xl font-serif ${stats.pendingConfirmation > 0 ? 'text-amber-600' : 'text-greenleaf-primary'} mt-1`}>{stats.pendingConfirmation}</h3>
             </div>
-            <div className="bg-greenleaf-secondary/10 p-4 rounded-2xl text-greenleaf-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            <div className={`${stats.pendingConfirmation > 0 ? 'bg-amber-500 text-white' : 'bg-greenleaf-accent text-greenleaf-primary'} p-4 rounded-2xl transition-colors`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
           </div>
         </div>
@@ -266,7 +286,7 @@ export default function WaiterPage() {
               {assignedTables.map((table) => {
                 const status = getTableStatus(table.tableNumber);
                 const statusStyles = {
-                  CALLING: "bg-red-600 text-white animate-bounce-short",
+                  PENDING: "bg-amber-500 text-white animate-pulse shadow-lg ring-4 ring-amber-500/20",
                   READY: "bg-greenleaf-secondary text-white shadow-lg",
                   OCCUPIED: "bg-greenleaf-primary text-white",
                   FREE: "bg-white text-greenleaf-primary border-2 border-greenleaf-accent",
@@ -312,6 +332,12 @@ export default function WaiterPage() {
                   All Active
                 </button>
                 <button
+                  onClick={() => setOrderFilter("PENDING")}
+                  className={`px-4 py-2 font-bold text-sm transition-all ${orderFilter === "PENDING" ? "text-amber-500 border-b-2 border-amber-500" : "text-greenleaf-muted hover:text-greenleaf-text"}`}
+                >
+                  Confirmations ({stats.pendingConfirmation})
+                </button>
+                <button
                   onClick={() => setOrderFilter("READY")}
                   className={`px-4 py-2 font-bold text-sm transition-all ${orderFilter === "READY" ? "text-greenleaf-primary border-b-2 border-greenleaf-primary" : "text-greenleaf-muted hover:text-greenleaf-text"}`}
                 >
@@ -319,13 +345,21 @@ export default function WaiterPage() {
                 </button>
               </div>
 
-              {orders.filter(o => orderFilter === "ALL" ? true : o.status === "READY").length === 0 ? (
+              {orders.filter(o => {
+                if (orderFilter === "PENDING") return o.status === "PENDING_CONFIRMATION";
+                if (orderFilter === "READY") return o.status === "READY";
+                return ["PLACED", "CONFIRMED", "PREPARING", "READY", "PENDING_CONFIRMATION"].includes(o.status);
+              }).length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-greenleaf-accent">
-                  <p className="font-serif text-xl text-greenleaf-muted">No {orderFilter === "READY" ? "ready" : ""} orders found</p>
+                  <p className="font-serif text-xl text-greenleaf-muted">No {orderFilter.toLowerCase()} orders found</p>
                 </div>
               ) : (
                 orders
-                  .filter(o => orderFilter === "ALL" ? true : o.status === "READY")
+                  .filter(o => {
+                    if (orderFilter === "PENDING") return o.status === "PENDING_CONFIRMATION";
+                    if (orderFilter === "READY") return o.status === "READY";
+                    return ["PLACED", "CONFIRMED", "PREPARING", "READY", "PENDING_CONFIRMATION"].includes(o.status);
+                  })
                   .map((order) => (
                     <div key={order._id} className="bg-white rounded-3xl p-8 shadow-premium border border-greenleaf-accent flex flex-col md:flex-row gap-8 items-start hover:shadow-floating transition-shadow">
                       <div className="w-full md:w-32 flex flex-col items-center justify-center bg-greenleaf-accent rounded-2xl p-4 shrink-0">
@@ -413,29 +447,49 @@ export default function WaiterPage() {
 
       {/* Modern Order Modal (For floating table selection) */}
       {selectedTableId && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in transition-all duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="bg-greenleaf-primary p-8 flex justify-between items-center text-white shrink-0">
+        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in transition-all duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-t-[32px] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col h-[92vh] md:max-h-[90vh] animate-in slide-in-from-bottom-20 duration-500">
+            <div className="bg-greenleaf-primary p-6 md:p-8 flex justify-between items-center text-white shrink-0">
               <div>
-                <h2 className="text-3xl font-serif">Place Service Order</h2>
-                <p className="text-greenleaf-accent text-sm mt-1">Table {assignedTables.find(t => t._id === selectedTableId)?.tableNumber}</p>
+                <h2 className="text-2xl md:text-3xl font-serif">Place Service Order</h2>
+                <p className="text-greenleaf-accent text-xs md:text-sm mt-1">Table {assignedTables.find(t => t._id === selectedTableId)?.tableNumber}</p>
               </div>
               <button onClick={() => setSelectedTableId(null)} className="p-2 hover:bg-white/10 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <h3 className="font-serif text-xl border-b pb-2">Top Menu Items</h3>
                 <div className="grid grid-cols-1 gap-3">
-                  {menu.slice(0, 10).map(item => (
-                    <button key={item._id} onClick={() => addToCart(item)} className="group flex justify-between items-center p-4 rounded-2xl border border-greenleaf-accent hover:border-greenleaf-primary transition-all hover:bg-greenleaf-accent/30 text-left">
-                      <div>
+                  {menu.map(item => (
+                    <button
+                      key={item._id}
+                      onClick={() => {
+                        if (item.measurementType === 'PORTION' && item.portions?.length > 0) {
+                          setSelectedItemForPortion(item);
+                        } else {
+                          addToCart(item);
+                        }
+                      }}
+                      className="group flex justify-between items-center p-4 rounded-2xl border border-greenleaf-accent hover:border-greenleaf-primary transition-all hover:bg-greenleaf-accent/30 text-left"
+                    >
+                      <div className="flex-1">
                         <p className="font-bold text-greenleaf-text">{item.name}</p>
-                        <p className="text-xs text-greenleaf-muted font-bold">₹{item.price}</p>
+                        {item.measurementType === 'PORTION' ? (
+                          <div className="flex flex-wrap gap-2 mt-1">
+                            {item.portions.map((p, idx) => (
+                              <span key={idx} className="text-[10px] bg-greenleaf-accent px-2 py-0.5 rounded-full font-bold text-greenleaf-primary">
+                                {p.label}: ₹{p.price}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-greenleaf-muted font-bold">₹{item.price}</p>
+                        )}
                       </div>
-                      <span className="bg-greenleaf-accent p-2 rounded-xl text-greenleaf-primary group-hover:bg-greenleaf-primary group-hover:text-white transition-colors">
+                      <span className="bg-greenleaf-accent p-2 rounded-xl text-greenleaf-primary group-hover:bg-greenleaf-primary group-hover:text-white transition-colors ml-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                       </span>
                     </button>
@@ -450,22 +504,51 @@ export default function WaiterPage() {
                 ) : (
                   <div className="space-y-3">
                     {cart.map(c => (
-                      <div key={c.menuItemId} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
+                      <div key={c._id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
                         <div className="text-sm font-bold">
                           {c.name} <span className="text-greenleaf-muted">x{c.quantity}</span>
                         </div>
-                        <div className="text-sm font-serif">₹{c.price * c.quantity}</div>
+                        <div className="text-sm font-serif">₹{Number(c.price) * c.quantity}</div>
                       </div>
                     ))}
                     <div className="pt-4 border-t-2 border-dashed flex justify-between items-center">
                       <span className="font-serif text-xl font-bold">Total</span>
-                      <span className="font-serif text-2xl text-greenleaf-primary font-bold">₹{cart.reduce((s, i) => s + i.price * i.quantity, 0)}</span>
+                      <span className="font-serif text-2xl text-greenleaf-primary font-bold">₹{cart.reduce((s, i) => s + Number(i.price) * i.quantity, 0)}</span>
                     </div>
                     <button onClick={placeWaiterOrder} className="w-full bg-greenleaf-primary text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:brightness-110 active:scale-95 transition-all mt-4">Process Order</button>
                   </div>
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Portion Selection Modal */}
+      {selectedItemForPortion && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in transition-all duration-300">
+          <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden flex flex-col">
+            <div className="bg-greenleaf-primary p-6 text-white text-center">
+              <h3 className="text-xl font-serif">Select Portion</h3>
+              <p className="text-sm opacity-80">{selectedItemForPortion.name}</p>
+            </div>
+            <div className="p-6 space-y-3">
+              {selectedItemForPortion.portions.map((portion, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => addToCart(selectedItemForPortion, portion)}
+                  className="w-full flex justify-between items-center p-4 rounded-2xl border-2 border-greenleaf-accent hover:border-greenleaf-primary hover:bg-greenleaf-accent/30 transition-all font-bold group"
+                >
+                  <span className="group-hover:text-greenleaf-primary">{portion.label}</span>
+                  <span className="text-greenleaf-primary">₹{portion.price}</span>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setSelectedItemForPortion(null)}
+              className="m-6 mt-0 p-4 rounded-2xl bg-gray-100 text-gray-500 font-bold hover:bg-gray-200 transition-all"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
@@ -484,6 +567,36 @@ export default function WaiterPage() {
               </div>
             </div>
             <button onClick={() => acknowledgeCall(call._id)} className="bg-white text-red-600 px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-100 shadow-lg">Acknowledge</button>
+          </div>
+        ))}
+        {pendingOrders.map((order) => (
+          <div key={order._id} className="pointer-events-auto bg-amber-500 text-white px-8 py-5 rounded-[2rem] shadow-2xl flex items-center justify-between gap-6 animate-in slide-in-from-bottom-10 border-4 border-white w-full max-w-xl">
+            <div className="flex items-center gap-4">
+              <div className="bg-white/20 p-3 rounded-2xl animate-pulse">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <div>
+                <p className="text-xs uppercase font-bold tracking-widest opacity-80">New Order Confirmation</p>
+                <p className="text-xl font-serif font-bold">Table {order.tableNumber} placed a cash order</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  confirmOrder(order._id);
+                  setPendingOrders(prev => prev.filter(o => o._id !== order._id));
+                }}
+                className="bg-white text-amber-600 px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-100 shadow-lg"
+              >
+                Accept
+              </button>
+              <button
+                onClick={() => setPendingOrders(prev => prev.filter(o => o._id !== order._id))}
+                className="bg-white/20 text-white px-4 py-2.5 rounded-2xl font-bold text-xs hover:bg-white/30"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         ))}
       </div>

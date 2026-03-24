@@ -43,9 +43,16 @@ export default function CheckoutPage() {
       };
 
       const order = await createOrder(orderData);
+
+      // Store in multiple-order tracking system
+      const existingOrders = JSON.parse(localStorage.getItem("activeOrderIds") || "[]");
+      if (!existingOrders.includes(order._id)) {
+        localStorage.setItem("activeOrderIds", JSON.stringify([...existingOrders, order._id]));
+      }
+
       localStorage.setItem("lastOrderId", order._id);
 
-      // CASH → direct menu with tracker
+      // CASH → stay on menu with integrated tracker/waiting UI
       if (method === "CASH") {
         navigate(`/table/${tableId}`);
         return;

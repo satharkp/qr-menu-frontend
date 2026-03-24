@@ -192,19 +192,23 @@ export default function MenuPage() {
 
       <div className="max-w-5xl mx-auto px-4 md:px-10 -mt-8 md:-mt-10 relative z-20">
         {/* Category Quick Links (Sticky) */}
-        <div className="sticky top-4 z-40 mb-6 md:mb-8 flex gap-2 md:gap-3 overflow-x-auto pb-4 hide-scrollbar">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`whitespace-nowrap px-4 py-2 md:px-6 md:py-2.5 rounded-xl md:rounded-2xl shadow-sm border text-[10px] md:text-xs uppercase tracking-widest transition-all active:scale-95 shadow-floating font-black ${activeCategory === cat
-                ? "bg-greenleaf-primary text-white border-greenleaf-primary ring-4 ring-greenleaf-primary/10"
-                : "bg-white/80 backdrop-blur-md border-greenleaf-accent text-greenleaf-text hover:bg-greenleaf-primary hover:text-white"
-                }`}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="sticky top-4 z-40 mb-6 md:mb-8 relative">
+          <div className="flex gap-2 md:gap-3 overflow-x-auto pb-4 hide-scrollbar scroll-smooth">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`whitespace-nowrap px-4 py-2 md:px-6 md:py-2.5 rounded-xl md:rounded-2xl shadow-sm border text-[10px] md:text-xs uppercase tracking-widest transition-all active:scale-95 shadow-floating font-black shrink-0 ${activeCategory === cat
+                  ? "bg-greenleaf-primary text-white border-greenleaf-primary ring-4 ring-greenleaf-primary/10"
+                  : "bg-white/90 backdrop-blur-md border-greenleaf-accent text-greenleaf-text hover:bg-greenleaf-primary hover:text-white"
+                  }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+          {/* Subtle Right Shadow Mask for Scroll indication */}
+          <div className="absolute top-0 right-0 bottom-4 w-8 bg-gradient-to-l from-greenleaf-bg pointer-events-none md:hidden" />
         </div>
 
         <div className="space-y-12 min-h-[50vh]">
