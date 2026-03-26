@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
-import { fetchMenuByTable, SOCKET_URL } from "../services/api";
+import { fetchMenuByTable, fetchMenuByRestaurant, SOCKET_URL } from "../services/api";
 import RestaurantHeader from "../components/RestaurantHeader";
 import MenuCategory from "../components/MenuCategory";
 import MenuItem from "../components/MenuItem";
@@ -13,7 +13,7 @@ import OrderTracker from "../components/OrderTracker";
 export default function MenuPage() {
   const { tableId, id } = useParams();
   const defaultTableId = "69948b911864d9b24462f4e4";
-  const resolvedTableId = tableId || id || defaultTableId;
+  const resolvedTableId = id ? null : (tableId || defaultTableId);
   const navigate = useNavigate();
   const [menu, setMenu] = useState([]);
   const [restaurant, setRestaurant] = useState(null);
@@ -23,14 +23,18 @@ export default function MenuPage() {
   const [selectedItemForPortions, setSelectedItemForPortions] = useState(null);
 
   useEffect(() => {
-    if (!resolvedTableId) {
-      setLoading(false);
-      return;
-    }
-
     const loadMenu = async () => {
       try {
-        const data = await fetchMenuByTable(resolvedTableId);
+        let data;
+        if (id) {
+          // If we have 'id' from /menu/:id, it's a restaurant ID
+          data = await fetchMenuByRestaurant(id);
+        } else {
+          // Otherwise it's a table ID from /table/:tableId or default
+          const resolvedTableId = tableId || defaultTableId;
+          data = await fetchMenuByTable(resolvedTableId);
+          localStorage.setItem("lastTableId", resolvedTableId);
+        }
 
         // Normalize API response safely
         const menuItems =
@@ -40,10 +44,7 @@ export default function MenuPage() {
           [];
 
         setMenu(Array.isArray(menuItems) ? menuItems : []);
-        setRestaurant(data); // data itself contains restaurantName and tableNumber
-
-        // Save tableId for later redirection
-        localStorage.setItem("lastTableId", resolvedTableId);
+        setRestaurant(data);
       } catch (error) {
         console.error("Failed to load menu", error);
       } finally {
@@ -51,7 +52,7 @@ export default function MenuPage() {
       }
     };
     loadMenu();
-  }, [resolvedTableId]);
+  }, [tableId, id]);
 
   // Socket.io for real-time menu updates
   useEffect(() => {
