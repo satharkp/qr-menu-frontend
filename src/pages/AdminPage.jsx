@@ -4,6 +4,7 @@ import DashboardSection from "../components/admin/DashboardSection";
 import WaitersSection from "../components/admin/WaitersSection";
 import TablesSection from "../components/admin/TablesSection";
 import MenuSection from "../components/admin/MenuSection";
+import CashierSection from "../components/admin/CashierSection";
 
 const getRoleFromToken = () => {
   try {
@@ -39,6 +40,7 @@ export default function AdminPage() {
     { key: "dashboard", label: "Intelligence", icon: "📊" },
     { key: "waiters", label: "Staff", icon: "🧑‍🍳" },
     { key: "tables", label: "Floor Plan", icon: "🪑" },
+    { key: "cashier", label: "Cashier", icon: "💰" },
     { key: "menu", label: "Curations", icon: "📋" },
   ];
   return (
@@ -136,6 +138,7 @@ export default function AdminPage() {
               {activeSection === "dashboard" && <DashboardSection />}
               {activeSection === "waiters" && <WaitersSection />}
               {activeSection === "tables" && <TablesSection />}
+              {activeSection === "cashier" && <CashierSection />}
               {activeSection === "menu" && <MenuSection />}
             </div>
           </div>

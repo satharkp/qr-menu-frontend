@@ -375,6 +375,11 @@ export default function WaiterPage() {
                             }`}>
                             {order.status.replace('_', ' ')}
                           </span>
+                          {order.paymentMethod === "CASH" && (
+                            <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-tighter ${order.isPaid ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                              {order.isPaid ? 'Paid' : 'Unpaid'}
+                            </span>
+                          )}
                           <span className="font-serif text-xl text-greenleaf-primary font-bold">₹{order.total}</span>
                         </div>
 

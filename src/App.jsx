@@ -63,6 +63,14 @@ function App() {
           }
         />
         <Route
+          path="/admin/cashier"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/tables"
           element={
             <ProtectedRoute role="admin">

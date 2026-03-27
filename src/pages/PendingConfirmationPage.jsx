@@ -152,7 +152,9 @@ export default function PendingConfirmationPage() {
           </div>
 
           <div className="border-t border-greenleaf-accent mt-4 md:mt-6 pt-4 md:pt-6 flex justify-between items-center">
-            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-greenleaf-muted">Total Paid</span>
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-greenleaf-muted">
+              {order?.isPaid ? "Total Paid" : "Total to Pay"}
+            </span>
             <span className="text-xl md:text-2xl font-serif font-bold text-greenleaf-text">₹{order?.total || 0}</span>
           </div>
         </div>
