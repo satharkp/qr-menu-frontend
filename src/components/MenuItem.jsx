@@ -1,6 +1,6 @@
 import { SOCKET_URL as API_BASE_ROOT } from "../services/api";
 
-const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions }) => {
+const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = '₹' }) => {
 
   const imageUrl = item.image
     ? item.image.startsWith("http")
@@ -41,7 +41,7 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions }) => {
             </h3>
             {!isPortion && (
               <span className="font-serif font-bold text-sm md:text-xl text-greenleaf-primary whitespace-nowrap">
-                ₹{item.price}
+                {currency}{item.price}
               </span>
             )}
             {isPortion && totalPortionQty > 0 && (

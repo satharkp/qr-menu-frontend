@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { fetchSettings } from "../services/api";
 import DashboardSection from "../components/admin/DashboardSection";
 import WaitersSection from "../components/admin/WaitersSection";
 import TablesSection from "../components/admin/TablesSection";
 import MenuSection from "../components/admin/MenuSection";
 import CashierSection from "../components/admin/CashierSection";
+import SettingsSection from "../components/admin/SettingsSection";
 
 const getRoleFromToken = () => {
   try {
@@ -23,6 +25,17 @@ export default function AdminPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const roleLabel = getRoleFromToken();
+  const [settings, setSettings] = useState(null);
+
+  const loadSettings = () => {
+    fetchSettings().then(data => {
+      if (data) setSettings(data);
+    }).catch(console.error);
+  };
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -42,9 +55,17 @@ export default function AdminPage() {
     { key: "tables", label: "Floor Plan", icon: "🪑" },
     { key: "cashier", label: "Cashier", icon: "💰" },
     { key: "menu", label: "Curations", icon: "📋" },
+    { key: "settings", label: "Settings", icon: "⚙️" },
   ];
+
+  const dynamicStyles = settings ? {
+    "--color-primary": settings.themeColor || "#105c38",
+    "--font-heading": `"${settings.font || "Playfair Display"}", serif`,
+    "--font-main": `"${settings.font || "Lato"}", sans-serif`
+  } : {};
+
   return (
-    <div className="min-h-screen flex bg-greenleaf-bg font-sans">
+    <div className="min-h-screen flex bg-greenleaf-bg font-sans" style={dynamicStyles}>
       {/* Premium Sidebar - Fixed approach */}
       <aside className="w-80 bg-greenleaf-primary text-white p-8 hidden md:flex flex-col shadow-2xl fixed top-0 left-0 h-screen z-30 overflow-hidden shrink-0">
         {/* Background Decoration */}
@@ -52,11 +73,15 @@ export default function AdminPage() {
 
         <div className="relative z-10 mb-12">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-[1rem] bg-greenleaf-secondary/20 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg">
-              <span className="text-2xl">🌿</span>
+            <div className="w-12 h-12 rounded-[1rem] bg-greenleaf-secondary/20 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg overflow-hidden">
+              {settings?.logo ? (
+                <img src={settings.logo} alt="Logo" className="w-full h-full object-contain p-1" />
+              ) : (
+                <span className="text-2xl">🌿</span>
+              )}
             </div>
             <div>
-              <h2 className="text-xl font-serif font-black tracking-tight">Greenleaf</h2>
+              <h2 className="text-xl font-serif font-black tracking-tight">{settings?.name || "Greenleaf"}</h2>
               <p className="text-[10px] uppercase tracking-widest font-bold opacity-60 text-greenleaf-secondary">Command Center</p>
             </div>
           </div>
@@ -135,11 +160,12 @@ export default function AdminPage() {
         <div className="p-10 bg-greenleaf-bg flex-1">
           <div className="max-w-7xl mx-auto">
             <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
-              {activeSection === "dashboard" && <DashboardSection />}
-              {activeSection === "waiters" && <WaitersSection />}
-              {activeSection === "tables" && <TablesSection />}
-              {activeSection === "cashier" && <CashierSection />}
-              {activeSection === "menu" && <MenuSection />}
+              {activeSection === "dashboard" && <DashboardSection settings={settings} />}
+              {activeSection === "waiters" && <WaitersSection settings={settings} />}
+              {activeSection === "tables" && <TablesSection settings={settings} />}
+              {activeSection === "cashier" && <CashierSection settings={settings} />}
+              {activeSection === "menu" && <MenuSection settings={settings} />}
+              {activeSection === "settings" && <SettingsSection onSettingsSaved={loadSettings} />}
             </div>
           </div>
         </div>

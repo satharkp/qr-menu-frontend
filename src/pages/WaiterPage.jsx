@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import DashboardLayout from "../components/layout/DashboardLayout";
-import { fetchNotifications, acknowledgeNotification, API_BASE, SOCKET_URL } from "../services/api";
+import { fetchNotifications, acknowledgeNotification, fetchSettings, API_BASE, SOCKET_URL } from "../services/api";
 const notificationSound = new Audio("/notification.mp3");
 
 
@@ -20,6 +20,7 @@ export default function WaiterPage() {
   const [orderFilter, setOrderFilter] = useState("ALL"); // ALL, READY
   const [selectedItemForPortion, setSelectedItemForPortion] = useState(null);
   const [pendingOrders, setPendingOrders] = useState([]);
+  const [currency, setCurrency] = useState('₹');
 
   // Fetch assigned tables
   const fetchAssignedTables = async () => {
@@ -72,6 +73,7 @@ export default function WaiterPage() {
   useEffect(() => {
     fetchAssignedTables();
     loadNotifications();
+    fetchSettings().then(s => { if (s?.currency) setCurrency(s.currency); }).catch(() => {});
     const interval = setInterval(() => {
       fetchAssignedTables();
       loadNotifications();
@@ -380,14 +382,14 @@ export default function WaiterPage() {
                               {order.isPaid ? 'Paid' : 'Unpaid'}
                             </span>
                           )}
-                          <span className="font-serif text-xl text-greenleaf-primary font-bold">₹{order.total}</span>
+                          <span className="font-serif text-xl text-greenleaf-primary font-bold">{currency}{order.total}</span>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2">
                           {order.items.map((item, i) => (
                             <div key={i} className="flex justify-between items-center text-sm">
                               <span className="text-greenleaf-text font-medium">{item.name} <span className="text-greenleaf-muted text-xs">× {item.quantity}</span></span>
-                              <span className="text-greenleaf-muted">₹{item.price * item.quantity}</span>
+                              <span className="text-greenleaf-muted">{currency}{item.price * item.quantity}</span>
                             </div>
                           ))}
                         </div>
@@ -486,12 +488,12 @@ export default function WaiterPage() {
                           <div className="flex flex-wrap gap-2 mt-1">
                             {item.portions.map((p, idx) => (
                               <span key={idx} className="text-[10px] bg-greenleaf-accent px-2 py-0.5 rounded-full font-bold text-greenleaf-primary">
-                                {p.label}: ₹{p.price}
+                                {p.label}: {currency}{p.price}
                               </span>
                             ))}
                           </div>
                         ) : (
-                          <p className="text-xs text-greenleaf-muted font-bold">₹{item.price}</p>
+                          <p className="text-xs text-greenleaf-muted font-bold">{currency}{item.price}</p>
                         )}
                       </div>
                       <span className="bg-greenleaf-accent p-2 rounded-xl text-greenleaf-primary group-hover:bg-greenleaf-primary group-hover:text-white transition-colors ml-4">
@@ -513,12 +515,12 @@ export default function WaiterPage() {
                         <div className="text-sm font-bold">
                           {c.name} <span className="text-greenleaf-muted">x{c.quantity}</span>
                         </div>
-                        <div className="text-sm font-serif">₹{Number(c.price) * c.quantity}</div>
+                        <div className="text-sm font-serif">{currency}{Number(c.price) * c.quantity}</div>
                       </div>
                     ))}
                     <div className="pt-4 border-t-2 border-dashed flex justify-between items-center">
                       <span className="font-serif text-xl font-bold">Total</span>
-                      <span className="font-serif text-2xl text-greenleaf-primary font-bold">₹{cart.reduce((s, i) => s + Number(i.price) * i.quantity, 0)}</span>
+                      <span className="font-serif text-2xl text-greenleaf-primary font-bold">{currency}{cart.reduce((s, i) => s + Number(i.price) * i.quantity, 0)}</span>
                     </div>
                     <button onClick={placeWaiterOrder} className="w-full bg-greenleaf-primary text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:brightness-110 active:scale-95 transition-all mt-4">Process Order</button>
                   </div>
@@ -544,7 +546,7 @@ export default function WaiterPage() {
                   className="w-full flex justify-between items-center p-4 rounded-2xl border-2 border-greenleaf-accent hover:border-greenleaf-primary hover:bg-greenleaf-accent/30 transition-all font-bold group"
                 >
                   <span className="group-hover:text-greenleaf-primary">{portion.label}</span>
-                  <span className="text-greenleaf-primary">₹{portion.price}</span>
+                  <span className="text-greenleaf-primary">{currency}{portion.price}</span>
                 </button>
               ))}
             </div>

@@ -19,13 +19,19 @@ const RestaurantHeader = ({ restaurant, tableId }) => {
 
       <div className="relative z-10 text-center max-w-2xl mx-auto">
         <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-[2rem] flex items-center justify-center border border-white/20 shadow-2xl animate-float">
-            <span className="text-4xl">🌿</span>
+          <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-[2rem] flex items-center justify-center border border-white/20 shadow-2xl animate-float overflow-hidden">
+            {restaurant?.settings?.logo ? (
+              <img src={restaurant.settings.logo} alt="Restaurant Logo" className="w-full h-full object-contain p-2" />
+            ) : (
+              <span className="text-4xl">🌿</span>
+            )}
           </div>
 
-          <div className="w-auto animate-in slide-in-from-left-4 duration-1000">
-            <CallWaiterButton tableId={tableId} isHeaderMode />
-          </div>
+          {restaurant?.settings?.features?.waiterCall !== false && (
+            <div className="w-auto animate-in slide-in-from-left-4 duration-1000">
+              <CallWaiterButton tableId={tableId} isHeaderMode />
+            </div>
+          )}
         </div>
 
         <h1 className="text-3xl md:text-5xl font-serif font-bold text-white tracking-tight drop-shadow-lg mb-4">

@@ -63,3 +63,26 @@ export const acknowledgeNotification = async (id) => {
   });
   return res.json();
 };
+
+export const fetchSettings = async () => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE}/settings`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.json();
+};
+
+export const updateSettings = async (data) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE}/settings`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+};

@@ -7,7 +7,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPage from "./pages/AdminPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import PendingConfirmationPage from "./pages/PendingConfirmationPage";
-
+import SuperAdminLoginPage from "./pages/SuperAdminLoginPage";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 
 function App() {
   return (
@@ -77,6 +78,19 @@ function App() {
               <AdminPage />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/super-admin/login" element={<SuperAdminLoginPage />} />
+        <Route
+          path="/super-admin/dashboard"
+          element={<SuperAdminDashboard />}
         />
       </Routes>
     </Router>

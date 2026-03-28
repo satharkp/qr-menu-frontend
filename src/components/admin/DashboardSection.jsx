@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_BASE } from "../../services/api";
 
-export default function DashboardSection() {
+export default function DashboardSection({ settings }) {
   const [restaurant, setRestaurant] = useState(null);
   const [stats, setStats] = useState(null);
   const [popularItems, setPopularItems] = useState([]);
@@ -73,7 +73,7 @@ export default function DashboardSection() {
     );
   }
 
-  const currencySymbol = getCurrencySymbol(restaurant.currency);
+  const currencySymbol = getCurrencySymbol(settings?.currency || restaurant.currency);
 
   return (
     <div className="space-y-8">

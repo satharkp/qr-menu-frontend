@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE } from "../../services/api";
 
-export default function CashierSection() {
+export default function CashierSection({ settings }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteringStatus, setFilteringStatus] = useState("unpaid"); // unpaid, all
@@ -100,7 +100,7 @@ export default function CashierSection() {
                   </h3>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-black text-greenleaf-text">₹{order.total}</p>
+                  <p className="text-2xl font-black text-greenleaf-text">{settings?.currency || '₹'}{order.total}</p>
                   <p className="text-[10px] font-bold text-greenleaf-muted uppercase tracking-tighter">Settlement Due</p>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function CashierSection() {
                     <span className="text-greenleaf-text/80 font-medium">
                       {item.quantity}x {item.name}
                     </span>
-                    <span className="text-greenleaf-muted text-xs">₹{item.price * item.quantity}</span>
+                    <span className="text-greenleaf-muted text-xs">{settings?.currency || '₹'}{item.price * item.quantity}</span>
                   </div>
                 ))}
               </div>

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchOrderById, callWaiter } from "../services/api";
+import { fetchOrderById, callWaiter, fetchSettings } from "../services/api";
 
 export default function PendingConfirmationPage() {
   const params = useParams();
@@ -11,6 +11,11 @@ export default function PendingConfirmationPage() {
   const [order, setOrder] = useState(null);
   const [callingWaiter, setCallingWaiter] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [currency, setCurrency] = useState('₹');
+
+  useEffect(() => {
+    fetchSettings().then(s => { if (s?.currency) setCurrency(s.currency); }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!orderId) return;
@@ -146,7 +151,7 @@ export default function PendingConfirmationPage() {
                     Quantity: {item.quantity}
                   </span>
                 </div>
-                <span className="text-xs md:text-sm font-bold text-greenleaf-primary whitespace-nowrap">₹{Number(item.price) * Number(item.quantity)}</span>
+                <span className="text-xs md:text-sm font-bold text-greenleaf-primary whitespace-nowrap">{currency}{Number(item.price) * Number(item.quantity)}</span>
               </div>
             ))}
           </div>
@@ -155,7 +160,7 @@ export default function PendingConfirmationPage() {
             <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-greenleaf-muted">
               {order?.isPaid ? "Total Paid" : "Total to Pay"}
             </span>
-            <span className="text-xl md:text-2xl font-serif font-bold text-greenleaf-text">₹{order?.total || 0}</span>
+            <span className="text-xl md:text-2xl font-serif font-bold text-greenleaf-text">{currency}{order?.total || 0}</span>
           </div>
         </div>
 

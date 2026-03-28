@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { fetchOrderById, SOCKET_URL } from "../services/api";
 import { io } from "socket.io-client";
 
-const OrderTracker = ({ restaurantId, tableNumber }) => {
+const OrderTracker = ({ restaurantId, tableNumber, currency = '₹' }) => {
   const [activeOrderIds, setActiveOrderIds] = useState(() => {
     return JSON.parse(localStorage.getItem("activeOrderIds") || "[]");
   });
@@ -158,13 +158,13 @@ const OrderTracker = ({ restaurantId, tableNumber }) => {
                       {order.items?.map((item, idx) => (
                         <div key={idx} className="flex justify-between items-center text-xs font-bold text-greenleaf-text">
                           <span className="truncate mr-2 font-sans">{item.name} <span className="opacity-50 ml-1">×{item.quantity}</span></span>
-                          <span className="font-serif shrink-0">₹{Number(item.price) * item.quantity}</span>
+                          <span className="font-serif shrink-0">{currency}{Number(item.price) * item.quantity}</span>
                         </div>
                       ))}
                     </div>
                     <div className="mt-3 pt-2 border-t border-greenleaf-accent/50 flex justify-between items-center font-black">
                       <span className="text-[10px] uppercase">Total</span>
-                      <span className="text-lg font-serif">₹{order.total}</span>
+                      <span className="text-lg font-serif">{currency}{order.total}</span>
                     </div>
                   </div>
 

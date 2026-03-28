@@ -1,0 +1,81 @@
+import { useState, useEffect } from "react";
+
+export default function RatingsWidget({ restaurantId }) {
+  const [rating, setRating] = useState(0);
+  const [hovered, setHovered] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    // Only show after a short delay, and not if already rated this session
+    const alreadyRated = sessionStorage.getItem(`rated-${restaurantId}`);
+    if (!alreadyRated) {
+      const timer = setTimeout(() => setVisible(true), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [restaurantId]);
+
+  const handleSubmit = () => {
+    if (rating === 0) return;
+    sessionStorage.setItem(`rated-${restaurantId}`, "true");
+    setSubmitted(true);
+    setTimeout(() => setVisible(false), 2500);
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed bottom-28 left-4 right-4 z-[98] flex justify-center animate-in slide-in-from-bottom-5 duration-500">
+      <div className="bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-greenleaf-accent p-6 max-w-sm w-full relative">
+        <button
+          onClick={() => setVisible(false)}
+          className="absolute top-4 right-4 w-7 h-7 rounded-full bg-greenleaf-bg flex items-center justify-center text-greenleaf-muted hover:text-greenleaf-primary transition-colors text-sm"
+        >
+          ✕
+        </button>
+
+        {submitted ? (
+          <div className="text-center py-2 animate-in fade-in duration-300">
+            <div className="text-3xl mb-2">🙏</div>
+            <p className="font-serif font-bold text-greenleaf-text text-lg">Thank you!</p>
+            <p className="text-xs text-greenleaf-muted mt-1 font-sans">Your feedback means the world to us.</p>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-greenleaf-bg rounded-xl flex items-center justify-center border border-greenleaf-accent">
+                <span className="text-xl">⭐</span>
+              </div>
+              <div>
+                <p className="font-serif font-black text-greenleaf-text text-sm leading-tight">Enjoying your meal?</p>
+                <p className="text-[10px] text-greenleaf-muted font-bold uppercase tracking-widest">Rate your experience</p>
+              </div>
+            </div>
+
+            <div className="flex justify-center gap-3 mb-5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onMouseEnter={() => setHovered(star)}
+                  onMouseLeave={() => setHovered(0)}
+                  onClick={() => setRating(star)}
+                  className="text-3xl transition-transform hover:scale-125 active:scale-95"
+                >
+                  {star <= (hovered || rating) ? "⭐" : "☆"}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={rating === 0}
+              className="w-full bg-greenleaf-primary disabled:bg-gray-200 disabled:text-gray-400 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-premium active:scale-95 transition-all"
+            >
+              {rating === 0 ? "Tap a star to rate" : "Submit Rating"}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

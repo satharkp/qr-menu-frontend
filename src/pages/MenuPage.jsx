@@ -8,6 +8,7 @@ import MenuItem from "../components/MenuItem";
 import CartFloating from "../components/CartFloating";
 import CallWaiterButton from "../components/customer/CallWaiterButton";
 import OrderTracker from "../components/OrderTracker";
+import RatingsWidget from "../components/RatingsWidget";
 
 
 export default function MenuPage() {
@@ -167,6 +168,7 @@ export default function MenuPage() {
         cart,
         total,
         tableId: resolvedTableId,
+        settings: restaurant?.settings
       },
     });
   };
@@ -186,8 +188,15 @@ export default function MenuPage() {
     ? ["All", ...new Set(menu.map((m) => m.category))]
     : ["All"];
 
+  const settings = restaurant?.settings || {};
+  const dynamicStyles = {
+    "--color-primary": settings.themeColor || "#105c38",
+    "--font-heading": `"${settings.font || "Playfair Display"}", serif`,
+    "--font-main": `"${settings.font || "Lato"}", sans-serif`
+  };
+
   return (
-    <div className="min-h-screen bg-greenleaf-bg pb-32 font-sans selection:bg-greenleaf-secondary/30">
+    <div className="min-h-screen bg-greenleaf-bg pb-32 font-sans selection:bg-greenleaf-secondary/30" style={dynamicStyles}>
 
       <RestaurantHeader restaurant={restaurant} tableId={resolvedTableId} />
 
@@ -229,6 +238,7 @@ export default function MenuPage() {
                           onAdd={increaseQty}
                           onRemove={decreaseQty}
                           onOpenPortions={setSelectedItemForPortions}
+                          currency={settings.currency || '₹'}
                         />
                       ))}
                   </div>
@@ -250,6 +260,7 @@ export default function MenuPage() {
                         onAdd={increaseQty}
                         onRemove={decreaseQty}
                         onOpenPortions={setSelectedItemForPortions}
+                        currency={settings.currency || '₹'}
                       />
                     ))}
                 </div>
@@ -271,14 +282,18 @@ export default function MenuPage() {
         cart={cart}
         total={total}
         onPlaceOrder={placeOrder}
+        currency={settings.currency || '₹'}
       />
 
       <OrderTracker
         restaurantId={restaurant?.restaurantId}
         tableNumber={restaurant?.tableNumber}
+        currency={settings.currency || '₹'}
       />
 
-      {/* GLOBAL PORTION SELECTOR MODAL - Fixes Z-Index Issues */}
+      {/* Ratings Widget */}
+      {settings?.features?.ratings && <RatingsWidget restaurantId={restaurant?.restaurantId} />}
+
       {selectedItemForPortions && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-300">
           <div
@@ -309,7 +324,7 @@ export default function MenuPage() {
                     <div key={index} className="flex items-center justify-between bg-greenleaf-bg rounded-2xl p-4 border border-greenleaf-accent transition-all hover:border-greenleaf-primary/20">
                       <div className="flex flex-col">
                         <span className="text-lg font-bold text-greenleaf-text">{portion.label}</span>
-                        <span className="text-sm text-greenleaf-primary font-bold">₹{portion.price}</span>
+                        <span className="text-sm text-greenleaf-primary font-bold">{settings.currency || '₹'}{portion.price}</span>
                       </div>
 
                       {portionQty === 0 ? (
