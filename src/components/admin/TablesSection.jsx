@@ -82,12 +82,12 @@ export default function TablesSection() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded-2xl shadow max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Create Tables</h2>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow max-w-md w-full">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Create Tables</h2>
 
         <input
-          className="border p-2 w-full mb-4 rounded"
+          className="border p-2 sm:p-3 w-full mb-4 rounded"
           placeholder="Number of tables"
           value={tableCount}
           onChange={(e) => setTableCount(e.target.value)}
@@ -96,24 +96,24 @@ export default function TablesSection() {
         <button
           onClick={createTables}
           disabled={creating}
-          className="bg-purple-600 text-white px-4 py-2 rounded w-full disabled:opacity-50"
+          className="bg-purple-600 text-white px-4 py-2 sm:py-3 rounded w-full disabled:opacity-50"
         >
           {creating ? "Creating..." : "Create Tables"}
         </button>
       </div>
 
-      <div className="bg-white p-6 rounded-2xl shadow">
-        <h2 className="text-xl font-semibold mb-4">Tables</h2>
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Tables</h2>
 
         {tables.length === 0 && (
           <p className="text-gray-500">No tables created yet.</p>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {tables.map((t) => (
             <div
               key={t._id}
-              className="relative p-6 rounded-[2rem] border border-greenleaf-accent bg-greenleaf-bg flex flex-col items-center justify-center shadow-sm hover:shadow-floating transition-all group overflow-hidden"
+              className="relative p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-greenleaf-accent bg-greenleaf-bg flex flex-col items-center justify-center shadow-sm hover:shadow-floating transition-all group overflow-hidden"
             >
               <button
                 onClick={() => deleteTable(t._id)}
@@ -124,11 +124,11 @@ export default function TablesSection() {
                 </svg>
               </button>
 
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-4 border border-greenleaf-accent shadow-sm">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center mb-4 border border-greenleaf-accent shadow-sm">
                 <span className="text-xl">🪑</span>
               </div>
 
-              <h3 className="text-2xl font-serif font-black text-greenleaf-primary mb-1">
+              <h3 className="text-xl sm:text-2xl font-serif font-black text-greenleaf-primary mb-1">
                 Table {t.tableNumber}
               </h3>
 
@@ -145,7 +145,7 @@ export default function TablesSection() {
                   navigator.clipboard.writeText(url);
                   alert(`Copied URL for Table ${t.tableNumber}:\n${url}`);
                 }}
-                className="mt-6 w-full bg-greenleaf-primary text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-premium active:scale-95 transition-all flex items-center justify-center gap-2"
+                className="mt-4 sm:mt-6 w-full bg-greenleaf-primary text-white py-2 sm:py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-premium active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 <span>🔗</span>
                 <span>Copy QR URL</span>

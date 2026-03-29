@@ -7,6 +7,7 @@ import TablesSection from "../components/admin/TablesSection";
 import MenuSection from "../components/admin/MenuSection";
 import CashierSection from "../components/admin/CashierSection";
 import SettingsSection from "../components/admin/SettingsSection";
+import StaffSection from "../components/admin/StaffSection";
 
 const getRoleFromToken = () => {
   try {
@@ -50,11 +51,12 @@ export default function AdminPage() {
   }, [location.pathname]);
 
   const navItems = [
-    { key: "dashboard", label: "Intelligence", icon: "📊" },
-    { key: "waiters", label: "Staff", icon: "🧑‍🍳" },
-    { key: "tables", label: "Floor Plan", icon: "🪑" },
+    { key: "dashboard", label: "Dashboard", icon: "📊" },
     { key: "cashier", label: "Cashier", icon: "💰" },
-    { key: "menu", label: "Curations", icon: "📋" },
+    { key: "staff", label: "Staff", icon: "👥" },
+    { key: "waiters", label: "Waiters", icon: "🧑‍🍳" },
+    { key: "tables", label: "Floor Plan", icon: "🪑" },
+    { key: "menu", label: "Menu", icon: "📋" },
     { key: "settings", label: "Settings", icon: "⚙️" },
   ];
 
@@ -67,11 +69,11 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen flex bg-greenleaf-bg font-sans" style={dynamicStyles}>
       {/* Premium Sidebar - Fixed approach */}
-      <aside className="w-80 bg-greenleaf-primary text-white p-8 hidden md:flex flex-col shadow-2xl fixed top-0 left-0 h-screen z-30 overflow-hidden shrink-0">
+      <aside className="w-72 lg:w-80 bg-greenleaf-primary text-white p-6 lg:p-8 hidden sm:flex flex-col justify-between shadow-2xl fixed top-0 left-0 h-screen z-30 shrink-0">
         {/* Background Decoration */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
 
-        <div className="relative z-10 mb-12">
+        <div className="relative z-10 mb-6 overflow-y-auto pr-1">
           <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-12 rounded-[1rem] bg-greenleaf-secondary/20 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg overflow-hidden">
               {settings?.logo ? (
@@ -118,7 +120,7 @@ export default function AdminPage() {
           </nav>
         </div>
 
-        <div className="mt-auto relative z-10">
+        <div className="mt-4 sm:mt-6 relative z-10 mb-6">
           <button
             onClick={() => {
               localStorage.removeItem("token");
@@ -126,16 +128,16 @@ export default function AdminPage() {
             }}
             className="w-full bg-white/5 hover:bg-red-500/20 border border-white/10 p-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3"
           >
-            <span>Termiante Session</span>
+            <span>Logout</span>
             <span>🚪</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content Hub - Responsive Margin for Fixed Sidebar */}
-      <div className="flex-1 flex flex-col md:ml-80 min-h-screen">
+      <div className="flex-1 flex flex-col sm:ml-72 lg:ml-80 min-h-screen">
         {/* Top Intelligence Bar */}
-        <div className="bg-white/80 backdrop-blur-md px-10 py-6 flex justify-between items-center border-b border-greenleaf-accent sticky top-0 z-20">
+        <div className="bg-white/80 backdrop-blur-md px-4 sm:px-6 lg:px-10 py-4 lg:py-6 flex justify-between items-center border-b border-greenleaf-accent sticky top-0 z-20">
           <div>
             <h1 className="text-3xl font-serif font-black text-greenleaf-primary capitalize">
               {activeSection}
@@ -157,10 +159,11 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="p-10 bg-greenleaf-bg flex-1">
+        <div className="p-4 sm:p-6 lg:p-10 bg-greenleaf-bg flex-1">
           <div className="max-w-7xl mx-auto">
             <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
               {activeSection === "dashboard" && <DashboardSection settings={settings} />}
+              {activeSection === "staff" && <StaffSection />}
               {activeSection === "waiters" && <WaitersSection settings={settings} />}
               {activeSection === "tables" && <TablesSection settings={settings} />}
               {activeSection === "cashier" && <CashierSection settings={settings} />}

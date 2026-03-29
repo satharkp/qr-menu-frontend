@@ -61,15 +61,15 @@ export default function CashierSection({ settings }) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header & Filter */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
         <div>
-          <h2 className="text-4xl font-serif font-black text-greenleaf-text">Cashier Command</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-greenleaf-text">Cashier Command</h2>
           <p className="text-[10px] uppercase font-black tracking-[0.2em] text-greenleaf-muted mt-1">Manage physical currency settlements</p>
         </div>
         
-        <div className="flex bg-white p-1.5 rounded-2xl border border-greenleaf-accent shadow-sm">
+        <div className="flex flex-wrap bg-white p-1.5 rounded-2xl border border-greenleaf-accent shadow-sm">
           <button 
             onClick={() => setFilteringStatus("unpaid")}
             className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filteringStatus === 'unpaid' ? 'bg-greenleaf-primary text-white shadow-premium' : 'text-greenleaf-muted hover:bg-greenleaf-bg'}`}
@@ -86,10 +86,10 @@ export default function CashierSection({ settings }) {
       </div>
 
       {/* Orders Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {filteredOrders.length > 0 ? (
           filteredOrders.map((order) => (
-            <div key={order._id} className="bg-white rounded-[2.5rem] p-8 shadow-floating border border-greenleaf-accent hover:border-greenleaf-primary/30 transition-all group">
+            <div key={order._id} className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent hover:border-greenleaf-primary/30 transition-all group">
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-greenleaf-primary bg-greenleaf-primary/10 px-3 py-1 rounded-full mb-3 block w-fit">
@@ -100,7 +100,7 @@ export default function CashierSection({ settings }) {
                   </h3>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-black text-greenleaf-text">{settings?.currency || '₹'}{order.total}</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-black text-greenleaf-text">{settings?.currency || '₹'}{order.total}</p>
                   <p className="text-[10px] font-bold text-greenleaf-muted uppercase tracking-tighter">Settlement Due</p>
                 </div>
               </div>
@@ -140,7 +140,7 @@ export default function CashierSection({ settings }) {
             </div>
           ))
         ) : (
-          <div className="col-span-full bg-white rounded-[3rem] p-20 border-2 border-dashed border-greenleaf-accent flex flex-col items-center justify-center text-center">
+          <div className="col-span-full bg-white rounded-[2rem] sm:rounded-[3rem] p-10 sm:p-16 lg:p-20 border-2 border-dashed border-greenleaf-accent flex flex-col items-center justify-center text-center">
             <div className="w-20 h-20 bg-greenleaf-bg rounded-full flex items-center justify-center text-3xl mb-6">💰</div>
             <h3 className="text-2xl font-serif font-black text-greenleaf-text mb-2">Clear Records</h3>
             <p className="text-greenleaf-muted text-sm max-w-md mx-auto font-medium">All physical settlements are currently up to date. No pending cash transactions in the queue.</p>

@@ -90,10 +90,10 @@ export default function SettingsSection({ onSettingsSaved }) {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-20" style={dynamicStyles}>
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 max-w-4xl mx-auto pb-16 sm:pb-20 px-2 sm:px-0" style={dynamicStyles}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-serif font-black text-greenleaf-primary">Restaurant Configuration</h2>
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black text-greenleaf-primary">Restaurant Configuration</h2>
           <p className="text-sm font-medium text-greenleaf-muted mt-1">
             Manage your brand identity, currency, and core application features.
           </p>
@@ -101,16 +101,16 @@ export default function SettingsSection({ onSettingsSaved }) {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="bg-greenleaf-primary hover:bg-greenleaf-secondary text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 flex items-center gap-2"
+          className="w-full sm:w-auto bg-greenleaf-primary hover:bg-greenleaf-secondary text-white font-bold py-2 sm:py-3 px-4 sm:px-8 rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {isSaving ? "Saving..." : "Save Configuration"}
           {!isSaving && <span>✓</span>}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* Brand Identity Card */}
-        <div className="bg-white p-6 rounded-3xl shadow-soft border border-greenleaf-accent">
+        <div className="bg-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-3xl shadow-soft border border-greenleaf-accent">
           <h3 className="text-lg font-bold text-greenleaf-primary mb-4 flex items-center gap-2">
             <span>🎨</span> Brand Identity
           </h3>
@@ -124,7 +124,7 @@ export default function SettingsSection({ onSettingsSaved }) {
                 value={settings.name}
                 onChange={handleChange}
                 placeholder="Greenleaf Dining"
-                className="w-full p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-greenleaf-primary transition-all font-serif font-bold text-lg"
+                className="w-full p-2 sm:p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-greenleaf-primary transition-all font-serif font-bold text-lg"
               />
             </div>
           
@@ -143,7 +143,7 @@ export default function SettingsSection({ onSettingsSaved }) {
                   name="themeColor"
                   value={settings.themeColor}
                   onChange={handleChange}
-                  className="flex-1 p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl font-mono text-sm uppercase focus:outline-none focus:ring-2 focus:ring-greenleaf-primary"
+                  className="flex-1 p-2 sm:p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl font-mono text-sm uppercase focus:outline-none focus:ring-2 focus:ring-greenleaf-primary"
                 />
               </div>
             </div>
@@ -154,7 +154,7 @@ export default function SettingsSection({ onSettingsSaved }) {
                 name="font"
                 value={settings.font}
                 onChange={handleChange}
-                className="w-full p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-greenleaf-primary transition-all font-sans"
+                className="w-full p-2 sm:p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-greenleaf-primary transition-all font-sans"
               >
                 <option value="Playfair Display">Classic Serif (Playfair Display)</option>
                 <option value="Inter">Modern Sans (Inter)</option>
@@ -171,11 +171,11 @@ export default function SettingsSection({ onSettingsSaved }) {
                 value={settings.logo}
                 onChange={handleChange}
                 placeholder="https://example.com/logo.png"
-                className="w-full p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-greenleaf-primary transition-all"
+                className="w-full p-2 sm:p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-greenleaf-primary transition-all"
               />
               {settings.logo && (
                 <div className="mt-4 p-4 bg-greenleaf-bg rounded-xl border border-greenleaf-accent flex justify-center">
-                  <img src={settings.logo} alt="Restaurant Logo preview" className="h-16 object-contain" onError={(e) => e.target.style.display='none'} />
+                  <img src={settings.logo} alt="Restaurant Logo preview" className="h-12 sm:h-16 object-contain" onError={(e) => e.target.style.display='none'} />
                 </div>
               )}
             </div>
@@ -188,14 +188,14 @@ export default function SettingsSection({ onSettingsSaved }) {
                 value={settings.currency}
                 onChange={handleChange}
                 placeholder="INR, $, €, etc."
-                className="w-full p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-greenleaf-primary transition-all uppercase"
+                className="w-full p-2 sm:p-3 bg-greenleaf-bg border border-greenleaf-accent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-greenleaf-primary transition-all uppercase"
               />
             </div>
           </div>
         </div>
 
         {/* Features Card */}
-        <div className="bg-white p-6 rounded-3xl shadow-soft border border-greenleaf-accent">
+        <div className="bg-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-3xl shadow-soft border border-greenleaf-accent">
           <h3 className="text-lg font-bold text-greenleaf-primary mb-4 flex items-center gap-2">
             <span>⚙️</span> Operational Features
           </h3>
@@ -237,19 +237,19 @@ export default function SettingsSection({ onSettingsSaved }) {
 
 function FeatureToggle({ title, description, isActive, onToggle }) {
   return (
-    <div className="flex items-center justify-between p-4 bg-greenleaf-bg rounded-2xl border border-greenleaf-accent transition-all hover:border-greenleaf-secondary">
-      <div className="pr-4">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 bg-greenleaf-bg rounded-2xl border border-greenleaf-accent transition-all hover:border-greenleaf-secondary">
+      <div className="pr-0 sm:pr-4">
         <p className="font-bold text-greenleaf-primary text-sm">{title}</p>
         <p className="text-[10px] text-greenleaf-muted mt-1 leading-relaxed">{description}</p>
       </div>
       <button
         onClick={onToggle}
-        className={`w-12 h-6 flex shrink-0 items-center rounded-full p-1 transition-colors duration-300 ease-in-out ${
+        className={`w-14 sm:w-12 h-7 sm:h-6 flex shrink-0 items-center rounded-full p-1 transition-colors duration-300 ease-in-out ${
           isActive ? "bg-greenleaf-secondary" : "bg-gray-300"
         }`}
       >
         <div
-          className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
+          className={`bg-white w-5 sm:w-4 h-5 sm:h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
             isActive ? "translate-x-6" : "translate-x-0"
           }`}
         ></div>

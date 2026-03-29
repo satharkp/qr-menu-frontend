@@ -12,6 +12,7 @@ export default function WaitersSection() {
   const [reassignMode, setReassignMode] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [toast, setToast] = useState(null);
+  const [lastCreated, setLastCreated] = useState(null);
 
   const isTableAssignedElsewhere = (tableId) => {
     return waiters.some((w) => {
@@ -40,7 +41,7 @@ export default function WaitersSection() {
       );
       setWaiters(res.data);
     } catch (err) {
-      console.error("Failed to fetch waiters", err);
+      console.error("Failed to fetch staff", err);
     }
   };
 
@@ -66,6 +67,12 @@ export default function WaitersSection() {
         { email: waiterEmail, password: waiterPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      setLastCreated({
+        email: waiterEmail,
+        password: waiterPassword,
+        role: "waiter",
+      });
 
       setWaiterEmail("");
       setWaiterPassword("");
@@ -156,13 +163,13 @@ export default function WaitersSection() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Create waiter */}
-      <div className="bg-white p-6 rounded-2xl shadow max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Create Waiter</h2>
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow max-w-md w-full">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Create Waiter</h2>
 
         <input
-          className="border p-2 w-full mb-3 rounded"
+          className="border p-2 sm:p-3 w-full mb-3 rounded"
           placeholder="Waiter email"
           value={waiterEmail}
           onChange={(e) => setWaiterEmail(e.target.value)}
@@ -170,7 +177,7 @@ export default function WaitersSection() {
 
         <input
           type="password"
-          className="border p-2 w-full mb-4 rounded"
+          className="border p-2 sm:p-3 w-full mb-3 rounded"
           placeholder="Password"
           value={waiterPassword}
           onChange={(e) => setWaiterPassword(e.target.value)}
@@ -178,25 +185,37 @@ export default function WaitersSection() {
 
         <button
           onClick={createWaiter}
-          className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+          className="bg-blue-600 text-white px-4 py-2 sm:py-3 rounded w-full"
         >
           Create Waiter
         </button>
       </div>
 
+      {lastCreated && (
+        <div className="bg-green-100 border border-green-300 p-3 sm:p-4 rounded-xl max-w-md w-full">
+          <p className="font-semibold text-green-800">Staff Created Successfully</p>
+          <p className="text-sm mt-1">Email: {lastCreated.email}</p>
+          <p className="text-sm">Password: {lastCreated.password}</p>
+          <p className="text-sm capitalize">Role: {lastCreated.role}</p>
+          <p className="text-xs text-gray-600 mt-1">
+            (Save this password now — it won’t be shown again)
+          </p>
+        </div>
+      )}
+
       {/* Waiter cards */}
-      <div className="bg-white p-6 rounded-2xl shadow">
-        <h2 className="text-xl font-semibold mb-4">Waiter List</h2>
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Waiter List</h2>
 
         {waiters.length === 0 && (
           <p className="text-gray-500">No waiters yet.</p>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {waiters.map((w) => (
             <div
               key={w._id}
-              className={`border rounded-xl p-4 shadow-sm transition ${selectedWaiter === w._id
+              className={`border rounded-xl p-3 sm:p-4 shadow-sm transition ${selectedWaiter === w._id
                   ? "border-blue-500 bg-blue-50"
                   : "bg-gray-50"
                 }`}
@@ -218,17 +237,17 @@ export default function WaitersSection() {
               >
                 Reassign tables
               </button>
-              <div className="flex gap-2 mt-2">
+              <div className="flex flex-col sm:flex-row gap-2 mt-2">
                 <button
                   onClick={() => clearWaiterTables(w._id)}
-                  className="text-xs bg-orange-500 text-white px-3 py-1 rounded"
+                  className="text-xs bg-orange-500 text-white px-3 py-1 rounded w-full sm:w-auto"
                 >
                   Clear tables
                 </button>
 
                 <button
                   onClick={() => deleteWaiter(w._id)}
-                  className="text-xs bg-red-600 text-white px-3 py-1 rounded"
+                  className="text-xs bg-red-600 text-white px-3 py-1 rounded w-full sm:w-auto"
                 >
                   Remove waiter
                 </button>
@@ -260,11 +279,11 @@ export default function WaitersSection() {
       </div>
 
       {/* Assign tables */}
-      <div className="bg-white p-6 rounded-2xl shadow">
-        <h2 className="text-xl font-semibold mb-4">Assign Tables</h2>
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Assign Tables</h2>
 
         <select
-          className="border p-2 w-full mb-4 rounded"
+          className="border p-2 sm:p-3 w-full mb-4 rounded"
           value={selectedWaiter}
           onChange={(e) => setSelectedWaiter(e.target.value)}
         >
@@ -293,7 +312,7 @@ export default function WaitersSection() {
                       : [...prev, t._id]
                   );
                 }}
-                className={`px-3 py-2 rounded-lg border transition ${locked
+                className={`px-3 py-2 sm:py-2.5 rounded-lg border transition ${locked
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                     : selectedTables.includes(t._id)
                       ? "bg-green-600 text-white"
@@ -312,7 +331,7 @@ export default function WaitersSection() {
             if (!selectedWaiter) return alert("Select a waiter");
             setShowConfirm(true);
           }}
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-green-600 text-white px-4 py-2 sm:py-3 rounded w-full sm:w-auto"
         >
           Assign Tables
         </button>
@@ -320,7 +339,7 @@ export default function WaitersSection() {
 
       {showConfirm && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-xl w-80">
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-[90%] max-w-sm">
             <h3 className="text-lg font-semibold mb-2">Confirm reassignment</h3>
             <p className="text-gray-600 mb-3">
               The following tables will be assigned:
@@ -344,7 +363,7 @@ export default function WaitersSection() {
               If these tables belong to another waiter, they will be reassigned.
             </p>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-col sm:flex-row justify-end gap-2">
               <button
                 onClick={() => setShowConfirm(false)}
                 className="px-3 py-2 border rounded"
@@ -368,7 +387,7 @@ export default function WaitersSection() {
 
       {toast && (
         <div
-          className={`fixed bottom-6 right-6 px-4 py-2 rounded shadow text-white ${toast.type === "error" ? "bg-red-600" : "bg-green-600"
+          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-3 sm:px-4 py-2 rounded shadow text-white ${toast.type === "error" ? "bg-red-600" : "bg-green-600"
             }`}
         >
           {toast.message}

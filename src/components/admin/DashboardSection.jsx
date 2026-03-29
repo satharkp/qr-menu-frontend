@@ -76,18 +76,18 @@ export default function DashboardSection({ settings }) {
   const currencySymbol = getCurrencySymbol(settings?.currency || restaurant.currency);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Restaurant Header Card */}
-      <div className="bg-white rounded-[3rem] p-10 shadow-floating border border-greenleaf-accent relative overflow-hidden group">
+      <div className="bg-white rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-8 lg:p-10 shadow-floating border border-greenleaf-accent relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
           <svg width="120" height="120" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" /></svg>
         </div>
 
         <div className="relative z-10">
-          <div className="flex justify-between items-start mb-10">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-10">
             <div>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-greenleaf-primary mb-2 block">Premium Enterprise Asset</span>
-              <h2 className="text-4xl font-serif font-black text-greenleaf-text leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-greenleaf-text leading-tight">
                 {restaurant.name}
               </h2>
             </div>
@@ -97,7 +97,7 @@ export default function DashboardSection({ settings }) {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8 bg-greenleaf-bg rounded-[2rem] border border-greenleaf-accent text-greenleaf-text">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6 lg:p-8 bg-greenleaf-bg rounded-[2rem] border border-greenleaf-accent text-greenleaf-text">
             <div>
               <p className="text-[10px] font-black tracking-widest text-greenleaf-muted uppercase mb-1">Operational ID</p>
               <p className="font-mono text-xs font-bold truncate max-w-[150px]">{restaurant._id}</p>
@@ -112,7 +112,7 @@ export default function DashboardSection({ settings }) {
             </div>
           </div>
 
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="mt-6 sm:mt-10 flex flex-wrap gap-3 sm:gap-4">
             <button
               onClick={() => navigate("/admin/menu")}
               className="bg-greenleaf-primary text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-premium hover:translate-y-[-2px] transition-all"
@@ -136,27 +136,27 @@ export default function DashboardSection({ settings }) {
       </div>
 
       {/* Real Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-[2rem] p-6 shadow-floating border border-greenleaf-accent">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="bg-white rounded-[2rem] p-4 sm:p-6 shadow-floating border border-greenleaf-accent">
           <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Total Revenue</p>
           <p className="text-2xl font-serif font-black text-greenleaf-text">
             {currencySymbol}{stats?.totalRevenue?.toLocaleString() || 0}
           </p>
           <p className="text-[10px] font-bold text-green-500 mt-1">LIFETIME GROWTH</p>
         </div>
-        <div className="bg-white rounded-[2rem] p-6 shadow-floating border border-greenleaf-accent">
+        <div className="bg-white rounded-[2rem] p-4 sm:p-6 shadow-floating border border-greenleaf-accent">
           <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Total Orders</p>
           <p className="text-2xl font-serif font-black text-greenleaf-text">{stats?.orderCount || 0}</p>
           <p className="text-[10px] font-bold text-blue-500 mt-1">PROCESSED ASSETS</p>
         </div>
-        <div className="bg-white rounded-[2rem] p-6 shadow-floating border border-greenleaf-accent">
+        <div className="bg-white rounded-[2rem] p-4 sm:p-6 shadow-floating border border-greenleaf-accent">
           <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Today's Sales</p>
           <p className="text-2xl font-serif font-black text-greenleaf-text">
             {currencySymbol}{stats?.todayRevenue?.toLocaleString() || 0}
           </p>
           <p className="text-[10px] font-bold text-orange-500 mt-1">{stats?.todayOrderCount || 0} ORDERS TODAY</p>
         </div>
-        <div className="bg-white rounded-[2rem] p-6 shadow-floating border border-greenleaf-accent">
+        <div className="bg-white rounded-[2rem] p-4 sm:p-6 shadow-floating border border-greenleaf-accent">
           <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Avg Order Value</p>
           <p className="text-2xl font-serif font-black text-greenleaf-text">
             {currencySymbol}{stats?.avgOrderValue || 0}
@@ -165,9 +165,9 @@ export default function DashboardSection({ settings }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
         {/* Popular Items */}
-        <div className="bg-white rounded-[2.5rem] p-8 shadow-floating border border-greenleaf-accent">
+        <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-serif font-black text-greenleaf-text italic">Top Performing Curations</h3>
             <span className="text-[10px] font-bold text-greenleaf-primary px-3 py-1 bg-greenleaf-primary/10 rounded-full">DEMAND ANALYTICS</span>
@@ -193,7 +193,7 @@ export default function DashboardSection({ settings }) {
         </div>
 
         {/* Operational Pulse */}
-        <div className="bg-white rounded-[2.5rem] p-8 shadow-floating border border-greenleaf-accent">
+        <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-serif font-black text-greenleaf-text italic">Operational Pulse</h3>
             <span className="text-[10px] font-bold text-orange-500 px-3 py-1 bg-orange-500/10 rounded-full">REAL-TIME FLOW</span>

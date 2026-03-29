@@ -7,6 +7,8 @@ const SuperAdminDashboard = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [name, setName] = useState("");
   const [domain, setDomain] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
 
   const token = localStorage.getItem("superAdminToken");
 
@@ -29,7 +31,7 @@ const SuperAdminDashboard = () => {
     try {
       await axios.post(
         `${API_BASE}/super/restaurants`,
-        { name, domain },
+        { name, domain, adminEmail, adminPassword },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -39,6 +41,8 @@ const SuperAdminDashboard = () => {
 
       setName("");
       setDomain("");
+      setAdminEmail("");
+      setAdminPassword("");
       fetchRestaurants();
     } catch (err) {
       console.error(err);
@@ -84,6 +88,19 @@ const SuperAdminDashboard = () => {
             placeholder="Domain"
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
+            style={{ padding: "10px", borderRadius: "6px", border: "1px solid #ccc", flex: 1 }}
+          />
+          <input
+            placeholder="Admin Email"
+            value={adminEmail}
+            onChange={(e) => setAdminEmail(e.target.value)}
+            style={{ padding: "10px", borderRadius: "6px", border: "1px solid #ccc", flex: 1 }}
+          />
+          <input
+            type="password"
+            placeholder="Admin Password"
+            value={adminPassword}
+            onChange={(e) => setAdminPassword(e.target.value)}
             style={{ padding: "10px", borderRadius: "6px", border: "1px solid #ccc", flex: 1 }}
           />
           <button

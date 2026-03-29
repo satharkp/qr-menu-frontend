@@ -173,10 +173,10 @@ export default function MenuSection() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-[2.5rem] shadow-premium max-w-5xl border border-greenleaf-accent">
-      <div className="flex items-center justify-between mb-8">
+    <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-premium max-w-5xl border border-greenleaf-accent">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h2 className="text-2xl font-serif font-black text-greenleaf-primary">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black text-greenleaf-primary">
             {editingItem ? "Edit Menu Selection" : "Menu Management"}
           </h2>
           <p className="text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-1">
@@ -193,7 +193,7 @@ export default function MenuSection() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
         <input
           className="border p-2 rounded"
           placeholder="Item name"
@@ -230,7 +230,7 @@ export default function MenuSection() {
         {measurementType === "PORTION" && (
           <div className="col-span-full space-y-2">
             {portions.map((portion, index) => (
-              <div key={index} className="flex gap-2">
+              <div key={index} className="flex flex-col sm:flex-row gap-2">
                 <input
                   className="border p-2 rounded flex-1"
                   placeholder="Portion Label (e.g. Half, Full, Large)"
@@ -338,9 +338,9 @@ export default function MenuSection() {
         {menuItems.map((item) => (
           <div
             key={item._id}
-            className="flex items-center gap-4 justify-between border rounded-xl p-3 bg-gray-50"
+            className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between border rounded-xl p-3 sm:p-4 bg-gray-50"
           >
-            <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
               {(() => {
                 const imageUrl = item.imageUrl || item.image || item.photo;
 
@@ -391,7 +391,7 @@ export default function MenuSection() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => handleEdit(item)}
-                className="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border border-green-100 hover:bg-green-100 transition-colors"
+                className="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border border-green-100 hover:bg-green-100 transition-colors w-full sm:w-auto"
               >
                 Edit
               </button>
@@ -414,7 +414,7 @@ export default function MenuSection() {
                     alert("Failed to update availability");
                   }
                 }}
-                className={`px-3 py-1 rounded text-white ${item.available ? "bg-green-600" : "bg-gray-500"
+                className={`px-3 py-1 rounded text-white w-full sm:w-auto ${item.available ? "bg-green-600" : "bg-gray-500"
                   }`}
               >
                 {item.available ? "Available" : "Hidden"}
@@ -438,7 +438,7 @@ export default function MenuSection() {
                     alert("Failed to delete menu item");
                   }
                 }}
-                className="bg-red-600 text-white px-3 py-1 rounded"
+                className="bg-red-600 text-white px-3 py-1 rounded w-full sm:w-auto"
               >
                 Delete
               </button>
