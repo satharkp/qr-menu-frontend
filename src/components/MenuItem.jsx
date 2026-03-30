@@ -1,4 +1,5 @@
 import { SOCKET_URL as API_BASE_ROOT } from "../services/api";
+import { formatPrice } from "../utils/formatCurrency";
 
 const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = 'â‚¹' }) => {
 
@@ -41,7 +42,7 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = 'â
             </h3>
             {!isPortion && (
               <span className="font-serif font-bold text-sm md:text-xl text-greenleaf-primary whitespace-nowrap">
-                {currency}{item.price}
+                {formatPrice(item.price, currency)}
               </span>
             )}
             {isPortion && totalPortionQty > 0 && (

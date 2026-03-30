@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "../utils/formatCurrency";
 
 const CartFloating = ({ cart, total, onPlaceOrder, currency = '₹' }) => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const CartFloating = ({ cart, total, onPlaceOrder, currency = '₹' }) => {
       <div className="max-w-md mx-auto bg-greenleaf-primary/95 backdrop-blur-xl text-white p-2.5 md:p-4 rounded-xl md:rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.3)] border border-white/10 flex items-center justify-between">
         <div className="flex flex-col pl-2">
           <span className="text-[8px] md:text-xs text-greenleaf-secondary uppercase tracking-widest font-black opacity-80">Total Order</span>
-          <span className="text-lg md:text-xl font-serif font-black text-white leading-tight">{currency}{total.toFixed(2)}</span>
+          <span className="text-lg md:text-xl font-serif font-black text-white leading-tight">{formatPrice(total.toFixed(2), currency)}</span>
         </div>
 
         <div className="flex items-center gap-2 md:gap-3">

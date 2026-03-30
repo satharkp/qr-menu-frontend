@@ -19,9 +19,13 @@ const RestaurantHeader = ({ restaurant, tableId }) => {
 
       <div className="relative z-10 text-center max-w-2xl mx-auto">
         <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-[2rem] flex items-center justify-center border border-white/20 shadow-2xl animate-float overflow-hidden">
+          <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-[2rem] flex items-center justify-center border border-white/20 shadow-2xl animate-float overflow-hidden p-2">
             {restaurant?.settings?.logo ? (
-              <img src={restaurant.settings.logo} alt="Restaurant Logo" className="w-full h-full object-contain p-2" />
+              <img
+                src={restaurant.settings.logo}
+                alt="Restaurant Logo"
+                className="w-full h-full object-contain"
+              />
             ) : (
               <span className="text-4xl">🌿</span>
             )}

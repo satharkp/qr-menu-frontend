@@ -163,13 +163,13 @@ export default function WaitersSection() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6 sm:space-y-8 bg-gradient-to-br from-gray-50 via-white to-gray-100 p-2 sm:p-4 rounded-[2rem]">
       {/* Create waiter */}
-      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow max-w-md w-full">
+      <div className="backdrop-blur-xl bg-white/80 p-4 sm:p-6 rounded-[2rem] shadow-xl border border-white/30 max-w-md w-full">
         <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Create Waiter</h2>
 
         <input
-          className="border p-2 sm:p-3 w-full mb-3 rounded"
+          className="w-full border border-gray-200 rounded-xl p-2 sm:p-3 mb-3 bg-white/70 focus:outline-none"
           placeholder="Waiter email"
           value={waiterEmail}
           onChange={(e) => setWaiterEmail(e.target.value)}
@@ -177,7 +177,7 @@ export default function WaitersSection() {
 
         <input
           type="password"
-          className="border p-2 sm:p-3 w-full mb-3 rounded"
+          className="w-full border border-gray-200 rounded-xl p-2 sm:p-3 mb-3 bg-white/70 focus:outline-none"
           placeholder="Password"
           value={waiterPassword}
           onChange={(e) => setWaiterPassword(e.target.value)}
@@ -185,15 +185,15 @@ export default function WaitersSection() {
 
         <button
           onClick={createWaiter}
-          className="bg-blue-600 text-white px-4 py-2 sm:py-3 rounded w-full"
+          className="bg-gray-900 text-white px-4 py-2 sm:py-3 rounded-xl w-full font-semibold"
         >
           Create Waiter
         </button>
       </div>
 
       {lastCreated && (
-        <div className="bg-green-100 border border-green-300 p-3 sm:p-4 rounded-xl max-w-md w-full">
-          <p className="font-semibold text-green-800">Staff Created Successfully</p>
+        <div className="bg-white/80 border border-white/30 p-3 sm:p-4 rounded-2xl max-w-md w-full shadow-md">
+          <p className="font-semibold text-gray-800">Staff Created Successfully</p>
           <p className="text-sm mt-1">Email: {lastCreated.email}</p>
           <p className="text-sm">Password: {lastCreated.password}</p>
           <p className="text-sm capitalize">Role: {lastCreated.role}</p>
@@ -204,7 +204,7 @@ export default function WaitersSection() {
       )}
 
       {/* Waiter cards */}
-      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow">
+      <div className="backdrop-blur-xl bg-white/80 p-4 sm:p-6 rounded-[2rem] shadow-xl border border-white/30">
         <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Waiter List</h2>
 
         {waiters.length === 0 && (
@@ -215,9 +215,9 @@ export default function WaitersSection() {
           {waiters.map((w) => (
             <div
               key={w._id}
-              className={`border rounded-xl p-3 sm:p-4 shadow-sm transition ${selectedWaiter === w._id
-                  ? "border-blue-500 bg-blue-50"
-                  : "bg-gray-50"
+              className={`bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 shadow-sm ${selectedWaiter === w._id
+                  ? "ring-2 ring-gray-300"
+                  : ""
                 }`}
             >
               <p className="font-semibold text-gray-800">{w.email}</p>
@@ -225,7 +225,7 @@ export default function WaitersSection() {
                 Load: {w.assignedTables?.length || 0} tables
               </p>
               <button
-                className="mt-2 text-sm bg-blue-600 text-white px-3 py-1 rounded"
+                className="mt-2 text-sm bg-gray-900 text-white px-3 py-1 rounded-xl"
                 onClick={() => {
                   setSelectedWaiter(w._id);
                   setSelectedTables(
@@ -240,14 +240,14 @@ export default function WaitersSection() {
               <div className="flex flex-col sm:flex-row gap-2 mt-2">
                 <button
                   onClick={() => clearWaiterTables(w._id)}
-                  className="text-xs bg-orange-500 text-white px-3 py-1 rounded w-full sm:w-auto"
+                  className="text-xs bg-gray-200 text-gray-800 px-3 py-1 rounded-xl w-full sm:w-auto"
                 >
                   Clear tables
                 </button>
 
                 <button
                   onClick={() => deleteWaiter(w._id)}
-                  className="text-xs bg-red-600 text-white px-3 py-1 rounded w-full sm:w-auto"
+                  className="text-xs bg-black text-white px-3 py-1 rounded-xl w-full sm:w-auto"
                 >
                   Remove waiter
                 </button>
@@ -279,7 +279,7 @@ export default function WaitersSection() {
       </div>
 
       {/* Assign tables */}
-      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow">
+      <div className="backdrop-blur-xl bg-white/80 p-4 sm:p-6 rounded-[2rem] shadow-xl border border-white/30">
         <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Assign Tables</h2>
 
         <select
@@ -312,7 +312,7 @@ export default function WaitersSection() {
                       : [...prev, t._id]
                   );
                 }}
-                className={`px-3 py-2 sm:py-2.5 rounded-lg border transition ${locked
+                className={`px-3 py-2 sm:py-2.5 rounded-xl border border-gray-200 ${locked
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                     : selectedTables.includes(t._id)
                       ? "bg-green-600 text-white"
@@ -331,7 +331,7 @@ export default function WaitersSection() {
             if (!selectedWaiter) return alert("Select a waiter");
             setShowConfirm(true);
           }}
-          className="bg-green-600 text-white px-4 py-2 sm:py-3 rounded w-full sm:w-auto"
+          className="bg-gray-900 text-white px-4 py-2 sm:py-3 rounded-xl w-full sm:w-auto"
         >
           Assign Tables
         </button>
@@ -339,7 +339,7 @@ export default function WaitersSection() {
 
       {showConfirm && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-[90%] max-w-sm">
+          <div className="bg-white/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-xl w-[90%] max-w-sm">
             <h3 className="text-lg font-semibold mb-2">Confirm reassignment</h3>
             <p className="text-gray-600 mb-3">
               The following tables will be assigned:
@@ -376,7 +376,7 @@ export default function WaitersSection() {
                   setShowConfirm(false);
                   await confirmAssignTables();
                 }}
-                className="bg-green-600 text-white px-3 py-2 rounded"
+                className="bg-gray-900 text-white px-3 py-2 rounded-xl"
               >
                 Confirm
               </button>
@@ -387,7 +387,7 @@ export default function WaitersSection() {
 
       {toast && (
         <div
-          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-3 sm:px-4 py-2 rounded shadow text-white ${toast.type === "error" ? "bg-red-600" : "bg-green-600"
+          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 px-3 sm:px-4 py-2 rounded shadow text-white ${toast.type === "error" ? "bg-black" : "bg-gray-900"
             }`}
         >
           {toast.message}

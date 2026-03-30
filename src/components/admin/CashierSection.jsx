@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE } from "../../services/api";
+import { formatPrice } from "../../utils/formatCurrency";
 
 export default function CashierSection({ settings }) {
   const [orders, setOrders] = useState([]);
@@ -53,8 +54,8 @@ export default function CashierSection({ settings }) {
 
   if (loading && orders.length === 0) {
     return (
-      <div className="bg-white rounded-[2rem] p-12 shadow-floating flex flex-col items-center justify-center border border-greenleaf-accent animate-pulse">
-        <div className="w-12 h-12 border-4 border-greenleaf-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+      <div className="bg-white rounded-[2rem] p-12 shadow-floating flex flex-col items-center justify-center border border-greenleaf-accent">
+        <div className="w-12 h-12 border-4 border-greenleaf-primary border-t-transparent rounded-full mb-4"></div>
         <p className="text-greenleaf-muted font-serif">Awaiting Transaction Data...</p>
       </div>
     );
@@ -72,13 +73,13 @@ export default function CashierSection({ settings }) {
         <div className="flex flex-wrap bg-white p-1.5 rounded-2xl border border-greenleaf-accent shadow-sm">
           <button 
             onClick={() => setFilteringStatus("unpaid")}
-            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filteringStatus === 'unpaid' ? 'bg-greenleaf-primary text-white shadow-premium' : 'text-greenleaf-muted hover:bg-greenleaf-bg'}`}
+            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${filteringStatus === 'unpaid' ? 'bg-greenleaf-primary text-white shadow-premium' : 'text-greenleaf-muted'}`}
           >
             Pending ({orders.filter(o => o.paymentMethod === "CASH" && !o.isPaid).length})
           </button>
           <button 
             onClick={() => setFilteringStatus("all")}
-            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filteringStatus === 'all' ? 'bg-greenleaf-primary text-white shadow-premium' : 'text-greenleaf-muted hover:bg-greenleaf-bg'}`}
+            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${filteringStatus === 'all' ? 'bg-greenleaf-primary text-white shadow-premium' : 'text-greenleaf-muted'}`}
           >
             All Cash History
           </button>
@@ -89,7 +90,7 @@ export default function CashierSection({ settings }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {filteredOrders.length > 0 ? (
           filteredOrders.map((order) => (
-            <div key={order._id} className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent hover:border-greenleaf-primary/30 transition-all group">
+            <div key={order._id} className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent group">
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-greenleaf-primary bg-greenleaf-primary/10 px-3 py-1 rounded-full mb-3 block w-fit">
@@ -100,7 +101,9 @@ export default function CashierSection({ settings }) {
                   </h3>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg sm:text-xl lg:text-2xl font-black text-greenleaf-text">{settings?.currency || '₹'}{order.total}</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-black text-greenleaf-text">
+                    {formatPrice(order.total, settings?.currency)}
+                  </p>
                   <p className="text-[10px] font-bold text-greenleaf-muted uppercase tracking-tighter">Settlement Due</p>
                 </div>
               </div>
@@ -111,7 +114,9 @@ export default function CashierSection({ settings }) {
                     <span className="text-greenleaf-text/80 font-medium">
                       {item.quantity}x {item.name}
                     </span>
-                    <span className="text-greenleaf-muted text-xs">{settings?.currency || '₹'}{item.price * item.quantity}</span>
+                    <span className="text-greenleaf-muted text-xs">
+                      {formatPrice(item.price * item.quantity, settings?.currency)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -119,7 +124,7 @@ export default function CashierSection({ settings }) {
               <div className="pt-6 border-t border-greenleaf-bg flex items-center justify-between gap-4">
                 <div className="flex flex-col">
                    <span className="text-[9px] font-black text-greenleaf-muted uppercase tracking-widest mb-1">Status</span>
-                   <span className={`text-[10px] font-black uppercase tracking-widest ${order.isPaid ? 'text-green-600' : 'text-orange-500 animate-pulse'}`}>
+                   <span className={`text-[10px] font-black uppercase tracking-widest ${order.isPaid ? 'text-green-600' : 'text-orange-500'}`}>
                     {order.isPaid ? '✓ Paid' : '● Unpaid'}
                    </span>
                 </div>
@@ -127,7 +132,7 @@ export default function CashierSection({ settings }) {
                 {!order.isPaid ? (
                   <button
                     onClick={() => markAsPaid(order._id)}
-                    className="bg-greenleaf-primary text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-premium hover:translate-y-[-2px] active:scale-95 transition-all"
+                    className="bg-greenleaf-primary text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-premium"
                   >
                     Mark as Paid
                   </button>

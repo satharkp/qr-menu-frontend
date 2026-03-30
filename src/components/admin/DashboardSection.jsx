@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_BASE } from "../../services/api";
+import { formatPrice } from "../../utils/formatCurrency";
 
 export default function DashboardSection({ settings }) {
   const [restaurant, setRestaurant] = useState(null);
   const [stats, setStats] = useState(null);
   const [popularItems, setPopularItems] = useState([]);
   const [operational, setOperational] = useState(null);
+  const [ratings, setRatings] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -25,11 +27,12 @@ export default function DashboardSection({ settings }) {
     setLoading(true);
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const [restRes, statsRes, popularRes, operationalRes] = await Promise.all([
+      const [restRes, statsRes, popularRes, operationalRes, ratingRes] = await Promise.all([
         axios.get(`${API_BASE}/restaurants`, { headers }),
         axios.get(`${API_BASE}/analytics/overview`, { headers }),
         axios.get(`${API_BASE}/analytics/popular-items`, { headers }),
-        axios.get(`${API_BASE}/analytics/operational`, { headers })
+        axios.get(`${API_BASE}/analytics/operational`, { headers }),
+        axios.get(`${API_BASE}/ratings/${restaurantId}`)
       ]);
 
       const restaurantData = restRes.data?.data?.find((r) => r._id === restaurantId);
@@ -37,6 +40,7 @@ export default function DashboardSection({ settings }) {
       setStats(statsRes.data);
       setPopularItems(popularRes.data);
       setOperational(operationalRes.data);
+      setRatings(ratingRes.data);
     } catch (err) {
       console.error("Failed to load dashboard data", err);
     } finally {
@@ -57,29 +61,20 @@ export default function DashboardSection({ settings }) {
     }
   };
 
-  const getCurrencySymbol = (code) => {
-    if (code === 'INR' || !code) return '₹';
-    if (code === 'GBP') return '£';
-    if (code === 'USD') return '$';
-    return code;
-  };
-
   if (loading || !restaurant) {
     return (
-      <div className="bg-white rounded-[2rem] p-12 shadow-floating flex flex-col items-center justify-center border border-greenleaf-accent animate-pulse">
-        <div className="w-12 h-12 border-4 border-greenleaf-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+      <div className="bg-white rounded-[2rem] p-12 shadow-floating flex flex-col items-center justify-center border border-greenleaf-accent">
+        <div className="w-12 h-12 border-4 border-greenleaf-primary border-t-transparent rounded-full mb-4"></div>
         <p className="text-greenleaf-muted font-serif">Synchronizing Asset Data...</p>
       </div>
     );
   }
 
-  const currencySymbol = getCurrencySymbol(settings?.currency || restaurant.currency);
-
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 sm:space-y-8 bg-gradient-to-br from-gray-50 via-white to-gray-100 p-2 sm:p-4 rounded-[2rem]">
       {/* Restaurant Header Card */}
-      <div className="bg-white rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-8 lg:p-10 shadow-floating border border-greenleaf-accent relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+      <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-8 lg:p-10 shadow-2xl border border-white/30 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-8 opacity-5">
           <svg width="120" height="120" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" /></svg>
         </div>
 
@@ -87,7 +82,7 @@ export default function DashboardSection({ settings }) {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-10">
             <div>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-greenleaf-primary mb-2 block">Premium Enterprise Asset</span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-greenleaf-text leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent leading-tight">
                 {restaurant.name}
               </h2>
             </div>
@@ -115,19 +110,19 @@ export default function DashboardSection({ settings }) {
           <div className="mt-6 sm:mt-10 flex flex-wrap gap-3 sm:gap-4">
             <button
               onClick={() => navigate("/admin/menu")}
-              className="bg-greenleaf-primary text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-premium hover:translate-y-[-2px] transition-all"
+              className="bg-gradient-to-r from-gray-900 to-gray-700 text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg"
             >
               Config Asset
             </button>
             <button
               onClick={() => window.open(`${window.location.origin}/menu/${restaurant._id}`, '_blank')}
-              className="bg-white border border-greenleaf-accent text-greenleaf-text px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-sm hover:bg-greenleaf-accent transition-all"
+              className="bg-white/70 backdrop-blur border border-white/30 text-greenleaf-text px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-md"
             >
               View Public Menu
             </button>
             <button
               onClick={clearAllOrders}
-              className="bg-red-500/10 border border-red-500/20 text-red-500 px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-sm hover:bg-red-500 hover:text-white transition-all sm:ml-auto"
+              className="bg-red-500/10 border border-red-500/20 text-red-500 px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-md sm:ml-auto"
             >
               Wipe All Orders
             </button>
@@ -136,46 +131,55 @@ export default function DashboardSection({ settings }) {
       </div>
 
       {/* Real Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-white rounded-[2rem] p-4 sm:p-6 shadow-floating border border-greenleaf-accent">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
           <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Total Revenue</p>
           <p className="text-2xl font-serif font-black text-greenleaf-text">
-            {currencySymbol}{stats?.totalRevenue?.toLocaleString() || 0}
+            {formatPrice(stats?.totalRevenue || 0, settings?.currency || restaurant.currency)}
           </p>
-          <p className="text-[10px] font-bold text-green-500 mt-1">LIFETIME GROWTH</p>
+          <p className="text-[10px] font-bold text-gray-700 mt-1">LIFETIME GROWTH</p>
         </div>
-        <div className="bg-white rounded-[2rem] p-4 sm:p-6 shadow-floating border border-greenleaf-accent">
+        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
           <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Total Orders</p>
           <p className="text-2xl font-serif font-black text-greenleaf-text">{stats?.orderCount || 0}</p>
-          <p className="text-[10px] font-bold text-blue-500 mt-1">PROCESSED ASSETS</p>
+          <p className="text-[10px] font-bold text-gray-700 mt-1">PROCESSED ASSETS</p>
         </div>
-        <div className="bg-white rounded-[2rem] p-4 sm:p-6 shadow-floating border border-greenleaf-accent">
+        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
           <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Today's Sales</p>
           <p className="text-2xl font-serif font-black text-greenleaf-text">
-            {currencySymbol}{stats?.todayRevenue?.toLocaleString() || 0}
+            {formatPrice(stats?.todayRevenue || 0, settings?.currency || restaurant.currency)}
           </p>
-          <p className="text-[10px] font-bold text-orange-500 mt-1">{stats?.todayOrderCount || 0} ORDERS TODAY</p>
+          <p className="text-[10px] font-bold text-gray-700 mt-1">{stats?.todayOrderCount || 0} ORDERS TODAY</p>
         </div>
-        <div className="bg-white rounded-[2rem] p-4 sm:p-6 shadow-floating border border-greenleaf-accent">
+        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
           <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Avg Order Value</p>
           <p className="text-2xl font-serif font-black text-greenleaf-text">
-            {currencySymbol}{stats?.avgOrderValue || 0}
+            {formatPrice(stats?.avgOrderValue || 0, settings?.currency || restaurant.currency)}
           </p>
-          <p className="text-[10px] font-bold text-purple-500 mt-1">PER TRANSACTION</p>
+          <p className="text-[10px] font-bold text-gray-700 mt-1">PER TRANSACTION</p>
+        </div>
+        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
+          <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Avg Rating</p>
+          <p className="text-2xl font-serif font-black text-greenleaf-text">
+            {ratings?.avgRating ? ratings.avgRating.toFixed(1) : "0.0"} ⭐
+          </p>
+          <p className="text-[10px] font-bold text-gray-700 mt-1">
+            {ratings?.total || 0} REVIEWS
+          </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
         {/* Popular Items */}
-        <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent">
+        <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-xl border border-white/30">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-serif font-black text-greenleaf-text italic">Top Performing Curations</h3>
-            <span className="text-[10px] font-bold text-greenleaf-primary px-3 py-1 bg-greenleaf-primary/10 rounded-full">DEMAND ANALYTICS</span>
+            <span className="text-[10px] font-bold bg-gray-100 text-gray-700 px-3 py-1 rounded-full">DEMAND ANALYTICS</span>
           </div>
           <div className="space-y-4 text-greenleaf-text">
             {popularItems.length > 0 ? (
               popularItems.map((item, idx) => (
-                <div key={item._id} className="flex items-center justify-between p-4 bg-greenleaf-bg border border-greenleaf-accent rounded-2xl hover:scale-[1.01] transition-transform">
+                <div key={item._id} className="flex items-center justify-between p-4 bg-greenleaf-bg border border-greenleaf-accent rounded-2xl">
                   <div className="flex items-center gap-4">
                     <span className="w-8 h-8 flex items-center justify-center bg-white rounded-lg text-xs font-black border border-greenleaf-accent">{idx + 1}</span>
                     <div>
@@ -183,7 +187,7 @@ export default function DashboardSection({ settings }) {
                       <p className="text-[10px] text-greenleaf-muted font-black tracking-widest">{item.quantitySold} UNITS SOLD</p>
                     </div>
                   </div>
-                  <p className="text-sm font-black text-greenleaf-primary">{currencySymbol}{item.revenue.toLocaleString()}</p>
+                  <p className="text-sm font-black text-gray-900">{formatPrice(item.revenue, settings?.currency || restaurant.currency)}</p>
                 </div>
               ))
             ) : (
@@ -193,10 +197,10 @@ export default function DashboardSection({ settings }) {
         </div>
 
         {/* Operational Pulse */}
-        <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent">
+        <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-xl border border-white/30">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-serif font-black text-greenleaf-text italic">Operational Pulse</h3>
-            <span className="text-[10px] font-bold text-orange-500 px-3 py-1 bg-orange-500/10 rounded-full">REAL-TIME FLOW</span>
+            <span className="text-[10px] font-bold bg-gray-100 text-gray-700 px-3 py-1 rounded-full">REAL-TIME FLOW</span>
           </div>
           <div className="grid grid-cols-2 gap-4 text-greenleaf-text">
             <div className="p-6 bg-greenleaf-bg border border-greenleaf-accent rounded-2xl">

@@ -2,6 +2,7 @@ import { createOrder } from "../services/api";
 import axios from "axios";
 import { API_BASE } from "../services/api";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
+import { formatPrice } from "../utils/formatCurrency";
 
 export default function CheckoutPage() {
   const location = useLocation();
@@ -150,7 +151,7 @@ export default function CheckoutPage() {
                       {item.name} {item.selectedPortion && <span className="text-xs md:text-sm font-normal opacity-60">({item.selectedPortion.label})</span>}
                     </span>
                     <span className="text-[8px] md:text-[10px] uppercase font-black tracking-tighter opacity-40">
-                      Unit Price: {safeSettings.currency || '₹'}{item.selectedPortion ? item.selectedPortion.price : item.price}
+                      Unit Price: {formatPrice(item.selectedPortion ? item.selectedPortion.price : item.price, safeSettings.currency)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 md:gap-4">
@@ -167,7 +168,7 @@ export default function CheckoutPage() {
         {/* Total */}
         <div className="flex justify-between items-center bg-greenleaf-primary rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 md:mb-10 shadow-premium shadow-greenleaf-primary/20">
           <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white/70">Total Investment</span>
-          <span className="text-2xl md:text-3xl font-serif font-black text-white">{safeSettings.currency || '₹'}{calculatedTotal.toFixed(2)}</span>
+          <span className="text-2xl md:text-3xl font-serif font-black text-white">{formatPrice(calculatedTotal.toFixed(2), safeSettings.currency)}</span>
         </div>
 
         {/* Payment Buttons */}

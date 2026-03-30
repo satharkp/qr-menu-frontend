@@ -26,6 +26,29 @@ export default function AdminPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const roleLabel = getRoleFromToken();
+
+  const getAdminLabel = () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return "Administrator";
+
+      const payload = JSON.parse(atob(token.split(".")[1]));
+
+      if (payload.isMainAdmin === true || payload.isMainAdmin === "true" || payload.role === "mainadmin") {
+        return "Main Administrator";
+      }
+
+      if (payload.role === "admin") {
+        return "Secondary Administrator";
+      }
+
+      return "Administrator";
+    } catch {
+      return "Administrator";
+    }
+  };
+
+  const adminLabel = getAdminLabel();
   const [settings, setSettings] = useState(null);
 
   const loadSettings = () => {
@@ -77,7 +100,11 @@ export default function AdminPage() {
           <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-12 rounded-[1rem] bg-greenleaf-secondary/20 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg overflow-hidden">
               {settings?.logo ? (
-                <img src={settings.logo} alt="Logo" className="w-full h-full object-contain p-1" />
+                <img
+                  src={settings.logo}
+                  alt="Logo"
+                  className="w-full h-full object-contain p-2 max-w-[80%] max-h-[80%] mx-auto"
+                />
               ) : (
                 <span className="text-2xl">🌿</span>
               )}
@@ -95,7 +122,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <p className="text-xs font-black tracking-widest opacity-60 uppercase">{roleLabel}</p>
-                <p className="text-sm font-bold">Administrator</p>
+                <p className="text-sm font-bold">{adminLabel}</p>
               </div>
             </div>
           </div>

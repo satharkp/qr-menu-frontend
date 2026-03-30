@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5050/api";
+const API_BASE = "https://qr-res.onrender.com/api";
 
 export default function StaffSection() {
   const [staff, setStaff] = useState([]);
@@ -42,22 +42,22 @@ export default function StaffSection() {
   }, []);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">Staff</h2>
+    <div className="space-y-6 sm:space-y-8 bg-gradient-to-br from-greenleaf-bg via-white to-greenleaf-bg p-2 sm:p-4 rounded-[2rem]">
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-gray-900">Staff Management</h2>
 
       {/* Create Staff Card */}
-      <div className="bg-white rounded-2xl shadow p-4 sm:p-6 max-w-md w-full">
+      <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] p-4 sm:p-6 max-w-md w-full shadow-xl border border-white/30">
         <h3 className="text-lg font-semibold mb-4">Create Staff</h3>
 
         <input
-          className="w-full border rounded-lg p-2 sm:p-3 mb-3"
+          className="w-full border border-gray-200 rounded-xl p-2 sm:p-3 mb-3 bg-white/70 focus:outline-none"
           placeholder="Staff email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
-          className="w-full border rounded-lg p-2 sm:p-3 mb-3"
+          className="w-full border border-gray-200 rounded-xl p-2 sm:p-3 mb-3 bg-white/70 focus:outline-none"
           placeholder="Password"
           type="password"
           value={password}
@@ -65,7 +65,7 @@ export default function StaffSection() {
         />
 
         <select
-          className="w-full border rounded-lg p-2 sm:p-3 mb-4"
+          className="w-full border border-gray-200 rounded-xl p-2 sm:p-3 mb-4 bg-white/70 focus:outline-none"
           value={role}
           onChange={(e) => setRole(e.target.value)}
         >
@@ -76,14 +76,14 @@ export default function StaffSection() {
 
         <button
           onClick={createStaff}
-          className="w-full bg-blue-600 text-white py-2 sm:py-3 rounded-lg hover:bg-blue-700 transition"
+          className="w-full bg-gray-900 text-white py-2 sm:py-3 rounded-xl font-semibold"
         >
           Create Staff
         </button>
       </div>
 
       {/* Staff List */}
-      <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
+      <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] shadow-xl border border-white/30 p-4 sm:p-6">
         <h3 className="text-lg font-semibold mb-4">Staff List</h3>
 
         {staff.length === 0 && (
@@ -94,7 +94,7 @@ export default function StaffSection() {
           {staff.map((s) => (
             <div
               key={s._id}
-              className="border rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              className="bg-white/70 border border-white/30 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             >
               <div>
                 <p className="font-semibold">{s.email}</p>
@@ -111,7 +111,7 @@ export default function StaffSection() {
               {s.isMainAdmin !== true && (
                 <button
                   onClick={() => deleteStaff(s._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 w-full sm:w-auto"
+                  className="bg-black text-white px-3 py-1 rounded-xl w-full sm:w-auto text-sm"
                 >
                   Delete
                 </button>
