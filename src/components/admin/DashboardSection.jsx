@@ -183,11 +183,15 @@ export default function DashboardSection({ settings }) {
                   <div className="flex items-center gap-4">
                     <span className="w-8 h-8 flex items-center justify-center bg-white rounded-lg text-xs font-black border border-greenleaf-accent">{idx + 1}</span>
                     <div>
-                      <p className="text-sm font-bold">{item.name}</p>
-                      <p className="text-[10px] text-greenleaf-muted font-black tracking-widest">{item.quantitySold} UNITS SOLD</p>
+                      <p className="text-sm font-bold">{item.name || item._id || "Item"}</p>
+                      <p className="text-[10px] text-greenleaf-muted font-black tracking-widest">
+                        {(item.quantitySold ?? item.count ?? 0)} UNITS SOLD
+                      </p>
                     </div>
                   </div>
-                  <p className="text-sm font-black text-gray-900">{formatPrice(item.revenue, settings?.currency || restaurant.currency)}</p>
+                  <p className="text-sm font-black text-gray-900">
+                    {formatPrice(item.revenue ?? 0, settings?.currency || restaurant.currency)}
+                  </p>
                 </div>
               ))
             ) : (
