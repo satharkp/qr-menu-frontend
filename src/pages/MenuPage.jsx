@@ -73,7 +73,8 @@ export default function MenuPage() {
         const exists = prev.find(i => i._id === updatedItem._id);
 
         if (!updatedItem.available) {
-          return prev.filter(i => i._id !== updatedItem._id);
+          // keep item but mark unavailable
+          return prev.map(i => i._id === updatedItem._id ? updatedItem : i);
         }
 
         if (exists) {
@@ -230,6 +231,7 @@ export default function MenuPage() {
                   <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
                     {menu
                       .filter((item) => item.category === cat)
+                      .sort((a, b) => (b.available === false) - (a.available === false))
                       .map((item) => (
                         <MenuItem
                           key={item._id}
@@ -252,6 +254,7 @@ export default function MenuPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
                   {menu
                     .filter((item) => item.category === activeCategory)
+                    .sort((a, b) => (b.available === false) - (a.available === false))
                     .map((item) => (
                       <MenuItem
                         key={item._id}

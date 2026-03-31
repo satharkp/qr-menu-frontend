@@ -63,6 +63,7 @@ export default function CheckoutPage() {
 
       // CASH → stay on menu with integrated tracker/waiting UI
       if (method === "CASH") {
+        localStorage.setItem("showRating", "true");
         navigate(`/table/${tableId}`);
         return;
       }
@@ -92,6 +93,7 @@ export default function CheckoutPage() {
               orderId: order._id,
             });
 
+            localStorage.setItem("showRating", "true");
             navigate(`/table/${tableId}`);
           } catch (err) {
             console.error("Payment verification failed", err);

@@ -7,6 +7,7 @@ export default function CashierSection({ settings }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteringStatus, setFilteringStatus] = useState("unpaid"); // unpaid, all
+  const [paymentFilter, setPaymentFilter] = useState("all"); // all, cash, upi, card
 
   const token = localStorage.getItem("token");
   const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
@@ -47,8 +48,14 @@ export default function CashierSection({ settings }) {
   };
 
   const filteredOrders = orders.filter(order => {
-    if (order.paymentMethod !== "CASH") return false;
+    // payment filter
+    if (paymentFilter !== "all" && order.paymentMethod !== paymentFilter.toUpperCase()) {
+      return false;
+    }
+
+    // status filter
     if (filteringStatus === "unpaid") return !order.isPaid;
+
     return true;
   });
 
@@ -84,6 +91,21 @@ export default function CashierSection({ settings }) {
             All Cash History
           </button>
         </div>
+        <div className="flex flex-wrap gap-2 mt-3">
+          {["all", "cash", "upi", "card"].map((type) => (
+            <button
+              key={type}
+              onClick={() => setPaymentFilter(type)}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
+                paymentFilter === type
+                  ? "bg-greenleaf-primary text-white shadow-premium"
+                  : "text-greenleaf-muted bg-white"
+              }`}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Orders Grid */}
@@ -104,7 +126,9 @@ export default function CashierSection({ settings }) {
                   <p className="text-lg sm:text-xl lg:text-2xl font-black text-greenleaf-text">
                     {formatPrice(order.total, settings?.currency)}
                   </p>
-                  <p className="text-[10px] font-bold text-greenleaf-muted uppercase tracking-tighter">Settlement Due</p>
+                  <p className="text-[10px] font-bold text-greenleaf-muted uppercase tracking-tighter">
+                    {order.paymentMethod}
+                  </p>
                 </div>
               </div>
 

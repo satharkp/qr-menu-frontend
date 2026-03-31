@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-const API_BASE = "https://qr-res.onrender.com/api";
+import { API_BASE } from "../../services/api";
 
 export default function StaffSection() {
   const [staff, setStaff] = useState([]);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../services/api";
 import { 
   LayoutDashboard, 
   Plus, 
@@ -20,8 +21,6 @@ import {
   ChevronRight,
   ShieldCheck
 } from "lucide-react";
-
-const API_BASE = import.meta.env.VITE_API_URL || "https://qr-res.onrender.com/api";
 
 const SuperAdminDashboard = () => {
   const [restaurants, setRestaurants] = useState([]);

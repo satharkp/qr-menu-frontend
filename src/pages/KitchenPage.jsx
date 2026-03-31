@@ -6,6 +6,7 @@ import { API_BASE, SOCKET_URL } from "../services/api";
 
 export default function KitchenPage() {
   const [orders, setOrders] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
   const [newOrderIds, setNewOrderIds] = useState([]);
   const [tvMode, setTvMode] = useState(false);
   const [volume, setVolume] = useState(() => {
@@ -19,6 +20,7 @@ export default function KitchenPage() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const previousOrderIds = useRef([]);
   const notificationAudioRef = useRef(null);
+  const [activeTab, setActiveTab] = useState("orders");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -62,6 +64,22 @@ export default function KitchenPage() {
 
   const token = localStorage.getItem("token");
 
+  const fetchMenuItems = async () => {
+    try {
+      if (!token) return;
+
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const restaurantId = payload.restaurantId;
+
+      const res = await axios.get(`${API_BASE}/menu/${restaurantId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMenuItems(res.data || []);
+    } catch (err) {
+      console.error("Failed to fetch menu items", err);
+    }
+  };
+
   const fetchOrders = async () => {
     try {
       if (!token) return;
@@ -87,6 +105,7 @@ export default function KitchenPage() {
 
   useEffect(() => {
     fetchOrders();
+    fetchMenuItems();
     const socket = io(SOCKET_URL);
     const storedToken = localStorage.getItem("token");
     if (!storedToken) return;
@@ -135,6 +154,19 @@ export default function KitchenPage() {
     }
   };
 
+  const toggleAvailability = async (itemId) => {
+    try {
+      await axios.patch(`${API_BASE}/menu/${itemId}/availability`, {}, {
+        
+        headers: { Authorization: `Bearer ${token}` },
+        
+      });
+      fetchMenuItems();
+    } catch (err) {
+      console.error("Failed to toggle availability", err);
+    }
+  };
+
   const clearOrders = async () => {
     if (!window.confirm("ARE YOU SURE? This will cancel ALL pending orders for this restaurant!")) return;
     try {
@@ -154,6 +186,15 @@ export default function KitchenPage() {
     const ready = orders.filter(o => o.status === "READY").length;
     return { queue, preparing, ready };
   }, [orders]);
+
+  const groupedMenuItems = useMemo(() => {
+    return menuItems.reduce((acc, item) => {
+      const cat = item.category || "Uncategorized";
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push(item);
+      return acc;
+    }, {});
+  }, [menuItems]);
 
   return (
     <DashboardLayout title="Kitchen Intelligence" hideNavbar={tvMode}>
@@ -226,95 +267,168 @@ export default function KitchenPage() {
           ))}
         </div>
 
-        {orders.length === 0 ? (
-          <div className={`py-60 text-center rounded-[4rem] border-8 border-dashed animate-pulse ${tvMode ? "border-white/20" : "border-greenleaf-accent bg-white/50"}`}>
-            <p className={`font-serif opacity-40 ${tvMode ? "text-6xl" : "text-3xl"}`}>No orders currently in orbit.</p>
-          </div>
-        ) : (
-          <div className={`flex flex-col gap-10 w-full`}>
-            {orders.map((order) => (
-              <div
-                key={order._id}
-                className={`w-full flex flex-col relative overflow-hidden transition-all duration-500 animate-in zoom-in-95 ${newOrderIds.includes(order._id) ? "ring-8 ring-greenleaf-secondary scale-[1.01]" : ""
-                  } ${tvMode
-                    ? "bg-white/10 rounded-[3rem] border border-white/20"
-                    : "bg-white rounded-[2rem] shadow-floating border border-greenleaf-accent"
-                  }`}
-              >
-                {/* Order Ticket Header */}
-                <div className={`p-8 border-b flex justify-between items-center ${tvMode ? "bg-white/10 border-white/20" : "bg-greenleaf-accent border-greenleaf-accent"}`}>
-                  <div>
-                    <span className={`font-black uppercase tracking-[0.2em] opacity-60 ${tvMode ? "text-lg" : "text-[10px]"}`}>Table Identification</span>
-                    <p className={`font-serif font-black ${tvMode ? "text-7xl text-greenleaf-secondary" : "text-4xl text-greenleaf-primary"}`}>
-                      #{order.tableNumber}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span className={`font-black uppercase tracking-widest rounded-full ${tvMode ? "text-2xl px-6 py-2" : "text-[10px] px-3 py-1"} ${order.status === "PLACED" ? "bg-yellow-100 text-yellow-700" :
-                      order.status === "PREPARING" ? "bg-orange-100 text-orange-700" : "bg-green-100 text-green-700"
-                      }`}>
-                      {order.status}
-                    </span>
-                    <p className={`font-black opacity-40 mt-3 ${tvMode ? "text-xl" : "text-[10px]"}`}>ARRIVED {getMinutesAgo(order.createdAt)}</p>
-                  </div>
-                </div>
+        {/* Tab Switcher */}
+        <div className={`flex gap-2 md:gap-4 mb-8 p-1.5 md:p-2 rounded-[2rem] max-w-xs md:max-w-md ${tvMode ? "bg-white/10" : "bg-white border border-greenleaf-accent shadow-sm"}`}>
+          <button
+            onClick={() => setActiveTab("orders")}
+            className={`flex-1 py-3 md:py-4 rounded-[1.5rem] font-black uppercase tracking-widest transition-all ${activeTab === 'orders'
+              ? (tvMode ? "bg-greenleaf-secondary text-white" : "bg-greenleaf-primary text-white shadow-lg")
+              : (tvMode ? "text-white/40 hover:text-white" : "text-greenleaf-muted hover:text-greenleaf-primary")
+              } ${tvMode ? "text-xl" : "text-[10px]"}`}
+          >
+            Live Orders
+          </button>
+          <button
+            onClick={() => setActiveTab("inventory")}
+            className={`flex-1 py-3 md:py-4 rounded-[1.5rem] font-black uppercase tracking-widest transition-all ${activeTab === 'inventory'
+              ? (tvMode ? "bg-greenleaf-secondary text-white" : "bg-greenleaf-primary text-white shadow-lg")
+              : (tvMode ? "text-white/40 hover:text-white" : "text-greenleaf-muted hover:text-greenleaf-primary")
+              } ${tvMode ? "text-xl" : "text-[10px]"}`}
+          >
+            Inventory
+          </button>
+        </div>
 
-                {/* Items Section */}
-                <div className={`${tvMode ? "p-10" : "p-8"} flex-1`}>
-                  <ul className={`${tvMode ? "space-y-6" : "space-y-4"}`}>
-                    {order.items.map((item, i) => (
-                      <li key={i} className="flex justify-between items-start gap-6">
-                        <div className="flex gap-6 items-center">
-                          <span className={`rounded-xl flex items-center justify-center font-black ${tvMode ? "w-14 h-14 text-2xl bg-greenleaf-secondary" : "w-8 h-8 text-sm bg-greenleaf-primary"} text-white`}>
-                            {item.quantity}
-                          </span>
-                          <span className={`font-black tracking-tight ${tvMode ? "text-4xl text-white" : "text-xl text-greenleaf-text"}`}>
+        {activeTab === "inventory" ? (
+          /* 🍽️ Menu Availability Control */
+          <div className={`mb-12 rounded-[2.5rem] shadow-premium transition-all duration-700 animate-in fade-in slide-in-from-bottom-10 ${tvMode ? "bg-white/5 border border-white/10 p-10" : "bg-white p-8 border border-greenleaf-accent"}`}>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className={`font-serif font-black tracking-tight ${tvMode ? "text-4xl text-greenleaf-secondary" : "text-2xl text-greenleaf-primary"}`}>
+                Inventory Management
+              </h2>
+              <p className={`font-black uppercase tracking-widest opacity-60 ${tvMode ? "text-xl" : "text-[10px]"}`}>
+                Toggle item availability instantly
+              </p>
+            </div>
+
+            <div className="space-y-8">
+              {Object.entries(groupedMenuItems).map(([category, items]) => (
+                <div key={category} className="space-y-4">
+                  <h3 className={`font-black uppercase tracking-[0.25em] opacity-40 ${tvMode ? "text-2xl" : "text-[10px]"}`}>
+                    {category}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                    {items.map((item) => (
+                      <button
+                        key={item._id}
+                        onClick={() => toggleAvailability(item._id)}
+                        className={`group flex items-center justify-between p-5 rounded-2xl border-2 transition-all active:scale-[0.98] ${item.available
+                            ? (tvMode ? "bg-green-500/10 border-green-500/30" : "bg-green-50 border-green-100 shadow-sm hover:shadow-md")
+                            : (tvMode ? "bg-red-500/10 border-red-500/30 opacity-60 grayscale" : "bg-red-50 border-red-100 opacity-80 grayscale-[0.5]")
+                          }`}
+                      >
+                        <div className="text-left">
+                          <p className={`font-bold tracking-tight mb-1 ${tvMode ? "text-2xl" : "text-sm"} ${item.available ? (tvMode ? "text-white" : "text-green-900") : "text-red-900"}`}>
                             {item.name}
+                          </p>
+                          <span className={`font-black uppercase tracking-widest ${tvMode ? "text-lg" : "text-[8px]"} ${item.available ? "text-green-600" : "text-red-600"}`}>
+                            {item.available ? "Currently In Stock" : "OUT OF STOCK"}
                           </span>
                         </div>
-                      </li>
+                        <div className={`w-3 h-3 rounded-full ${item.available ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-pulse" : "bg-red-500"}`} />
+                      </button>
                     ))}
-                  </ul>
-
-                  {order.specialInstructions && (
-                    <div className={`${tvMode ? "mt-12 p-8 border-4" : "mt-8 p-4 border"} bg-red-500/10 border-red-500/40 rounded-[2rem]`}>
-                      <p className={`font-black uppercase tracking-widest text-red-500 mb-2 ${tvMode ? "text-xl" : "text-[10px]"}`}>Kitchen Note</p>
-                      <p className={`font-black italic ${tvMode ? "text-3xl" : "text-sm"}`}>{order.specialInstructions}</p>
-                    </div>
-                  )}
+                  </div>
                 </div>
-
-                {/* Actions Section */}
-                <div className={`${tvMode ? "p-10" : "p-10"} pt-0`}>
-                  {order.status === "PLACED" && (
-                    <button
-                      onClick={() => updateStatus(order._id, "PREPARING")}
-                      className={`w-full bg-orange-500 hover:bg-orange-600 text-white rounded-[2rem] font-black uppercase tracking-[.25em] shadow-2xl transition-all active:scale-95 ${tvMode ? "py-10 text-3xl" : "py-5 text-xs"}`}
-                    >
-                      Fire! (Start Prep)
-                    </button>
-                  )}
-
-                  {order.status === "PREPARING" && (
-                    <button
-                      onClick={() => updateStatus(order._id, "READY")}
-                      className={`w-full bg-green-600 hover:bg-green-700 text-white rounded-[2rem] font-black uppercase tracking-[.25em] shadow-2xl transition-all active:scale-95 ${tvMode ? "py-10 text-3xl" : "py-5 text-xs"}`}
-                    >
-                      Order Ready
-                    </button>
-                  )}
-
-                  {order.status === "READY" && (
-                    <div className={`text-center bg-green-500/20 border-4 border-green-500/40 rounded-[2rem] ${tvMode ? "py-10" : "py-5"}`}>
-                      <p className={`text-green-500 font-black uppercase tracking-widest animate-pulse ${tvMode ? "text-3xl" : "text-xs"}`}>Waiting for Service</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Decorative Perf Line */}
-                <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-greenleaf-secondary to-transparent opacity-30"></div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          /* Live Orders Feed */
+          <div className="animate-in fade-in slide-in-from-bottom-10">
+            {orders.length === 0 ? (
+              <div className={`py-60 text-center rounded-[4rem] border-8 border-dashed animate-pulse ${tvMode ? "border-white/20" : "border-greenleaf-accent bg-white/50"}`}>
+                <p className={`font-serif opacity-40 ${tvMode ? "text-6xl" : "text-3xl"}`}>No orders currently in orbit.</p>
               </div>
-            ))}
+            ) : (
+              <div className={`flex flex-col gap-10 w-full`}>
+                {orders.map((order) => (
+                  <div
+                    key={order._id}
+                    className={`w-full flex flex-col relative overflow-hidden transition-all duration-500 animate-in zoom-in-95 ${newOrderIds.includes(order._id) ? "ring-8 ring-greenleaf-secondary scale-[1.01]" : ""
+                      } ${tvMode
+                        ? "bg-white/10 rounded-[3rem] border border-white/20"
+                        : "bg-white rounded-[2rem] shadow-floating border border-greenleaf-accent"
+                      }`}
+                  >
+                    {/* Order Ticket Header */}
+                    <div className={`p-8 border-b flex justify-between items-center ${tvMode ? "bg-white/10 border-white/20" : "bg-greenleaf-accent border-greenleaf-accent"}`}>
+                      <div>
+                        <span className={`font-black uppercase tracking-[0.2em] opacity-60 ${tvMode ? "text-lg" : "text-[10px]"}`}>Table Identification</span>
+                        <p className={`font-serif font-black ${tvMode ? "text-7xl text-greenleaf-secondary" : "text-4xl text-greenleaf-primary"}`}>
+                          #{order.tableNumber}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className={`font-black uppercase tracking-widest rounded-full ${tvMode ? "text-2xl px-6 py-2" : "text-[10px] px-3 py-1"} ${order.status === "PLACED" ? "bg-yellow-100 text-yellow-700" :
+                          order.status === "PREPARING" ? "bg-orange-100 text-orange-700" : "bg-green-100 text-green-700"
+                          }`}>
+                          {order.status}
+                        </span>
+                        <p className={`font-black opacity-40 mt-3 ${tvMode ? "text-xl" : "text-[10px]"}`}>ARRIVED {getMinutesAgo(order.createdAt)}</p>
+                      </div>
+                    </div>
+
+                    {/* Items Section */}
+                    <div className={`${tvMode ? "p-10" : "p-8"} flex-1`}>
+                      <ul className={`${tvMode ? "space-y-6" : "space-y-4"}`}>
+                        {order.items.map((item, i) => (
+                          <li key={i} className="flex justify-between items-start gap-6">
+                            <div className="flex gap-6 items-center">
+                              <span className={`rounded-xl flex items-center justify-center font-black ${tvMode ? "w-14 h-14 text-2xl bg-greenleaf-secondary" : "w-8 h-8 text-sm bg-greenleaf-primary"} text-white`}>
+                                {item.quantity}
+                              </span>
+                              <div className="flex items-center gap-4">
+                                <span className={`font-black tracking-tight ${tvMode ? "text-4xl text-white" : "text-xl text-greenleaf-text"}`}>
+                                  {item.name}
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {order.specialInstructions && (
+                        <div className={`${tvMode ? "mt-12 p-8 border-4" : "mt-8 p-4 border"} bg-red-500/10 border-red-500/40 rounded-[2rem]`}>
+                          <p className={`font-black uppercase tracking-widest text-red-500 mb-2 ${tvMode ? "text-xl" : "text-[10px]"}`}>Kitchen Note</p>
+                          <p className={`font-black italic ${tvMode ? "text-3xl" : "text-sm"}`}>{order.specialInstructions}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions Section */}
+                    <div className={`${tvMode ? "p-10" : "p-10"} pt-0`}>
+                      {order.status === "PLACED" && (
+                        <button
+                          onClick={() => updateStatus(order._id, "PREPARING")}
+                          className={`w-full bg-orange-500 hover:bg-orange-600 text-white rounded-[2rem] font-black uppercase tracking-[.25em] shadow-2xl transition-all active:scale-95 ${tvMode ? "py-10 text-3xl" : "py-5 text-xs"}`}
+                        >
+                          Fire! (Start Prep)
+                        </button>
+                      )}
+
+                      {order.status === "PREPARING" && (
+                        <button
+                          onClick={() => updateStatus(order._id, "READY")}
+                          className={`w-full bg-green-600 hover:bg-green-700 text-white rounded-[2rem] font-black uppercase tracking-[.25em] shadow-2xl transition-all active:scale-95 ${tvMode ? "py-10 text-3xl" : "py-5 text-xs"}`}
+                        >
+                          Order Ready
+                        </button>
+                      )}
+
+                      {order.status === "READY" && (
+                        <div className={`text-center bg-green-500/20 border-4 border-green-500/40 rounded-[2rem] ${tvMode ? "py-10" : "py-5"}`}>
+                          <p className={`text-green-500 font-black uppercase tracking-widest animate-pulse ${tvMode ? "text-3xl" : "text-xs"}`}>Waiting for Service</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Decorative Perf Line */}
+                    <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-greenleaf-secondary to-transparent opacity-30"></div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

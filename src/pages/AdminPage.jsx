@@ -8,6 +8,7 @@ import MenuSection from "../components/admin/MenuSection";
 import CashierSection from "../components/admin/CashierSection";
 import SettingsSection from "../components/admin/SettingsSection";
 import StaffSection from "../components/admin/StaffSection";
+import AnalyticsSection from "../components/admin/AnalyticsSection";
 
 const getRoleFromToken = () => {
   try {
@@ -75,6 +76,7 @@ export default function AdminPage() {
 
   const navItems = [
     { key: "dashboard", label: "Dashboard", icon: "📊" },
+    { key: "analytics", label: "Analytics", icon: "📈" },
     { key: "cashier", label: "Cashier", icon: "💰" },
     { key: "staff", label: "Staff", icon: "👥" },
     { key: "waiters", label: "Waiters", icon: "🧑‍🍳" },
@@ -190,6 +192,7 @@ export default function AdminPage() {
           <div className="max-w-7xl mx-auto">
             <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
               {activeSection === "dashboard" && <DashboardSection settings={settings} />}
+              {activeSection === "analytics" && <AnalyticsSection />}
               {activeSection === "staff" && <StaffSection />}
               {activeSection === "waiters" && <WaitersSection settings={settings} />}
               {activeSection === "tables" && <TablesSection settings={settings} />}

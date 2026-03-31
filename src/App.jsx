@@ -48,6 +48,14 @@ function App() {
           }
         />
         <Route
+          path="/admin/analytics"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminPage defaultTab="analytics" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/menu"
           element={
             <ProtectedRoute role="admin">
@@ -95,6 +103,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route path="/super-admin/login" element={<SuperAdminLoginPage />} />
         <Route
           path="/super-admin/dashboard"

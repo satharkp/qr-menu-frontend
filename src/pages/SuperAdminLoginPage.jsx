@@ -2,8 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Lock, Mail, ShieldCheck, ArrowRight } from "lucide-react";
+import { API_BASE } from "../services/api";
 
-const API_BASE = import.meta.env.VITE_API_URL || "https://qr-res.onrender.com/api";
 
 const SuperAdminLoginPage = () => {
   const [email, setEmail] = useState("");

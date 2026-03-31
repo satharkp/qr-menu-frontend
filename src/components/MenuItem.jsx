@@ -17,7 +17,7 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = 'â
     : 0;
 
   return (
-    <div className="group bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-floating transition-all duration-500 border border-greenleaf-accent flex flex-row md:flex-row mb-4 md:mb-6 animate-in fade-in slide-in-from-bottom-5">
+    <div className={`group bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm transition-all duration-500 border border-greenleaf-accent flex flex-row md:flex-row mb-4 md:mb-6 animate-in fade-in slide-in-from-bottom-5 ${!item.available ? 'opacity-75 grayscale' : 'hover:shadow-floating'}`}>
       {/* Image Section */}
       <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:h-auto md:w-40 lg:w-48 shrink-0 overflow-hidden">
         <img
@@ -29,6 +29,13 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = 'â
         {item.isPopular && (
           <div className="absolute top-2 left-2 bg-greenleaf-secondary text-white text-[8px] md:text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 md:px-2 md:py-1 rounded-md shadow-lg">
             Popular
+          </div>
+        )}
+        {!item.available && (
+          <div className="absolute inset-0 bg-black/5 flex items-center justify-center">
+            <div className="bg-black/80 text-white text-[8px] md:text-[10px] font-black uppercase tracking-tighter px-2 py-1 rounded-md transform -rotate-12">
+              Out of Stock
+            </div>
           </div>
         )}
       </div>
@@ -59,7 +66,11 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = 'â
         </div>
 
         <div className="mt-2 md:mt-6 flex items-center justify-end">
-          {isPortion ? (
+          {!item.available ? (
+            <span className="text-red-500 font-bold text-xs md:text-sm uppercase tracking-widest px-3 py-1 border border-red-200 rounded-lg bg-red-50">
+              Unavailable
+            </span>
+          ) : isPortion ? (
             <button
               onClick={() => onOpenPortions(item)}
               className="bg-greenleaf-primary hover:bg-greenleaf-primary/90 text-white px-4 py-2 md:px-8 md:py-3 rounded-xl md:rounded-2xl shadow-premium transition-all active:scale-95 font-bold text-xs md:text-sm flex items-center gap-1 md:gap-2 group-hover:translate-y-[-2px]"

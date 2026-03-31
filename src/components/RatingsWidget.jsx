@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_BASE } from "../services/api";
 
 export default function RatingsWidget({ restaurantId }) {
   const [rating, setRating] = useState(0);
@@ -7,10 +8,22 @@ export default function RatingsWidget({ restaurantId }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Check if we just completed a payment (set in CheckoutPage)
+    // Always prioritize this over whether they already rated, as they might want to rate specific orders
+    const showImmediately = localStorage.getItem("showRating") === "true";
+
+    if (showImmediately) {
+      setVisible(true);
+      setSubmitted(false);
+      setRating(0);
+      localStorage.removeItem("showRating");
+      return;
+    }
+
     // Only show after a short delay, and not if already rated this session
     const alreadyRated = sessionStorage.getItem(`rated-${restaurantId}`);
     if (!alreadyRated) {
-      const timer = setTimeout(() => setVisible(true), 8000);
+      const timer = setTimeout(() => setVisible(true), 12000); // 12s delay for normal browsing
       return () => clearTimeout(timer);
     }
   }, [restaurantId]);
@@ -19,7 +32,7 @@ export default function RatingsWidget({ restaurantId }) {
     if (rating === 0) return;
 
     try {
-      await fetch("https://qr-res.onrender.com/api/ratings", {
+      await fetch(`${API_BASE}/ratings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +63,7 @@ export default function RatingsWidget({ restaurantId }) {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-28 left-4 right-4 z-[98] flex justify-center animate-in slide-in-from-bottom-5 duration-500 backdrop-blur-[2px]">
+    <div className="fixed bottom-64 left-4 right-4 z-[100] flex justify-center animate-in slide-in-from-bottom-5 duration-500 backdrop-blur-[2px]">
       <div className="bg-white rounded-[2rem] shadow-[0_25px_80px_rgba(0,0,0,0.18)] border border-greenleaf-accent/60 p-6 max-w-sm w-full relative">
         <button
           onClick={() => setVisible(false)}
