@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE, SOCKET_URL } from "../../services/api";
 import imageCompression from "browser-image-compression";
+import { io } from "socket.io-client";
 
 export default function MenuSection() {
   const [menuItems, setMenuItems] = useState([]);
@@ -21,9 +22,36 @@ export default function MenuSection() {
   const token = localStorage.getItem("token");
   const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
   const restaurantId = payload?.restaurantId;
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (restaurantId) fetchMenu();
+    if (!restaurantId) return;
+
+    fetchMenu();
+
+    const s = io(SOCKET_URL, {
+      transports: ["websocket"],
+    });
+
+    s.emit("join-restaurant", restaurantId);
+
+    s.on("menu-item-updated", (updatedItem) => {
+      setMenuItems((prev) => {
+        const exists = prev.find(i => i._id === updatedItem._id);
+
+        if (exists) {
+          return prev.map(i => i._id === updatedItem._id ? updatedItem : i);
+        } else {
+          return [...prev, updatedItem];
+        }
+      });
+    });
+
+    setSocket(s);
+
+    return () => {
+      s.disconnect();
+    };
   }, [restaurantId]);
 
   if (!token || !restaurantId) {
@@ -404,11 +432,6 @@ export default function MenuSection() {
                       { headers: { Authorization: `Bearer ${token}` } }
                     );
 
-                    setMenuItems((prev) =>
-                      prev.map((m) =>
-                        m._id === item._id ? { ...m, available: !m.available } : m
-                      )
-                    );
                   } catch (err) {
                     console.error("Availability update error:", err.response?.data || err.message);
                     alert("Failed to update availability");
