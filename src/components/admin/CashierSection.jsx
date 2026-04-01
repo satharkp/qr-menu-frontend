@@ -161,8 +161,13 @@ export default function CashierSection({ settings }) {
                     Mark as Paid
                   </button>
                 ) : (
-                  <div className="h-10 flex items-center px-4 bg-green-50 rounded-xl border border-green-100 italic text-[10px] font-bold text-green-700">
-                    Settled at {new Date(order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <div className="flex flex-col items-end text-[10px] font-bold text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-100">
+                    <span>
+                      Settled at {new Date(order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <span className="text-greenleaf-muted text-[9px] font-medium">
+                      {new Date(order.updatedAt).toLocaleDateString()}
+                    </span>
                   </div>
                 )}
               </div>

@@ -182,7 +182,7 @@ export default function AdminPage() {
             <div className="text-right">
               <p className="text-xs font-black text-greenleaf-muted tracking-widest">LOCAL TIME</p>
               <p className="text-sm font-bold">
-                {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
               </p>
             </div>
           </div>
