@@ -13,7 +13,7 @@ import AnalyticsSection from "../components/admin/AnalyticsSection";
 const getRoleFromToken = () => {
   try {
     const token = localStorage.getItem("token");
-    if (!token) return "Admin";
+    if (!token) return "User";
     const payload = JSON.parse(atob(token.split(".")[1]));
     return payload.role?.toUpperCase() || "ADMIN";
   } catch {
@@ -31,7 +31,7 @@ export default function AdminPage() {
   const getAdminLabel = () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return "Administrator";
+      if (!token) return "Admin User";
 
       const payload = JSON.parse(atob(token.split(".")[1]));
 
@@ -43,9 +43,9 @@ export default function AdminPage() {
         return "Secondary Administrator";
       }
 
-      return "Administrator";
+      return "Admin User";
     } catch {
-      return "Administrator";
+      return "Admin User";
     }
   };
 
@@ -112,7 +112,7 @@ export default function AdminPage() {
               )}
             </div>
             <div>
-              <h2 className="text-xl font-serif font-black tracking-tight">{settings?.name || "Greenleaf"}</h2>
+              <h2 className="text-xl font-serif font-black tracking-tight">{settings?.name || "Your Restaurant"}</h2>
               <p className="text-[10px] uppercase tracking-widest font-bold opacity-60 text-greenleaf-secondary">Command Center</p>
             </div>
           </div>
