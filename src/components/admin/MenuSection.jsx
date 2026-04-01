@@ -431,7 +431,11 @@ export default function MenuSection() {
                       { restaurantId },
                       { headers: { Authorization: `Bearer ${token}` } }
                     );
-
+                    setMenuItems((prev) =>
+                      prev.map((m) =>
+                        m._id === item._id ? { ...m, available: !m.available } : m
+                      )
+                    );
                   } catch (err) {
                     console.error("Availability update error:", err.response?.data || err.message);
                     alert("Failed to update availability");
