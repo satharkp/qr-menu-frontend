@@ -22,7 +22,22 @@ export default function MenuSection() {
   const token = localStorage.getItem("token");
   const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
   const restaurantId = payload?.restaurantId;
-  const [socket, setSocket] = useState(null);
+
+  const fetchMenu = async () => {
+    try {
+      if (!restaurantId) return;
+
+      const res = await axios.get(
+        `${API_BASE}/menu/${restaurantId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setMenuItems(res.data || []);
+    } catch (err) {
+      console.error("Failed to fetch menu", err);
+      setMenuItems([]);
+    }
+  };
 
   useEffect(() => {
     if (!restaurantId) return;
@@ -47,7 +62,6 @@ export default function MenuSection() {
       });
     });
 
-    setSocket(s);
 
     return () => {
       s.disconnect();
@@ -61,22 +75,6 @@ export default function MenuSection() {
       </div>
     );
   }
-
-  const fetchMenu = async () => {
-    try {
-      if (!restaurantId) return;
-
-      const res = await axios.get(
-        `${API_BASE}/menu/${restaurantId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setMenuItems(res.data || []);
-    } catch (err) {
-      console.error("Failed to fetch menu", err);
-      setMenuItems([]);
-    }
-  };
 
   const handleImageChange = async (file) => {
     if (!file) return;
@@ -461,7 +459,7 @@ export default function MenuSection() {
                     );
 
                     setMenuItems((prev) => prev.filter((m) => m._id !== item._id));
-                  } catch (err) {
+                  } catch {
                     alert("Failed to delete menu item");
                   }
                 }}

@@ -1,9 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../utils/formatCurrency";
 
 const CartFloating = ({ cart, total, onPlaceOrder, currency = '₹' }) => {
-  const navigate = useNavigate();
-
   if (cart.length === 0) return null;
 
   return (

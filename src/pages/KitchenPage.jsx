@@ -46,6 +46,7 @@ export default function KitchenPage() {
   }, [volume, muted]);
 
   const getMinutesAgo = (date) => {
+    // eslint-disable-next-line react-hooks/purity
     const diffInMs = Date.now() - new Date(date).getTime();
     const diffInMins = Math.floor(diffInMs / 60000);
 

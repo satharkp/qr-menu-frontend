@@ -3,7 +3,6 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import { fetchNotifications, acknowledgeNotification, fetchSettings, API_BASE, SOCKET_URL } from "../services/api";
-const notificationSound = new Audio("/notification.mp3");
 
 
 export default function WaiterPage() {

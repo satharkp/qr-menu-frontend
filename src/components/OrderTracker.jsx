@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { fetchOrderById, SOCKET_URL } from "../services/api";
+import axios from "axios";
+import { fetchOrderById, SOCKET_URL, API_BASE } from "../services/api";
 import { io } from "socket.io-client";
 
 const OrderTracker = ({ restaurantId, tableNumber, currency = '₹' }) => {
@@ -9,11 +10,56 @@ const OrderTracker = ({ restaurantId, tableNumber, currency = '₹' }) => {
   const [orders, setOrders] = useState([]); // Store array of order objects
   const [timeLefts, setTimeLefts] = useState({}); // { orderId: minutes }
   const [isMinimized, setIsMinimized] = useState(false);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
     console.log("DEBUG: OrderTracker mounted.");
   }, []);
+
+  const handleCancelPending = (orderId) => {
+    const newIds = activeOrderIds.filter((id) => id !== orderId);
+    setActiveOrderIds(newIds);
+    localStorage.setItem("activeOrderIds", JSON.stringify(newIds));
+  };
+
+  const handleResumePayment = async (order) => {
+    try {
+      const { data: razorpayOrder } = await axios.post(
+        `${API_BASE}/payments/razorpay/order`,
+        { amount: order.total }
+      );
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "Greenleaf Restaurant",
+        description: "Order Payment",
+        order_id: razorpayOrder.id,
+        handler: async function (response) {
+          try {
+            await axios.post(`${API_BASE}/payments/razorpay/verify`, {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: order._id,
+            });
+            fetchAllOrders();
+            localStorage.setItem("showRating", "true");
+            // Reload page to reflect successful payment in menu
+            window.location.reload();
+          } catch {
+            alert("Payment verification failed");
+          }
+        },
+        theme: { color: "#105c38" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to initiate payment. Please cancel and try placing the order again.");
+    }
+  };
 
   const fetchAllOrders = async () => {
     if (activeOrderIds.length === 0) {
@@ -30,7 +76,7 @@ const OrderTracker = ({ restaurantId, tableNumber, currency = '₹' }) => {
               return data;
             }
             return null;
-          } catch (err) {
+          } catch {
             return null;
           }
         })
@@ -143,6 +189,35 @@ const OrderTracker = ({ restaurantId, tableNumber, currency = '₹' }) => {
 
       <div className={`w-full flex flex-col gap-3 transition-all duration-500 overflow-y-auto max-h-[40vh] py-2 px-1 custom-scrollbar ${isMinimized ? 'h-0 opacity-0 pointer-events-none' : 'opacity-100'}`}>
         {orders.map((order, index) => {
+          if (order.status === "PAYMENT_PENDING") {
+            return (
+              <div key={order._id} className="max-w-md mx-auto w-full bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_15px_50px_rgba(0,0,0,0.15)] border border-orange-500/20 p-4 animate-in slide-in-from-bottom-10 duration-700">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-orange-600 mb-1">Payment Pending</h3>
+                    <p className="text-xs font-bold text-greenleaf-muted/80 tracking-tight">Your recent order awaits payment.</p>
+                  </div>
+                  <span className="font-serif font-black text-xl text-greenleaf-primary">{currency}{order.total}</span>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => handleCancelPending(order._id)}
+                    className="flex-[0.6] border border-red-200 text-red-500 hover:bg-red-50 py-2.5 rounded-[1rem] font-black text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <span>Cancel</span>
+                    <span className="text-lg">✕</span>
+                  </button>
+                  <button 
+                    onClick={() => handleResumePayment(order)}
+                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-[1rem] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-orange-500/30 transition-all active:scale-95 flex items-center justify-center gap-2"
+                  >
+                    Complete Payment
+                  </button>
+                </div>
+              </div>
+            );
+          }
+
           if (order.status === "PENDING_CONFIRMATION") {
             return (
               <div key={order._id} className="inset-0 fixed z-[10000] bg-black/60 backdrop-blur-md flex items-center justify-center p-6 text-center animate-in fade-in duration-500">

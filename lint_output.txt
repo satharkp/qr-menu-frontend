@@ -1,0 +1,274 @@
+
+> qr-menu-frontend@0.0.0 lint
+> eslint .
+
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/CartFloating.jsx
+  5:9  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/OrderTracker.jsx
+  12:10  error    'error' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        no-unused-vars
+  12:17  error    'setError' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     no-unused-vars
+  33:20  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              no-unused-vars
+  65:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  63 |
+  64 |   useEffect(() => {
+> 65 |     fetchAllOrders();
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  66 |     const interval = setInterval(fetchAllOrders, 15000);
+  67 |     return () => clearInterval(interval);
+  68 |   }, [activeOrderIds, tableNumber]);  react-hooks/set-state-in-effect
+  68:6   warning  React Hook useEffect has a missing dependency: 'fetchAllOrders'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/exhaustive-deps
+  83:6   warning  React Hook useEffect has a missing dependency: 'fetchAllOrders'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/exhaustive-deps
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/ProtectedRoute.jsx
+  13:14  error  Error: Avoid constructing JSX within try/catch
+
+React does not immediately render components when JSX is rendered, so any errors from this component will not be caught by the try/catch. To catch errors in rendering a given component, wrap that component in an error boundary. (https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary).
+
+  11 |     // Only block access — do not redirect by role
+  12 |     if (role && payload.role !== role) {
+> 13 |       return <Navigate to="/login" replace />;
+     |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid constructing JSX within try/catch
+  14 |     }
+  15 |
+  16 |     return children;  react-hooks/error-boundaries
+  17:12  error  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    no-unused-vars
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/RatingsWidget.jsx
+  16:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  14 |
+  15 |     if (showImmediately) {
+> 16 |       setVisible(true);
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  17 |       setSubmitted(false);
+  18 |       setRating(0);
+  19 |       localStorage.removeItem("showRating");  react-hooks/set-state-in-effect
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/admin/AnalyticsSection.jsx
+  1:1  error  Definition for rule 'react/prop-types' was not found  react/prop-types
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/admin/CashierSection.jsx
+  36:6  warning  React Hook useEffect has a missing dependency: 'fetchOrders'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/admin/DashboardSection.jsx
+  24:6  warning  React Hook useEffect has a missing dependency: 'fetchAllData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/admin/MenuSection.jsx
+   25:10  error    'socket' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  no-unused-vars
+   30:5   error    Error: Cannot access variable before it is declared
+
+`fetchMenu` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  28 |     if (!restaurantId) return;
+  29 |
+> 30 |     fetchMenu();
+     |     ^^^^^^^^^ `fetchMenu` accessed before it is declared
+  31 |
+  32 |     const s = io(SOCKET_URL, {
+  33 |       transports: ["websocket"],
+
+  63 |   }
+  64 |
+> 65 |   const fetchMenu = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |     try {
+     | ^^^^^^^^^
+> 67 |       if (!restaurantId) return;
+     …
+     | ^^^^^^^^^
+> 78 |     }
+     | ^^^^^^^^^
+> 79 |   };
+     | ^^^^^ `fetchMenu` is declared here
+  80 |
+  81 |   const handleImageChange = async (file) => {
+  82 |     if (!file) return;  react-hooks/immutability
+   55:6   warning  React Hook useEffect has a missing dependency: 'fetchMenu'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/exhaustive-deps
+  464:28  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         no-unused-vars
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/admin/SettingsSection.jsx
+  45:14  error  'error' is defined but never used  no-unused-vars
+  66:14  error  'error' is defined but never used  no-unused-vars
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/admin/StaffSection.jsx
+  40:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  38 |
+  39 |   useEffect(() => {
+> 40 |     fetchStaff();
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  41 |   }, []);
+  42 |
+  43 |   return (  react-hooks/set-state-in-effect
+  41:6  warning  React Hook useEffect has a missing dependency: 'fetchStaff'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react-hooks/exhaustive-deps
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/admin/TablesSection.jsx
+  17:6  warning  React Hook useEffect has a missing dependency: 'fetchTables'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/components/admin/WaitersSection.jsx
+  32:5   error    Error: Cannot access variable before it is declared
+
+`fetchWaiters` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  30 |
+  31 |   useEffect(() => {
+> 32 |     fetchWaiters();
+     |     ^^^^^^^^^^^^ `fetchWaiters` accessed before it is declared
+  33 |     fetchTables();
+  34 |   }, []);
+  35 |
+
+  34 |   }, []);
+  35 |
+> 36 |   const fetchWaiters = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |     try {
+     | ^^^^^^^^^
+> 38 |       const res = await axios.get(
+     …
+     | ^^^^^^^^^
+> 45 |     }
+     | ^^^^^^^^^
+> 46 |   };
+     | ^^^^^ `fetchWaiters` is declared here
+  47 |
+  48 |   const fetchTables = async () => {
+  49 |     try {                                                       react-hooks/immutability
+  33:5   error    Error: Cannot access variable before it is declared
+
+`fetchTables` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  31 |   useEffect(() => {
+  32 |     fetchWaiters();
+> 33 |     fetchTables();
+     |     ^^^^^^^^^^^ `fetchTables` accessed before it is declared
+  34 |   }, []);
+  35 |
+  36 |   const fetchWaiters = async () => {
+
+  46 |   };
+  47 |
+> 48 |   const fetchTables = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 49 |     try {
+     | ^^^^^^^^^
+> 50 |       const payload = JSON.parse(atob(token.split(".")[1]));
+     …
+     | ^^^^^^^^^
+> 60 |     }
+     | ^^^^^^^^^
+> 61 |   };
+     | ^^^^^ `fetchTables` is declared here
+  62 |
+  63 |   const createWaiter = async () => {
+  64 |     try {  react-hooks/immutability
+  34:6   warning  React Hook useEffect has missing dependencies: 'fetchTables' and 'fetchWaiters'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-hooks/exhaustive-deps
+  80:14  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      no-unused-vars
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/pages/AdminPage.jsx
+  74:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  72 |   useEffect(() => {
+  73 |     const pathSection = location.pathname.split("/")[2] || "dashboard";
+> 74 |     setActiveSection(pathSection);
+     |     ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  75 |   }, [location.pathname]);
+  76 |
+  77 |   const navItems = [  react-hooks/set-state-in-effect
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/pages/KitchenPage.jsx
+   35:6   warning  React Hook useEffect has a missing dependency: 'volume'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    react-hooks/exhaustive-deps
+   49:22  error    Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  47 |
+  48 |   const getMinutesAgo = (date) => {
+> 49 |     const diffInMs = Date.now() - new Date(date).getTime();
+     |                      ^^^^^^^^^^ Cannot call impure function
+  50 |     const diffInMins = Math.floor(diffInMs / 60000);
+  51 |
+  52 |     if (diffInMins < 1) return "Just now";  react-hooks/purity
+  145:6   warning  React Hook useEffect has missing dependencies: 'fetchMenuItems' and 'fetchOrders'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/pages/PendingConfirmationPage.jsx
+  35:6  warning  React Hook useEffect has a missing dependency: 'fetchOrder'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/pages/SuperAdminDashboard.jsx
+  135:6    warning  React Hook useEffect has a missing dependency: 'fetchRestaurants'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 react-hooks/exhaustive-deps
+  495:121  error    Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  493 |                           <div className="flex items-center gap-3.5 text-slate-300 group-hover:text-slate-500 transition-colors">
+  494 |                             <Calendar size={16} strokeWidth={2} />
+> 495 |                           <span className="font-black uppercase tracking-[0.15em] text-[10px]">{new Date(r.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+      |                                                                                                                         ^^^^^^^^^^ Cannot call impure function
+  496 |                           </div>
+  497 |                         </td>
+  498 |                       </tr>  react-hooks/purity
+
+/Users/apple/qr-restaurant-backend/qr-menu-frontend/src/pages/WaiterPage.jsx
+    6:7  error    'notificationSound' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              no-unused-vars
+   74:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  72 |
+  73 |   useEffect(() => {
+> 74 |     fetchAssignedTables();
+     |     ^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  75 |     loadNotifications();
+  76 |     fetchSettings().then(s => { if (s?.currency) setCurrency(s.currency); }).catch(() => {});
+  77 |     const interval = setInterval(() => {  react-hooks/set-state-in-effect
+   82:6  warning  React Hook useEffect has a missing dependency: 'fetchAssignedTables'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         react-hooks/exhaustive-deps
+   92:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  90 |
+  91 |     const decoded = JSON.parse(atob(token.split(".")[1]));
+> 92 |     setPayload(decoded);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  93 |     fetchOrders();
+  94 |     fetchMenuData(decoded.restaurantId);
+  95 |                                                                          react-hooks/set-state-in-effect
+  127:6  warning  React Hook useEffect has a missing dependency: 'fetchOrders'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 react-hooks/exhaustive-deps
+
+✖ 38 problems (24 errors, 14 warnings)
+

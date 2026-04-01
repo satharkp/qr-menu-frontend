@@ -28,11 +28,6 @@ export default function WaitersSection() {
 
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    fetchWaiters();
-    fetchTables();
-  }, []);
-
   const fetchWaiters = async () => {
     try {
       const res = await axios.get(
@@ -60,6 +55,11 @@ export default function WaitersSection() {
     }
   };
 
+  useEffect(() => {
+    fetchWaiters();
+    fetchTables();
+  }, []);
+
   const createWaiter = async () => {
     try {
       await axios.post(
@@ -77,7 +77,7 @@ export default function WaitersSection() {
       setWaiterEmail("");
       setWaiterPassword("");
       fetchWaiters();
-    } catch (err) {
+    } catch {
       alert("Failed to create waiter");
     }
   };
@@ -94,8 +94,7 @@ export default function WaitersSection() {
       fetchWaiters();
       setToast({ message: "Waiter removed", type: "success" });
       setTimeout(() => setToast(null), 2500);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setToast({ message: "Failed to remove waiter", type: "error" });
       setTimeout(() => setToast(null), 2500);
     }
@@ -114,8 +113,7 @@ export default function WaitersSection() {
       fetchWaiters();
       setToast({ message: "Assignments cleared", type: "success" });
       setTimeout(() => setToast(null), 2500);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setToast({ message: "Failed to clear assignments", type: "error" });
       setTimeout(() => setToast(null), 2500);
     }
@@ -155,8 +153,7 @@ export default function WaitersSection() {
       fetchWaiters();
       setToast({ message: "Tables reassigned successfully", type: "success" });
       setTimeout(() => setToast(null), 2500);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setToast({ message: "Failed to assign tables", type: "error" });
       setTimeout(() => setToast(null), 2500);
     }

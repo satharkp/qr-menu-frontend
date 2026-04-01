@@ -492,6 +492,7 @@ const SuperAdminDashboard = () => {
                         <td className="px-10 py-8">
                           <div className="flex items-center gap-3.5 text-slate-300 group-hover:text-slate-500 transition-colors">
                             <Calendar size={16} strokeWidth={2} />
+                          {/* eslint-disable-next-line react-hooks/purity */}
                           <span className="font-black uppercase tracking-[0.15em] text-[10px]">{new Date(r.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                           </div>
                         </td>

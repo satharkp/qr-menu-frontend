@@ -13,10 +13,12 @@ export default function RatingsWidget({ restaurantId }) {
     const showImmediately = localStorage.getItem("showRating") === "true";
 
     if (showImmediately) {
-      setVisible(true);
-      setSubmitted(false);
-      setRating(0);
-      localStorage.removeItem("showRating");
+      setTimeout(() => {
+        setVisible(true);
+        setSubmitted(false);
+        setRating(0);
+        localStorage.removeItem("showRating");
+      }, 0);
       return;
     }
 

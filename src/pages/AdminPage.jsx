@@ -22,10 +22,10 @@ const getRoleFromToken = () => {
 };
 
 export default function AdminPage() {
-  const [activeSection, setActiveSection] = useState("dashboard");
+  const location = useLocation();
+  const activeSection = location.pathname.split("/")[2] || "dashboard";
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
-  const location = useLocation();
   const roleLabel = getRoleFromToken();
 
   const getAdminLabel = () => {
@@ -69,10 +69,6 @@ export default function AdminPage() {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const pathSection = location.pathname.split("/")[2] || "dashboard";
-    setActiveSection(pathSection);
-  }, [location.pathname]);
 
   const navItems = [
     { key: "dashboard", label: "Dashboard", icon: "📊" },

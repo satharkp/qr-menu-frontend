@@ -42,7 +42,7 @@ export default function SettingsSection({ onSettingsSaved }) {
           },
         });
       }
-    } catch (error) {
+    } catch {
       alert("Failed to load settings");
     } finally {
       setIsLoading(false);
@@ -63,7 +63,7 @@ export default function SettingsSection({ onSettingsSaved }) {
       await updateSettings(finalSettings);
       if (onSettingsSaved) onSettingsSaved();
       alert("Settings updated successfully!");
-    } catch (error) {
+    } catch {
       alert("Failed to update settings");
     } finally {
       setIsSaving(false);

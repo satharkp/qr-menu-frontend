@@ -1,16 +1,146 @@
-# React + Vite
+# 🍽️ QR-Based Restaurant Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack MERN application that enables restaurants to manage orders, menu, payments, and operations in real-time using QR-based ordering.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+### 🧑‍💼 Admin Panel
+- Manage menu items (create, update, delete)
+- Control item availability in real-time
+- View analytics (revenue, orders, top-selling items)
+- Role-based access control
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 👨‍🍳 Kitchen Panel
+- View incoming orders live
+- Toggle item availability (Available / Out of Stock)
+- Real-time updates across all panels using Socket.io
 
-## Expanding the ESLint configuration
+### 💳 Cashier Panel
+- View all transactions (Cash, UPI, Card)
+- Mark orders as paid
+- Track settlement time and date
+- Filter by payment type and status
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 📱 Customer Side
+- Scan QR to view menu
+- Add items to cart
+- Place orders instantly
+- View unavailable items with "Out of Stock" indicator
+
+---
+
+## ⚡ Tech Stack
+
+**Frontend:**
+- React.js
+- Tailwind CSS
+
+**Backend:**
+- Node.js
+- Express.js
+
+**Database:**
+- MongoDB (Atlas)
+
+**Real-Time:**
+- Socket.io
+
+**Authentication:**
+- JWT (Role-based)
+
+**Payments:**
+- Razorpay (Test Mode)
+
+**Deployment:**
+- Frontend: Vercel  
+- Backend: Render  
+
+---
+
+## 🔥 Key Highlights
+
+- Real-time synchronization between Admin, Kitchen, and Customer panels
+- Dynamic menu system with live availability updates
+- Analytics dashboard with revenue tracking and date filtering
+- Secure role-based authentication
+- Optimistic UI updates for smooth user experience
+
+---
+
+## 📦 Installation
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/satharkp/your-repo-name.git
+cd your-repo-name
+```
+
+---
+
+### 2. Setup Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Create a `.env` file:
+```env
+
+PORT=5050
+MONGO_URI=mongodb+srv://knaqk:CbULWqpIXT2WRpXL@qr-res.py75zkw.mongodb.net/restaurant?retryWrites=true&w=majority
+JWT_SECRET=supersecretkey
+RAZORPAY_KEY_ID=rzp_test_SJxoiJjW3BH8yU
+```
+
+---
+
+### 3. Setup Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Create a `.env` file:
+```env
+VITE_API_URL=http://localhost:5050/api
+```
+
+---
+
+## 🌐 Live Demo
+
+- Frontend: https://qr-menu-frontend-eta.vercel.app/
+- Backend: https://qr-res.onrender.com/api 
+
+---
+
+## 📸 Screenshots
+
+_Add screenshots here (Admin Dashboard, Kitchen Panel, Cashier Panel, Customer Menu)_
+
+---
+
+## 🧠 Future Improvements
+
+- Notifications system (order ready alerts)
+- Inventory management
+- Multi-restaurant support dashboard
+- Dark mode
+
+---
+
+## 👨‍💻 Author
+
+**Abdul Sathar KP**  
+📧 satharkp292@gmail.com  
+🔗 https://github.com/satharkp  
+
+---
+
+## ⭐ Show your support
+
+If you like this project, give it a ⭐ on GitHub!
