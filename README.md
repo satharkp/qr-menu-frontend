@@ -91,8 +91,6 @@ Create a `.env` file:
 
 PORT=5050
 MONGO_URI=mongodb+srv://knaqk:CbULWqpIXT2WRpXL@qr-res.py75zkw.mongodb.net/restaurant?retryWrites=true&w=majority
-JWT_SECRET=supersecretkey
-RAZORPAY_KEY_ID=rzp_test_SJxoiJjW3BH8yU
 ```
 
 ---
