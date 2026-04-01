@@ -73,8 +73,8 @@ A full-stack MERN application that enables restaurants to manage orders, menu, p
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/satharkp/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/satharkp/QR-RES
+cd QR-RES
 ```
 
 ---
