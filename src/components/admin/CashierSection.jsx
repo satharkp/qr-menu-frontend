@@ -163,7 +163,7 @@ export default function CashierSection({ settings }) {
                 ) : (
                   <div className="flex flex-col items-end text-[10px] font-bold text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-100">
                     <span>
-                      Settled at {new Date(order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      Settled at {new Date(order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                     </span>
                     <span className="text-greenleaf-muted text-[9px] font-medium">
                       {new Date(order.updatedAt).toLocaleDateString()}
