@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { fetchOrderById, SOCKET_URL, API_BASE } from "../services/api";
 import { io } from "socket.io-client";
+import { formatPrice } from "../utils/formatCurrency";
 
-const OrderTracker = ({ restaurantId, tableNumber, currency = '₹' }) => {
+const OrderTracker = ({ restaurantId, tableNumber, currency = '₹', restaurantName = "Restaurant" }) => {
   const [activeOrderIds, setActiveOrderIds] = useState(() => {
     return JSON.parse(localStorage.getItem("activeOrderIds") || "[]");
   });
@@ -153,6 +154,69 @@ const OrderTracker = ({ restaurantId, tableNumber, currency = '₹' }) => {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
+  const printBill = (order) => {
+    const printWindow = window.open('', '_blank');
+    const restaurantNameOnOrder = order.restaurantId?.name || restaurantName;
+    
+    const content = `
+      <html>
+        <head>
+          <title>Receipt - #` + order._id.substring(order._id.length - 6).toUpperCase() + `</title>
+          <style>
+            body { font-family: 'Courier New', Courier, monospace; padding: 20px; color: #000; max-width: 400px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+            .title { font-size: 24px; font-weight: bold; margin: 0; }
+            .subtitle { font-size: 14px; margin: 5px 0 0 0; }
+            .details { margin-bottom: 20px; font-size: 14px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+            .item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
+            .total { display: flex; justify-content: space-between; margin-top: 10px; font-weight: bold; font-size: 16px; border-top: 1px dashed #000; padding-top: 10px; }
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; border-top: 1px dashed #000; padding-top: 10px; }
+            @media print {
+              body { padding: 0; }
+              @page { margin: 0.5cm; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1 class="title">` + restaurantNameOnOrder + `</h1>
+            <p class="subtitle">Receipt</p>
+          </div>
+          <div class="details">
+            <div>Order ID: #` + order._id.substring(order._id.length - 6).toUpperCase() + `</div>
+            <div>Table: ` + order.tableNumber + `</div>
+            <div>Date: ` + new Date(order.createdAt).toLocaleString() + `</div>
+            <div>Status: ` + (order.isPaid ? 'PAID' : 'UNPAID') + `</div>
+          </div>
+          <div class="items">
+            ` + order.items.map(item => `
+              <div class="item">
+                <span>` + item.quantity + `x ` + item.name + `</span>
+                <span>` + formatPrice(item.price * item.quantity, currency) + `</span>
+              </div>
+            `).join('') + `
+          </div>
+          <div class="total">
+            <span>TOTAL</span>
+            <span>` + formatPrice(order.total, currency) + `</span>
+          </div>
+          <div class="footer">
+            <p>Thank you for dining with us!</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+  };
+
   if (orders.length === 0) return null;
 
   const getStatusColor = (status) => {
@@ -274,11 +338,19 @@ const OrderTracker = ({ restaurantId, tableNumber, currency = '₹' }) => {
                 </p>
               </div>
 
-              <div className="text-right border-l border-greenleaf-accent/20 pl-4 sm:pl-5 shrink-0">
-                <h4 className="text-[8px] sm:text-[9px] uppercase font-black tracking-widest text-greenleaf-muted/40 mb-0.5 sm:mb-1">Estimated</h4>
-                <p className="text-xl sm:text-2xl font-serif font-black text-greenleaf-primary leading-none">
-                  {timeLefts[order._id] || 0}<span className="text-[9px] sm:text-[10px] lowercase font-normal italic opacity-40 ml-0.5">m</span>
-                </p>
+              <div className="text-right border-l border-greenleaf-accent/20 pl-4 sm:pl-5 shrink-0 flex flex-col items-end gap-2">
+                <div>
+                  <h4 className="text-[8px] sm:text-[9px] uppercase font-black tracking-widest text-greenleaf-muted/40 mb-0.5 sm:mb-1">Estimated</h4>
+                  <p className="text-xl sm:text-2xl font-serif font-black text-greenleaf-primary leading-none">
+                    {timeLefts[order._id] || 0}<span className="text-[9px] sm:text-[10px] lowercase font-normal italic opacity-40 ml-0.5">m</span>
+                  </p>
+                </div>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); printBill(order); }}
+                  className="bg-greenleaf-bg hover:bg-greenleaf-accent/10 p-1.5 rounded-lg text-[8px] uppercase font-black tracking-tighter text-greenleaf-primary transition-all active:scale-95 border border-greenleaf-accent/50"
+                >
+                  View Bill 📄
+                </button>
               </div>
             </div>
           );

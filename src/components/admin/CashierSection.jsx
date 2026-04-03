@@ -47,7 +47,73 @@ export default function CashierSection({ settings }) {
     }
   };
 
+  const printBill = (order) => {
+    const printWindow = window.open('', '_blank');
+    const restaurantName = settings?.name || "Restaurant";
+    
+    const content = `
+      <html>
+        <head>
+          <title>Receipt - #` + order._id.substring(order._id.length - 6).toUpperCase() + `</title>
+          <style>
+            body { font-family: 'Courier New', Courier, monospace; padding: 20px; color: #000; max-width: 400px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+            .title { font-size: 24px; font-weight: bold; margin: 0; }
+            .subtitle { font-size: 14px; margin: 5px 0 0 0; }
+            .details { margin-bottom: 20px; font-size: 14px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+            .item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
+            .total { display: flex; justify-content: space-between; margin-top: 10px; font-weight: bold; font-size: 16px; border-top: 1px dashed #000; padding-top: 10px; }
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; border-top: 1px dashed #000; padding-top: 10px; }
+            @media print {
+              body { padding: 0; }
+              @page { margin: 0.5cm; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1 class="title">` + restaurantName + `</h1>
+            <p class="subtitle">Receipt</p>
+          </div>
+          <div class="details">
+            <div>Order ID: #` + order._id.substring(order._id.length - 6).toUpperCase() + `</div>
+            <div>Table: ` + order.tableNumber + `</div>
+            <div>Date: ` + new Date(order.createdAt).toLocaleString() + `</div>
+            <div>Status: ` + (order.isPaid ? 'PAID' : 'UNPAID') + `</div>
+          </div>
+          <div class="items">
+            ` + order.items.map(item => `
+              <div class="item">
+                <span>` + item.quantity + `x ` + item.name + `</span>
+                <span>` + formatPrice(item.price * item.quantity, settings?.currency) + `</span>
+              </div>
+            `).join('') + `
+          </div>
+          <div class="total">
+            <span>TOTAL</span>
+            <span>` + formatPrice(order.total, settings?.currency) + `</span>
+          </div>
+          <div class="footer">
+            <p>Thank you for dining with us!</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+  };
+
   const filteredOrders = orders.filter(order => {
+    // filter out orders that are still pending payment (Razorpay/Online)
+    if (order.status === "PAYMENT_PENDING") return false;
+
     // payment filter
     if (paymentFilter !== "all" && order.paymentMethod !== paymentFilter.toUpperCase()) {
       return false;
@@ -145,7 +211,7 @@ export default function CashierSection({ settings }) {
                 ))}
               </div>
 
-              <div className="pt-6 border-t border-greenleaf-bg flex items-center justify-between gap-4">
+              <div className="pt-6 border-t border-greenleaf-bg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex flex-col">
                    <span className="text-[9px] font-black text-greenleaf-muted uppercase tracking-widest mb-1">Status</span>
                    <span className={`text-[10px] font-black uppercase tracking-widest ${order.isPaid ? 'text-green-600' : 'text-orange-500'}`}>
@@ -153,23 +219,31 @@ export default function CashierSection({ settings }) {
                    </span>
                 </div>
                 
-                {!order.isPaid ? (
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-end">
                   <button
-                    onClick={() => markAsPaid(order._id)}
-                    className="bg-greenleaf-primary text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-premium"
+                    onClick={() => printBill(order)}
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-colors border border-gray-200 shadow-sm whitespace-nowrap"
                   >
-                    Mark as Paid
+                    Print Bill
                   </button>
-                ) : (
-                  <div className="flex flex-col items-end text-[10px] font-bold text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-100">
-                    <span>
-                      Settled at {new Date(order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
-                    </span>
-                    <span className="text-greenleaf-muted text-[9px] font-medium">
-                      {new Date(order.updatedAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                )}
+                  {!order.isPaid ? (
+                    <button
+                      onClick={() => markAsPaid(order._id)}
+                      className="bg-greenleaf-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-premium whitespace-nowrap"
+                    >
+                      Mark as Paid
+                    </button>
+                  ) : (
+                    <div className="flex flex-col items-end text-[10px] font-bold text-green-700 bg-green-50 px-3 sm:px-4 py-2 rounded-xl border border-green-100 whitespace-nowrap">
+                      <span>
+                        Settled at {new Date(order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                      </span>
+                      <span className="text-greenleaf-muted text-[9px] font-medium hidden sm:block">
+                        {new Date(order.updatedAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))

@@ -292,6 +292,7 @@ export default function MenuPage() {
         restaurantId={restaurant?.restaurantId}
         tableNumber={restaurant?.tableNumber}
         currency={settings.currency || '₹'}
+        restaurantName={restaurant?.restaurantName}
       />
 
       {/* Ratings Widget */}

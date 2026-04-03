@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchOrderById, callWaiter, fetchSettings } from "../services/api";
+import { formatPrice } from "../utils/formatCurrency";
 
 export default function PendingConfirmationPage() {
   const params = useParams();
@@ -79,6 +80,70 @@ export default function PendingConfirmationPage() {
     }
   };
 
+  const printBill = () => {
+    if (!order) return;
+    const printWindow = window.open('', '_blank');
+    const restaurantName = order.restaurantId?.name || "Restaurant";
+    
+    const content = `
+      <html>
+        <head>
+          <title>Receipt - #` + order._id.substring(order._id.length - 6).toUpperCase() + `</title>
+          <style>
+            body { font-family: 'Courier New', Courier, monospace; padding: 20px; color: #000; max-width: 400px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+            .title { font-size: 24px; font-weight: bold; margin: 0; }
+            .subtitle { font-size: 14px; margin: 5px 0 0 0; }
+            .details { margin-bottom: 20px; font-size: 14px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+            .item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
+            .total { display: flex; justify-content: space-between; margin-top: 10px; font-weight: bold; font-size: 16px; border-top: 1px dashed #000; padding-top: 10px; }
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; border-top: 1px dashed #000; padding-top: 10px; }
+            @media print {
+              body { padding: 0; }
+              @page { margin: 0.5cm; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1 class="title">` + restaurantName + `</h1>
+            <p class="subtitle">Receipt</p>
+          </div>
+          <div class="details">
+            <div>Order ID: #` + order._id.substring(order._id.length - 6).toUpperCase() + `</div>
+            <div>Table: ` + order.tableNumber + `</div>
+            <div>Date: ` + new Date(order.createdAt).toLocaleString() + `</div>
+            <div>Status: ` + (order.isPaid ? 'PAID' : 'UNPAID') + `</div>
+          </div>
+          <div class="items">
+            ` + order.items.map(item => `
+              <div class="item">
+                <span>` + item.quantity + `x ` + item.name + `</span>
+                <span>` + formatPrice(item.price * item.quantity, currency) + `</span>
+              </div>
+            `).join('') + `
+          </div>
+          <div class="total">
+            <span>TOTAL</span>
+            <span>` + formatPrice(order.total, currency) + `</span>
+          </div>
+          <div class="footer">
+            <p>Thank you for dining with us!</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+  };
+
   if (!orderId) {
     return (
       <div className="min-h-screen bg-greenleaf-bg flex items-center justify-center p-6">
@@ -139,6 +204,12 @@ export default function PendingConfirmationPage() {
             <span className="w-1.5 h-1.5 bg-greenleaf-primary rounded-full"></span>
             Your Curation
           </h2>
+          <button 
+            onClick={printBill}
+            className="absolute top-5 right-5 md:top-8 md:right-8 bg-white border border-greenleaf-accent hover:border-greenleaf-primary text-greenleaf-primary px-3 py-1.5 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm flex items-center gap-1.5"
+          >
+            Bill Copy 📄
+          </button>
 
           <div className="space-y-3 md:space-y-4 max-h-48 md:max-h-60 overflow-y-auto pr-2 custom-scrollbar">
             {order?.items?.map((item, index) => (
