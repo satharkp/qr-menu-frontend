@@ -20,6 +20,7 @@ export default function WaiterPage() {
   const [selectedItemForPortion, setSelectedItemForPortion] = useState(null);
   const [pendingOrders, setPendingOrders] = useState([]);
   const [currency, setCurrency] = useState('₹');
+  const [orderType, setOrderType] = useState("DINE_IN");
 
   // Fetch assigned tables
   const fetchAssignedTables = async () => {
@@ -72,7 +73,7 @@ export default function WaiterPage() {
   useEffect(() => {
     fetchAssignedTables();
     loadNotifications();
-    fetchSettings().then(s => { if (s?.currency) setCurrency(s.currency); }).catch(() => {});
+    fetchSettings().then(s => { if (s?.currency) setCurrency(s.currency); }).catch(() => { });
     const interval = setInterval(() => {
       fetchAssignedTables();
       loadNotifications();
@@ -207,6 +208,7 @@ export default function WaiterPage() {
         items: cart,
         total,
         paymentMethod: "CASH",
+        orderType,
         orderSource: "WAITER",
       }, { headers: { Authorization: `Bearer ${token}` } });
       setCart([]);
@@ -371,11 +373,18 @@ export default function WaiterPage() {
 
                       <div className="flex-1 space-y-4 w-full">
                         <div className="flex justify-between items-center border-b border-greenleaf-accent pb-4">
-                          <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${order.status === "READY" ? "bg-green-100 text-green-700" :
-                            order.status === "PENDING_CONFIRMATION" ? "bg-yellow-100 text-yellow-700" : "bg-greenleaf-accent text-greenleaf-primary"
-                            }`}>
-                            {order.status.replace('_', ' ')}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${order.status === "READY" ? "bg-green-100 text-green-700" :
+                              order.status === "PENDING_CONFIRMATION" ? "bg-yellow-100 text-yellow-700" : "bg-greenleaf-accent text-greenleaf-primary"
+                              }`}>
+                              {order.status.replace('_', ' ')}
+                            </span>
+                            {order.orderType === "TAKEAWAY" ? (
+                              <span className="bg-purple-100 text-purple-700 font-bold uppercase text-[9px] px-2.5 py-1 rounded-lg border border-purple-200">🛍️ Takeaway</span>
+                            ) : (
+                              <span className="bg-blue-50 text-blue-700 font-bold uppercase text-[9px] px-2.5 py-1 rounded-lg border border-blue-100">🍽️ Dine-In</span>
+                            )}
+                          </div>
                           {order.paymentMethod === "CASH" && (
                             <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-tighter ${order.isPaid ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
                               {order.isPaid ? 'Paid' : 'Unpaid'}
@@ -458,48 +467,70 @@ export default function WaiterPage() {
             <div className="bg-greenleaf-primary p-6 md:p-8 flex justify-between items-center text-white shrink-0">
               <div>
                 <h2 className="text-2xl md:text-3xl font-serif">Place Service Order</h2>
-                <p className="text-greenleaf-accent text-xs md:text-sm mt-1">Table {assignedTables.find(t => t._id === selectedTableId)?.tableNumber}</p>
+                <div className="flex gap-2">
+                  <p className="text-greenleaf-accent text-xs md:text-sm mt-1">Table {assignedTables.find(t => t._id === selectedTableId)?.tableNumber}</p>
+                  <span className="text-white/40">•</span>
+                  <p className="text-greenleaf-accent text-xs md:text-sm mt-1 uppercase font-bold tracking-widest">{orderType}</p>
+                </div>
               </div>
-              <button onClick={() => setSelectedTableId(null)} className="p-2 hover:bg-white/10 rounded-full">
+              <button onClick={() => { setSelectedTableId(null); setOrderType("DINE_IN"); }} className="p-2 hover:bg-white/10 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <h3 className="font-serif text-xl border-b pb-2">Top Menu Items</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  {menu.map(item => (
-                    <button
-                      key={item._id}
-                      onClick={() => {
-                        if (item.measurementType === 'PORTION' && item.portions?.length > 0) {
-                          setSelectedItemForPortion(item);
-                        } else {
-                          addToCart(item);
-                        }
-                      }}
-                      className="group flex justify-between items-center p-4 rounded-2xl border border-greenleaf-accent hover:border-greenleaf-primary transition-all hover:bg-greenleaf-accent/30 text-left"
-                    >
-                      <div className="flex-1">
-                        <p className="font-bold text-greenleaf-text">{item.name}</p>
-                        {item.measurementType === 'PORTION' ? (
-                          <div className="flex flex-wrap gap-2 mt-1">
-                            {item.portions.map((p, idx) => (
-                              <span key={idx} className="text-[10px] bg-greenleaf-accent px-2 py-0.5 rounded-full font-bold text-greenleaf-primary">
-                                {p.label}: {currency}{p.price}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-xs text-greenleaf-muted font-bold">{currency}{item.price}</p>
-                        )}
-                      </div>
-                      <span className="bg-greenleaf-accent p-2 rounded-xl text-greenleaf-primary group-hover:bg-greenleaf-primary group-hover:text-white transition-colors ml-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                      </span>
-                    </button>
-                  ))}
+              <div className="space-y-6">
+                {/* Order Type Toggle for Waiter */}
+                <div className="bg-greenleaf-bg p-2 rounded-2xl border border-greenleaf-accent flex gap-2">
+                  <button
+                    onClick={() => setOrderType("DINE_IN")}
+                    className={`flex-1 py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${orderType === "DINE_IN" ? "bg-greenleaf-primary text-white shadow-lg" : "text-greenleaf-muted hover:bg-white"}`}
+                  >
+                    🍽️ Dine-In
+                  </button>
+                  <button
+                    onClick={() => setOrderType("TAKEAWAY")}
+                    className={`flex-1 py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${orderType === "TAKEAWAY" ? "bg-purple-600 text-white shadow-lg" : "text-greenleaf-muted hover:bg-white"}`}
+                  >
+                    🛍️ Takeaway
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="font-serif text-xl border-b pb-2">Top Menu Items</h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    {menu.map(item => (
+                      <button
+                        key={item._id}
+                        onClick={() => {
+                          if (item.measurementType === 'PORTION' && item.portions?.length > 0) {
+                            setSelectedItemForPortion(item);
+                          } else {
+                            addToCart(item);
+                          }
+                        }}
+                        className="group flex justify-between items-center p-4 rounded-2xl border border-greenleaf-accent hover:border-greenleaf-primary transition-all hover:bg-greenleaf-accent/30 text-left"
+                      >
+                        <div className="flex-1">
+                          <p className="font-bold text-greenleaf-text">{item.name}</p>
+                          {item.measurementType === 'PORTION' ? (
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              {item.portions.map((p, idx) => (
+                                <span key={idx} className="text-[10px] bg-greenleaf-accent px-2 py-0.5 rounded-full font-bold text-greenleaf-primary">
+                                  {p.label}: {currency}{p.price}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-greenleaf-muted font-bold">{currency}{item.price}</p>
+                          )}
+                        </div>
+                        <span className="bg-greenleaf-accent p-2 rounded-xl text-greenleaf-primary group-hover:bg-greenleaf-primary group-hover:text-white transition-colors ml-4">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 

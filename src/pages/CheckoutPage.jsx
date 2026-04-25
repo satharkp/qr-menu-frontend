@@ -2,11 +2,13 @@ import { createOrder } from "../services/api";
 import axios from "axios";
 import { API_BASE } from "../services/api";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
+import { useState } from "react";
 import { formatPrice } from "../utils/formatCurrency";
 
 export default function CheckoutPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [orderType, setOrderType] = useState("DINE_IN");
 
   const { cart, tableId, settings } = location.state || {
     cart: [],
@@ -49,6 +51,7 @@ export default function CheckoutPage() {
           quantity: Number(item.quantity)
         })),
         paymentMethod: method,
+        orderType,
       };
 
       const order = await createOrder(orderData);
@@ -134,6 +137,32 @@ export default function CheckoutPage() {
             Checkout
           </h1>
           <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-1 md:mt-2">Finalize Your Selection</p>
+        </div>
+
+        {/* Order Type Toggle */}
+        <div className="flex bg-greenleaf-bg p-1.5 md:p-2 rounded-2xl md:rounded-[1.5rem] mb-6 md:mb-8 border border-greenleaf-accent shadow-sm">
+          <button
+            onClick={() => setOrderType("DINE_IN")}
+            className={`flex-1 py-3 md:py-4 rounded-xl md:rounded-[1.2rem] font-black uppercase tracking-widest transition-all text-[10px] md:text-xs flex flex-col items-center gap-1 ${
+              orderType === "DINE_IN"
+                ? "bg-greenleaf-primary text-white shadow-premium scale-[1.02]"
+                : "text-greenleaf-muted hover:text-greenleaf-primary"
+            }`}
+          >
+            <span className="text-xl md:text-2xl">🍽️</span>
+            Dine-In
+          </button>
+          <button
+            onClick={() => setOrderType("TAKEAWAY")}
+            className={`flex-1 py-3 md:py-4 rounded-xl md:rounded-[1.2rem] font-black uppercase tracking-widest transition-all text-[10px] md:text-xs flex flex-col items-center gap-1 ${
+              orderType === "TAKEAWAY"
+                ? "bg-greenleaf-primary text-white shadow-premium scale-[1.02]"
+                : "text-greenleaf-muted hover:text-greenleaf-primary"
+            }`}
+          >
+            <span className="text-xl md:text-2xl">🛍️</span>
+            Takeaway
+          </button>
         </div>
 
         {/* Order Summary */}

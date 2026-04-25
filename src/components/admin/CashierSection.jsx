@@ -78,6 +78,7 @@ export default function CashierSection({ settings }) {
           <div class="details">
             <div>Order ID: #` + order._id.substring(order._id.length - 6).toUpperCase() + `</div>
             <div>Table: ` + order.tableNumber + `</div>
+            <div style="font-weight: bold; margin: 5px 0;">Type: ` + (order.orderType === "TAKEAWAY" ? "TAKEAWAY" : "DINE-IN") + `</div>
             <div>Date: ` + new Date(order.createdAt).toLocaleString() + `</div>
             <div>Status: ` + (order.isPaid ? 'PAID' : 'UNPAID') + `</div>
           </div>
@@ -181,9 +182,20 @@ export default function CashierSection({ settings }) {
             <div key={order._id} className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent group">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-greenleaf-primary bg-greenleaf-primary/10 px-3 py-1 rounded-full mb-3 block w-fit">
-                    Table {order.tableNumber}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-greenleaf-primary bg-greenleaf-primary/10 px-3 py-1 rounded-full">
+                      Table {order.tableNumber}
+                    </span>
+                    {order.orderType === "TAKEAWAY" ? (
+                      <span className="text-[10px] font-black uppercase tracking-widest text-purple-700 bg-purple-100 px-3 py-1 rounded-full border border-purple-200 shadow-sm flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
+                        <span>🛍️</span> Takeaway
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-black uppercase tracking-widest text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 shadow-sm flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
+                        <span>🍽️</span> Dine-In
+                      </span>
+                    )}
+                  </div>
                   <h3 className="text-xl font-serif font-black text-greenleaf-text italic">
                     {order._id.substring(order._id.length - 6).toUpperCase()}
                   </h3>

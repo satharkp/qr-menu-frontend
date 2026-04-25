@@ -185,6 +185,7 @@ const OrderTracker = ({ restaurantId, tableNumber, currency = '₹', restaurantN
           <div class="details">
             <div>Order ID: #` + order._id.substring(order._id.length - 6).toUpperCase() + `</div>
             <div>Table: ` + order.tableNumber + `</div>
+            <div style="font-weight: bold; margin: 5px 0;">Type: ` + (order.orderType === "TAKEAWAY" ? "TAKEAWAY" : "DINE-IN") + `</div>
             <div>Date: ` + new Date(order.createdAt).toLocaleString() + `</div>
             <div>Status: ` + (order.isPaid ? 'PAID' : 'UNPAID') + `</div>
           </div>
@@ -330,6 +331,12 @@ const OrderTracker = ({ restaurantId, tableNumber, currency = '₹', restaurantN
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
                   <span className="text-[8px] sm:text-[9px] font-black uppercase text-greenleaf-primary tracking-widest">Table {order.tableNumber}</span>
+                  <span className="w-1 h-1 bg-greenleaf-accent/50 rounded-full"></span>
+                  {order.orderType === "TAKEAWAY" ? (
+                    <span className="text-[8px] sm:text-[9px] font-black uppercase text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-md border border-purple-100 flex items-center gap-0.5"><span>🛍️</span> Takeaway</span>
+                  ) : (
+                    <span className="text-[8px] sm:text-[9px] font-black uppercase text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100 flex items-center gap-0.5"><span>🍽️</span> Dine-In</span>
+                  )}
                   <span className="w-1 h-1 bg-greenleaf-accent/50 rounded-full"></span>
                   <span className="text-[8px] sm:text-[9px] font-black uppercase text-greenleaf-muted/40 italic">Seq #{index + 1}</span>
                 </div>

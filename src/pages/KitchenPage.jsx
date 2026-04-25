@@ -158,9 +158,9 @@ export default function KitchenPage() {
   const toggleAvailability = async (itemId) => {
     try {
       await axios.patch(`${API_BASE}/menu/${itemId}/availability`, {}, {
-        
+
         headers: { Authorization: `Bearer ${token}` },
-        
+
       });
       fetchMenuItems();
     } catch (err) {
@@ -314,8 +314,8 @@ export default function KitchenPage() {
                         key={item._id}
                         onClick={() => toggleAvailability(item._id)}
                         className={`group flex items-center justify-between p-5 rounded-2xl border-2 transition-all active:scale-[0.98] ${item.available
-                            ? (tvMode ? "bg-green-500/10 border-green-500/30" : "bg-green-50 border-green-100 shadow-sm hover:shadow-md")
-                            : (tvMode ? "bg-red-500/10 border-red-500/30 opacity-60 grayscale" : "bg-red-50 border-red-100 opacity-80 grayscale-[0.5]")
+                          ? (tvMode ? "bg-green-500/10 border-green-500/30" : "bg-green-50 border-green-100 shadow-sm hover:shadow-md")
+                          : (tvMode ? "bg-red-500/10 border-red-500/30 opacity-60 grayscale" : "bg-red-50 border-red-100 opacity-80 grayscale-[0.5]")
                           }`}
                       >
                         <div className="text-left">
@@ -355,7 +355,12 @@ export default function KitchenPage() {
                     {/* Order Ticket Header */}
                     <div className={`p-8 border-b flex justify-between items-center ${tvMode ? "bg-white/10 border-white/20" : "bg-greenleaf-accent border-greenleaf-accent"}`}>
                       <div>
-                        <span className={`font-black uppercase tracking-[0.2em] opacity-60 ${tvMode ? "text-lg" : "text-[10px]"}`}>Table Identification</span>
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className={`font-black uppercase tracking-[0.2em] opacity-60 ${tvMode ? "text-lg" : "text-[10px]"}`}>Table Identification</span>
+                          {order.orderType === "TAKEAWAY" && (
+                            <span className={`bg-purple-100 text-purple-700 font-black uppercase tracking-widest rounded-full ${tvMode ? "text-xl px-4 py-1" : "text-[8px] px-2 py-0.5 border border-purple-200"}`}>🛍️ Takeaway</span>
+                          )}
+                        </div>
                         <p className={`font-serif font-black ${tvMode ? "text-7xl text-greenleaf-secondary" : "text-4xl text-greenleaf-primary"}`}>
                           #{order.tableNumber}
                         </p>

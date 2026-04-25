@@ -15,7 +15,7 @@ export default function PendingConfirmationPage() {
   const [currency, setCurrency] = useState('₹');
 
   useEffect(() => {
-    fetchSettings().then(s => { if (s?.currency) setCurrency(s.currency); }).catch(() => {});
+    fetchSettings().then(s => { if (s?.currency) setCurrency(s.currency); }).catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function PendingConfirmationPage() {
     if (!order) return;
     const printWindow = window.open('', '_blank');
     const restaurantName = order.restaurantId?.name || "Restaurant";
-    
+
     const content = `
       <html>
         <head>
@@ -112,6 +112,7 @@ export default function PendingConfirmationPage() {
           <div class="details">
             <div>Order ID: #` + order._id.substring(order._id.length - 6).toUpperCase() + `</div>
             <div>Table: ` + order.tableNumber + `</div>
+            <div style="font-weight: bold; margin: 5px 0;">Type: ` + (order.orderType === "TAKEAWAY" ? "TAKEAWAY" : "DINE-IN") + `</div>
             <div>Date: ` + new Date(order.createdAt).toLocaleString() + `</div>
             <div>Status: ` + (order.isPaid ? 'PAID' : 'UNPAID') + `</div>
           </div>
@@ -137,7 +138,7 @@ export default function PendingConfirmationPage() {
     printWindow.document.write(content);
     printWindow.document.close();
     printWindow.focus();
-    
+
     setTimeout(() => {
       printWindow.print();
       printWindow.close();
@@ -183,6 +184,17 @@ export default function PendingConfirmationPage() {
             Order Received
           </h1>
           <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-1 md:mt-2">Currently being processed</p>
+          <div className="mt-4 flex justify-center">
+            {order?.orderType === "TAKEAWAY" ? (
+              <span className="bg-purple-100 text-purple-700 font-black uppercase text-[10px] px-4 py-1.5 rounded-full border border-purple-200 shadow-sm flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
+                <span>🛍️</span> Takeaway Order
+              </span>
+            ) : (
+              <span className="bg-blue-50 text-blue-700 font-black uppercase text-[10px] px-4 py-1.5 rounded-full border border-blue-100 shadow-sm flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
+                <span>🍽️</span> Dine-In Order
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Wait Time Display */}
@@ -204,7 +216,7 @@ export default function PendingConfirmationPage() {
             <span className="w-1.5 h-1.5 bg-greenleaf-primary rounded-full"></span>
             Your Curation
           </h2>
-          <button 
+          <button
             onClick={printBill}
             className="absolute top-5 right-5 md:top-8 md:right-8 bg-white border border-greenleaf-accent hover:border-greenleaf-primary text-greenleaf-primary px-3 py-1.5 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm flex items-center gap-1.5"
           >
