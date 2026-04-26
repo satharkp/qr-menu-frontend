@@ -2,7 +2,7 @@ import { createOrder } from "../services/api";
 import axios from "axios";
 import { API_BASE } from "../services/api";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatPrice } from "../utils/formatCurrency";
 
 export default function CheckoutPage() {
@@ -17,11 +17,15 @@ export default function CheckoutPage() {
   };
 
   const safeSettings = settings || {};
-  const dynamicStyles = {
-    "--color-primary": safeSettings.themeColor || "#105c38",
-    "--font-heading": `"${safeSettings.font || "Playfair Display"}", serif`,
-    "--font-main": `"${safeSettings.font || "Lato"}", sans-serif`
-  };
+
+  useEffect(() => {
+    if (safeSettings.themeColor || safeSettings.font) {
+      const root = document.documentElement;
+      root.style.setProperty("--color-primary", safeSettings.themeColor || "#2563eb");
+      root.style.setProperty("--font-main", safeSettings.font || "Inter");
+      root.style.setProperty("--font-heading", safeSettings.font || "Inter");
+    }
+  }, [safeSettings]);
 
   // Safely calculate total from cart to avoid NaN issues
   const calculatedTotal = Array.isArray(cart)
@@ -124,69 +128,66 @@ export default function CheckoutPage() {
 
 
   return (
-    <div className="min-h-screen bg-greenleaf-bg flex items-center justify-center p-6 relative overflow-hidden" style={dynamicStyles}>
-      {/* Decorative botanical elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-greenleaf-primary/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-
-      <div className="w-full max-w-xl bg-white rounded-[2rem] md:rounded-[3rem] shadow-floating p-6 md:p-12 border border-greenleaf-accent relative z-10 animate-in fade-in zoom-in-95 duration-700">
-        <div className="text-center mb-6 md:mb-10">
-          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 bg-greenleaf-bg rounded-xl md:rounded-2xl flex items-center justify-center border border-greenleaf-accent shadow-sm">
-            <span className="text-2xl md:text-3xl">🛍️</span>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-3 md:p-6 relative overflow-hidden font-sans">
+      <div className="w-full max-w-xl bg-white rounded-[2rem] shadow-xl p-6 md:p-12 border border-gray-100 relative z-10 animate-in fade-in zoom-in-95 duration-700">
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 mx-auto mb-4 bg-slate-50 rounded-2xl flex items-center justify-center border border-gray-100 shadow-sm text-2xl">
+            🛍️
           </div>
-          <h1 className="text-2xl md:text-4xl font-serif font-bold text-greenleaf-text tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             Checkout
           </h1>
-          <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-1 md:mt-2">Finalize Your Selection</p>
+          <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mt-1.5">Finalize Your Selection</p>
         </div>
 
         {/* Order Type Toggle */}
-        <div className="flex bg-greenleaf-bg p-1.5 md:p-2 rounded-2xl md:rounded-[1.5rem] mb-6 md:mb-8 border border-greenleaf-accent shadow-sm">
+        <div className="flex bg-slate-50 p-1.5 rounded-2xl mb-6 border border-gray-100 shadow-sm">
           <button
             onClick={() => setOrderType("DINE_IN")}
-            className={`flex-1 py-3 md:py-4 rounded-xl md:rounded-[1.2rem] font-black uppercase tracking-widest transition-all text-[10px] md:text-xs flex flex-col items-center gap-1 ${
+            className={`flex-1 py-3.5 rounded-xl font-bold uppercase tracking-widest transition-all text-[10px] flex flex-col items-center gap-1 ${
               orderType === "DINE_IN"
-                ? "bg-greenleaf-primary text-white shadow-premium scale-[1.02]"
-                : "text-greenleaf-muted hover:text-greenleaf-primary"
+                ? "bg-slate-900 text-white shadow-lg scale-[1.02]"
+                : "text-slate-400 hover:text-slate-900"
             }`}
           >
-            <span className="text-xl md:text-2xl">🍽️</span>
+            <span className="text-xl">🍽️</span>
             Dine-In
           </button>
           <button
             onClick={() => setOrderType("TAKEAWAY")}
-            className={`flex-1 py-3 md:py-4 rounded-xl md:rounded-[1.2rem] font-black uppercase tracking-widest transition-all text-[10px] md:text-xs flex flex-col items-center gap-1 ${
+            className={`flex-1 py-3.5 rounded-xl font-bold uppercase tracking-widest transition-all text-[10px] flex flex-col items-center gap-1 ${
               orderType === "TAKEAWAY"
-                ? "bg-greenleaf-primary text-white shadow-premium scale-[1.02]"
-                : "text-greenleaf-muted hover:text-greenleaf-primary"
+                ? "bg-slate-900 text-white shadow-lg scale-[1.02]"
+                : "text-slate-400 hover:text-slate-900"
             }`}
           >
-            <span className="text-xl md:text-2xl">🛍️</span>
+            <span className="text-xl">🛍️</span>
             Takeaway
           </button>
         </div>
 
         {/* Order Summary */}
-        <div className="bg-greenleaf-bg rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 mb-6 md:mb-8 border border-greenleaf-accent">
-          <h2 className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-greenleaf-primary mb-4 md:mb-6 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-greenleaf-primary rounded-full"></span>
+        <div className="bg-slate-50 rounded-2xl p-5 md:p-8 mb-6 border border-gray-100">
+          <h2 className="text-[9px] font-bold uppercase tracking-widest text-slate-900 mb-4 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-slate-900 rounded-full"></span>
             Order Summary
           </h2>
           {cart.length === 0 ? (
-            <p className="text-sm italic text-greenleaf-muted py-4 text-center">Your curation is currently empty.</p>
+            <p className="text-xs italic text-slate-400 py-4 text-center">Your selection is empty.</p>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[30vh] overflow-y-auto pr-1 custom-scrollbar">
               {cart.map((item) => (
                 <div key={item.cartItemId || item._id} className="flex justify-between items-center group">
-                  <div className="flex flex-col">
-                    <span className="text-base md:text-lg font-bold text-greenleaf-text group-hover:text-greenleaf-primary transition-colors">
-                      {item.name} {item.selectedPortion && <span className="text-xs md:text-sm font-normal opacity-60">({item.selectedPortion.label})</span>}
+                  <div className="flex-1 pr-4">
+                    <span className="text-sm md:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors block leading-tight">
+                      {item.name} {item.selectedPortion && <span className="text-[10px] font-normal opacity-60">({item.selectedPortion.label})</span>}
                     </span>
-                    <span className="text-[8px] md:text-[10px] uppercase font-black tracking-tighter opacity-40">
-                      Unit Price: {formatPrice(item.selectedPortion ? item.selectedPortion.price : item.price, safeSettings.currency)}
+                    <span className="text-[8px] uppercase font-bold tracking-tight text-slate-400">
+                      {formatPrice(item.selectedPortion ? item.selectedPortion.price : item.price, safeSettings.currency)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 md:gap-4">
-                    <span className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-white border border-greenleaf-accent flex items-center justify-center text-[10px] md:text-xs font-black">
+                  <div className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-[10px] font-bold shadow-sm">
                       x{item.quantity}
                     </span>
                   </div>
@@ -197,52 +198,52 @@ export default function CheckoutPage() {
         </div>
 
         {/* Total */}
-        <div className="flex justify-between items-center bg-greenleaf-primary rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 md:mb-10 shadow-premium shadow-greenleaf-primary/20">
-          <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white/70">Total Investment</span>
-          <span className="text-2xl md:text-3xl font-serif font-black text-white">{formatPrice(calculatedTotal.toFixed(2), safeSettings.currency)}</span>
+        <div className="flex justify-between items-center bg-slate-900 rounded-2xl p-5 mb-8 shadow-xl">
+          <span className="text-[9px] font-bold uppercase tracking-widest text-white/60">Total Amount</span>
+          <span className="text-2xl md:text-3xl font-bold text-white">{formatPrice(calculatedTotal.toFixed(2), safeSettings.currency)}</span>
         </div>
 
         {/* Payment Buttons */}
-        <div className="grid grid-cols-1 gap-4">
+        <div className="space-y-3">
           {safeSettings?.features?.cashPayment !== false && (
             <button
               disabled={!cart.length}
               onClick={() => handlePayment("CASH")}
-              className="w-full bg-greenleaf-secondary hover:bg-greenleaf-secondary/90 disabled:bg-gray-200 transition-all text-white py-4 md:py-5 rounded-[1.25rem] md:rounded-[1.5rem] font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.25em] shadow-xl shadow-greenleaf-secondary/20 active:scale-95"
+              className="w-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 transition-all text-white py-4.5 rounded-xl font-bold text-[10px] uppercase tracking-[0.25em] shadow-lg active:scale-95"
             >
               Pay at Counter (Cash)
             </button>
           )}
 
           {safeSettings?.features?.onlinePayment !== false && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 disabled={!cart.length}
                 onClick={() => handlePayment("UPI")}
-                className="bg-white hover:bg-purple-50 border border-purple-200 disabled:opacity-50 transition-all text-purple-700 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] shadow-sm active:scale-95 flex items-center justify-center gap-2"
+                className="bg-white hover:bg-slate-50 border border-gray-200 disabled:opacity-50 transition-all text-slate-900 py-4 rounded-xl font-bold text-[9px] uppercase tracking-[0.15em] shadow-sm active:scale-95 flex items-center justify-center gap-1.5"
               >
-                UPI Access
+                UPI Transfer
               </button>
 
               <button
                 disabled={!cart.length}
                 onClick={() => handlePayment("CARD")}
-                className="bg-white hover:bg-blue-50 border border-blue-200 disabled:opacity-50 transition-all text-blue-700 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] shadow-sm active:scale-95 flex items-center justify-center gap-2"
+                className="bg-white hover:bg-slate-50 border border-gray-200 disabled:opacity-50 transition-all text-slate-900 py-4 rounded-xl font-bold text-[9px] uppercase tracking-[0.15em] shadow-sm active:scale-95 flex items-center justify-center gap-1.5"
               >
-                Global Card
+                Credit Card
               </button>
             </div>
           )}
         </div>
 
-        <p className="mt-10 text-center text-[10px] font-black text-greenleaf-muted uppercase tracking-[0.2em] opacity-40">
+        <p className="mt-8 text-center text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] opacity-60">
           Secure Transaction Gateway • SSL
         </p>
       </div>
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&display=swap');
+      <style dangerouslySetInnerHTML={{ __html: `
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
       `}} />
     </div>
   );

@@ -227,54 +227,53 @@ export default function WaiterPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div
             onClick={() => { setViewMode("ORDERS"); setOrderFilter("ALL"); }}
-            className="bg-white p-6 rounded-3xl shadow-premium border border-greenleaf-accent flex items-center justify-between overflow-hidden relative group cursor-pointer hover:shadow-floating transition-all active:scale-95"
+            className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between overflow-hidden relative group cursor-pointer hover:shadow-md transition-all active:scale-95"
           >
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-greenleaf-accent rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
             <div>
-              <p className="text-sm font-sans text-greenleaf-muted uppercase tracking-wider font-bold">Active Orders</p>
-              <h3 className="text-3xl font-serif text-greenleaf-primary mt-1">{stats.activeOrders}</h3>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Orders</p>
+              <h3 className="text-3xl font-bold text-brand-primary mt-1">{stats.activeOrders}</h3>
             </div>
-            <div className="bg-greenleaf-primary/10 p-4 rounded-2xl text-greenleaf-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+            <div className="bg-brand-primary/10 p-3 rounded-lg text-brand-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
             </div>
           </div>
 
           <div
             onClick={() => setViewMode("HISTORY")}
-            className={`${stats.pendingCalls > 0 ? 'bg-red-50 animate-pulse' : 'bg-white'} p-6 rounded-3xl shadow-premium border border-red-100 flex items-center justify-between overflow-hidden relative group transition-all cursor-pointer hover:shadow-floating active:scale-95`}
+            className={`${stats.pendingCalls > 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-200'} p-6 rounded-xl shadow-sm border flex items-center justify-between overflow-hidden relative group transition-all cursor-pointer hover:shadow-md active:scale-95`}
           >
             <div>
-              <p className="text-sm font-sans text-greenleaf-muted uppercase tracking-wider font-bold">Waiter Calls</p>
-              <h3 className={`text-3xl font-serif ${stats.pendingCalls > 0 ? 'text-red-600' : 'text-greenleaf-primary'} mt-1`}>{stats.pendingCalls}</h3>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Waiter Calls</p>
+              <h3 className={`text-3xl font-bold ${stats.pendingCalls > 0 ? 'text-red-600' : 'text-brand-primary'} mt-1`}>{stats.pendingCalls}</h3>
             </div>
-            <div className={`${stats.pendingCalls > 0 ? 'bg-red-600 text-white' : 'bg-greenleaf-accent text-greenleaf-primary'} p-4 rounded-2xl transition-colors`}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+            <div className={`${stats.pendingCalls > 0 ? 'bg-red-600 text-white' : 'bg-brand-accent text-brand-primary'} p-3 rounded-lg transition-colors`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
             </div>
           </div>
 
           <div
             onClick={() => { setViewMode("ORDERS"); setOrderFilter("PENDING"); }}
-            className={`${stats.pendingConfirmation > 0 ? 'bg-amber-50 animate-pulse border-amber-200' : 'bg-white border-greenleaf-accent'} p-6 rounded-3xl shadow-premium border flex items-center justify-between overflow-hidden relative group cursor-pointer hover:shadow-floating transition-all active:scale-95`}
+            className={`${stats.pendingConfirmation > 0 ? 'bg-amber-50 border-amber-200 animate-pulse' : 'bg-white border-gray-200'} p-6 rounded-xl shadow-sm border flex items-center justify-between overflow-hidden relative group cursor-pointer hover:shadow-md transition-all active:scale-95`}
           >
             <div>
-              <p className="text-sm font-sans text-greenleaf-muted uppercase tracking-wider font-bold">Needs Confirm</p>
-              <h3 className={`text-3xl font-serif ${stats.pendingConfirmation > 0 ? 'text-amber-600' : 'text-greenleaf-primary'} mt-1`}>{stats.pendingConfirmation}</h3>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Needs Confirm</p>
+              <h3 className={`text-3xl font-bold ${stats.pendingConfirmation > 0 ? 'text-amber-600' : 'text-brand-primary'} mt-1`}>{stats.pendingConfirmation}</h3>
             </div>
-            <div className={`${stats.pendingConfirmation > 0 ? 'bg-amber-500 text-white' : 'bg-greenleaf-accent text-greenleaf-primary'} p-4 rounded-2xl transition-colors`}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div className={`${stats.pendingConfirmation > 0 ? 'bg-amber-500 text-white' : 'bg-brand-accent text-brand-primary'} p-3 rounded-lg transition-colors`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
           </div>
         </div>
 
         {/* View Selection */}
-        <div className="flex bg-white p-1.5 rounded-2xl shadow-sm border border-greenleaf-accent w-fit mx-auto">
+        <div className="flex bg-white p-1 rounded-lg shadow-sm border border-gray-200 w-fit mx-auto">
           {["TABLES", "ORDERS", "HISTORY"].map((mode) => (
             <button
               key={mode}
               onClick={() => setViewMode(mode)}
-              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${viewMode === mode
-                ? "bg-greenleaf-primary text-white shadow-lg lg:px-12"
-                : "text-greenleaf-muted hover:text-greenleaf-primary hover:bg-greenleaf-accent"
+              className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${viewMode === mode
+                ? "bg-brand-primary text-white shadow-sm"
+                : "text-slate-500 hover:text-brand-primary hover:bg-brand-accent/50"
                 }`}
             >
               {mode}
@@ -289,22 +288,22 @@ export default function WaiterPage() {
               {assignedTables.map((table) => {
                 const status = getTableStatus(table.tableNumber);
                 const statusStyles = {
-                  PENDING: "bg-amber-500 text-white animate-pulse shadow-lg ring-4 ring-amber-500/20",
-                  READY: "bg-greenleaf-secondary text-white shadow-lg",
-                  OCCUPIED: "bg-greenleaf-primary text-white",
-                  FREE: "bg-white text-greenleaf-primary border-2 border-greenleaf-accent",
+                  PENDING: "bg-amber-500 text-white animate-pulse shadow-md",
+                  READY: "bg-brand-secondary text-white shadow-md",
+                  OCCUPIED: "bg-brand-primary text-white",
+                  FREE: "bg-white text-brand-primary border border-gray-200",
                 };
 
                 return (
                   <div
                     key={table._id}
                     onClick={() => setSelectedTableId(table._id)}
-                    className={`relative aspect-square rounded-3xl p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-floating flex flex-col items-center justify-center gap-3 ${statusStyles[status]}`}
+                    className={`relative aspect-square rounded-xl p-6 cursor-pointer transform transition-all duration-200 hover:shadow-md flex flex-col items-center justify-center gap-2 ${statusStyles[status]}`}
                   >
-                    <span className="text-xs font-sans opacity-80 uppercase tracking-widest font-bold">Table</span>
-                    <span className="text-4xl font-serif font-bold">{table.tableNumber}</span>
-                    <div className="mt-2 text-[10px] font-sans font-bold uppercase tracking-tighter opacity-90 px-3 py-1 bg-black/10 rounded-full">
-                      {status === "CALLING" ? "Customer Needs Help" : status}
+                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Table</span>
+                    <span className="text-4xl font-bold">{table.tableNumber}</span>
+                    <div className="mt-2 text-[10px] font-bold uppercase px-3 py-1 bg-black/10 rounded-full">
+                      {status === "CALLING" ? "Needs Help" : status}
                     </div>
                     {status === "CALLING" && (
                       <button
@@ -313,9 +312,9 @@ export default function WaiterPage() {
                           const call = waiterCalls.find(c => Number(c.tableNumber) === table.tableNumber);
                           if (call) acknowledgeCall(call._id);
                         }}
-                        className="mt-3 bg-white text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-gray-100"
+                        className="mt-3 bg-white text-red-600 px-4 py-1.5 rounded-md text-xs font-bold hover:bg-gray-100 shadow-sm"
                       >
-                        Acknowledge
+                        OK
                       </button>
                     )}
                   </div>
@@ -327,24 +326,24 @@ export default function WaiterPage() {
           {viewMode === "ORDERS" && (
             <div className="space-y-6 max-w-4xl mx-auto">
               {/* Order Tabs */}
-              <div className="flex gap-4 mb-6 border-b border-greenleaf-accent pb-2">
+              <div className="flex gap-6 mb-6 border-b border-gray-200 pb-0">
                 <button
                   onClick={() => setOrderFilter("ALL")}
-                  className={`px-4 py-2 font-bold text-sm transition-all ${orderFilter === "ALL" ? "text-greenleaf-primary border-b-2 border-greenleaf-primary" : "text-greenleaf-muted hover:text-greenleaf-text"}`}
+                  className={`px-4 py-3 font-bold text-sm transition-all relative ${orderFilter === "ALL" ? "text-brand-primary border-b-2 border-brand-primary" : "text-slate-500 hover:text-slate-700"}`}
                 >
                   All Active
                 </button>
                 <button
                   onClick={() => setOrderFilter("PENDING")}
-                  className={`px-4 py-2 font-bold text-sm transition-all ${orderFilter === "PENDING" ? "text-amber-500 border-b-2 border-amber-500" : "text-greenleaf-muted hover:text-greenleaf-text"}`}
+                  className={`px-4 py-3 font-bold text-sm transition-all relative ${orderFilter === "PENDING" ? "text-amber-600 border-b-2 border-amber-600" : "text-slate-500 hover:text-slate-700"}`}
                 >
-                  Confirmations ({stats.pendingConfirmation})
+                  Confirmations <span className="ml-1 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">{stats.pendingConfirmation}</span>
                 </button>
                 <button
                   onClick={() => setOrderFilter("READY")}
-                  className={`px-4 py-2 font-bold text-sm transition-all ${orderFilter === "READY" ? "text-greenleaf-primary border-b-2 border-greenleaf-primary" : "text-greenleaf-muted hover:text-greenleaf-text"}`}
+                  className={`px-4 py-3 font-bold text-sm transition-all relative ${orderFilter === "READY" ? "text-brand-primary border-b-2 border-brand-primary" : "text-slate-500 hover:text-slate-700"}`}
                 >
-                  Ready to Serve ({stats.tablesReady})
+                  Ready to Serve <span className="ml-1 text-[10px] bg-brand-accent text-brand-primary px-1.5 py-0.5 rounded-full">{stats.tablesReady}</span>
                 </button>
               </div>
 
@@ -353,8 +352,8 @@ export default function WaiterPage() {
                 if (orderFilter === "READY") return o.status === "READY";
                 return ["PLACED", "CONFIRMED", "PREPARING", "READY", "PENDING_CONFIRMATION"].includes(o.status);
               }).length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-greenleaf-accent">
-                  <p className="font-serif text-xl text-greenleaf-muted">No {orderFilter.toLowerCase()} orders found</p>
+                <div className="text-center py-20 bg-white rounded-xl border-2 border-dashed border-gray-200">
+                  <p className="text-lg text-slate-500 font-medium">No {orderFilter.toLowerCase()} orders found</p>
                 </div>
               ) : (
                 orders
@@ -364,53 +363,45 @@ export default function WaiterPage() {
                     return ["PLACED", "CONFIRMED", "PREPARING", "READY", "PENDING_CONFIRMATION"].includes(o.status);
                   })
                   .map((order) => (
-                    <div key={order._id} className="bg-white rounded-3xl p-8 shadow-premium border border-greenleaf-accent flex flex-col md:flex-row gap-8 items-start hover:shadow-floating transition-shadow">
-                      <div className="w-full md:w-32 flex flex-col items-center justify-center bg-greenleaf-accent rounded-2xl p-4 shrink-0">
-                        <span className="text-xs text-greenleaf-muted uppercase font-bold">Table</span>
-                        <span className="text-3xl font-serif text-greenleaf-primary font-bold">{order.tableNumber}</span>
-                        <span className="text-[10px] text-greenleaf-muted mt-2">{new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <div key={order._id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex flex-col md:flex-row gap-6 items-start hover:border-brand-primary/30 transition-all">
+                      <div className="w-full md:w-24 flex flex-col items-center justify-center bg-gray-50 rounded-lg p-4 shrink-0 border border-gray-100">
+                        <span className="text-[10px] text-slate-500 uppercase font-bold">Table</span>
+                        <span className="text-3xl font-bold text-brand-primary">{order.tableNumber}</span>
+                        <span className="text-[10px] text-slate-400 mt-1 font-medium">{new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
 
                       <div className="flex-1 space-y-4 w-full">
-                        <div className="flex justify-between items-center border-b border-greenleaf-accent pb-4">
+                        <div className="flex justify-between items-center border-b border-gray-100 pb-4">
                           <div className="flex items-center gap-2">
-                            <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${order.status === "READY" ? "bg-green-100 text-green-700" :
-                              order.status === "PENDING_CONFIRMATION" ? "bg-yellow-100 text-yellow-700" : "bg-greenleaf-accent text-greenleaf-primary"
+                            <span className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${order.status === "READY" ? "bg-green-100 text-green-700" :
+                              order.status === "PENDING_CONFIRMATION" ? "bg-yellow-100 text-yellow-700" : "bg-brand-accent text-brand-primary"
                               }`}>
                               {order.status.replace('_', ' ')}
                             </span>
                             {order.orderType === "TAKEAWAY" ? (
-                              <span className="bg-purple-100 text-purple-700 font-bold uppercase text-[9px] px-2.5 py-1 rounded-lg border border-purple-200">🛍️ Takeaway</span>
+                              <span className="bg-purple-50 text-purple-700 font-bold uppercase text-[9px] px-2 py-1 rounded border border-purple-100">🛍️ Takeaway</span>
                             ) : (
-                              <span className="bg-blue-50 text-blue-700 font-bold uppercase text-[9px] px-2.5 py-1 rounded-lg border border-blue-100">🍽️ Dine-In</span>
+                              <span className="bg-blue-50 text-blue-700 font-bold uppercase text-[9px] px-2 py-1 rounded border border-blue-100">🍽️ Dine-In</span>
                             )}
                           </div>
-                          {order.paymentMethod === "CASH" && (
-                            <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-tighter ${order.isPaid ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-                              {order.isPaid ? 'Paid' : 'Unpaid'}
-                            </span>
-                          )}
-                          <span className="font-serif text-xl text-greenleaf-primary font-bold">{currency}{order.total}</span>
+                          <span className="text-lg text-slate-900 font-bold">{currency}{order.total}</span>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">
                           {order.items.map((item, i) => (
-                            <div key={i} className="flex justify-between items-center text-sm">
-                              <span className="text-greenleaf-text font-medium">{item.name} <span className="text-greenleaf-muted text-xs">× {item.quantity}</span></span>
-                              <span className="text-greenleaf-muted">{currency}{item.price * item.quantity}</span>
+                            <div key={i} className="flex justify-between items-center text-xs">
+                              <span className="text-slate-700 font-medium">{item.name} <span className="text-slate-400">× {item.quantity}</span></span>
+                              <span className="text-slate-500">{currency}{item.price * item.quantity}</span>
                             </div>
                           ))}
                         </div>
 
-                        <div className="pt-4 flex gap-3">
+                        <div className="pt-2 flex gap-3">
                           {order.status === "PENDING_CONFIRMATION" && (
-                            <button onClick={() => confirmOrder(order._id)} className="flex-1 bg-greenleaf-secondary text-white py-3 rounded-2xl font-bold shadow-lg hover:brightness-110 transition-all">Accept Order</button>
+                            <button onClick={() => confirmOrder(order._id)} className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white py-2.5 rounded-lg font-bold text-sm shadow-sm transition-colors">Accept Order</button>
                           )}
                           {order.status === "READY" && (
-                            <button onClick={() => updateOrderStatus(order._id, "SERVED")} className="flex-1 bg-greenleaf-primary text-white py-3 rounded-2xl font-bold shadow-lg hover:brightness-110 transition-all">Mark as Served</button>
-                          )}
-                          {order.status === "CONFIRMED" && (
-                            <div className="text-xs text-greenleaf-muted italic">Preparing in kitchen...</div>
+                            <button onClick={() => updateOrderStatus(order._id, "SERVED")} className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-bold text-sm shadow-sm transition-colors">Mark Served</button>
                           )}
                         </div>
                       </div>
@@ -421,30 +412,30 @@ export default function WaiterPage() {
           )}
 
           {viewMode === "HISTORY" && (
-            <div className="bg-white rounded-3xl shadow-premium border border-greenleaf-accent overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
-                  <thead className="bg-greenleaf-accent">
+                  <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-8 py-5 text-sm font-bold text-greenleaf-primary uppercase tracking-widest">Table</th>
-                      <th className="px-8 py-5 text-sm font-bold text-greenleaf-primary uppercase tracking-widest">Type</th>
-                      <th className="px-8 py-5 text-sm font-bold text-greenleaf-primary uppercase tracking-widest">Time</th>
-                      <th className="px-8 py-5 text-sm font-bold text-greenleaf-primary uppercase tracking-widest">Status</th>
+                      <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Table</th>
+                      <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Type</th>
+                      <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Time</th>
+                      <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-greenleaf-accent">
+                  <tbody className="divide-y divide-gray-100">
                     {callHistory.length === 0 ? (
                       <tr>
-                        <td colSpan="4" className="px-8 py-10 text-center text-greenleaf-muted font-serif italic">No history yet</td>
+                        <td colSpan="4" className="px-6 py-10 text-center text-slate-400 text-sm">No history yet</td>
                       </tr>
                     ) : (
                       callHistory.map((item) => (
-                        <tr key={item._id} className="hover:bg-greenleaf-bg transition-colors">
-                          <td className="px-8 py-5 font-serif text-lg text-greenleaf-primary font-bold">Table {item.tableNumber}</td>
-                          <td className="px-8 py-5 text-sm text-greenleaf-text">Waiter Call</td>
-                          <td className="px-8 py-5 text-sm text-greenleaf-muted">{new Date(item.createdAt).toLocaleString()}</td>
-                          <td className="px-8 py-5">
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${item.status === "ACKNOWLEDGED" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+                        <tr key={item._id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 text-sm font-bold text-slate-900">Table {item.tableNumber}</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">Waiter Call</td>
+                          <td className="px-6 py-4 text-xs text-slate-500">{new Date(item.createdAt).toLocaleString()}</td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${item.status === "ACKNOWLEDGED" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"
                               }`}>
                               {item.status}
                             </span>
@@ -462,43 +453,43 @@ export default function WaiterPage() {
 
       {/* Modern Order Modal (For floating table selection) */}
       {selectedTableId && (
-        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in transition-all duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-t-[32px] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col h-[92vh] md:max-h-[90vh] animate-in slide-in-from-bottom-20 duration-500">
-            <div className="bg-greenleaf-primary p-6 md:p-8 flex justify-between items-center text-white shrink-0">
+        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in transition-all duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-t-2xl md:rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[92vh] md:max-h-[90vh] animate-in slide-in-from-bottom-20 duration-500">
+            <div className="bg-brand-primary p-6 md:p-8 flex justify-between items-center text-white shrink-0">
               <div>
-                <h2 className="text-2xl md:text-3xl font-serif">Place Service Order</h2>
-                <div className="flex gap-2">
-                  <p className="text-greenleaf-accent text-xs md:text-sm mt-1">Table {assignedTables.find(t => t._id === selectedTableId)?.tableNumber}</p>
+                <h2 className="text-2xl font-bold tracking-tight">Place Service Order</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-brand-accent text-sm font-medium">Table {assignedTables.find(t => t._id === selectedTableId)?.tableNumber}</p>
                   <span className="text-white/40">•</span>
-                  <p className="text-greenleaf-accent text-xs md:text-sm mt-1 uppercase font-bold tracking-widest">{orderType}</p>
+                  <p className="text-brand-accent text-xs font-bold uppercase tracking-widest">{orderType}</p>
                 </div>
               </div>
-              <button onClick={() => { setSelectedTableId(null); setOrderType("DINE_IN"); }} className="p-2 hover:bg-white/10 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              <button onClick={() => { setSelectedTableId(null); setOrderType("DINE_IN"); }} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 {/* Order Type Toggle for Waiter */}
-                <div className="bg-greenleaf-bg p-2 rounded-2xl border border-greenleaf-accent flex gap-2">
+                <div className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex gap-1">
                   <button
                     onClick={() => setOrderType("DINE_IN")}
-                    className={`flex-1 py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${orderType === "DINE_IN" ? "bg-greenleaf-primary text-white shadow-lg" : "text-greenleaf-muted hover:bg-white"}`}
+                    className={`flex-1 py-2 px-4 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all ${orderType === "DINE_IN" ? "bg-brand-primary text-white shadow-sm" : "text-slate-500 hover:bg-white"}`}
                   >
-                    🍽️ Dine-In
+                    Dine-In
                   </button>
                   <button
                     onClick={() => setOrderType("TAKEAWAY")}
-                    className={`flex-1 py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${orderType === "TAKEAWAY" ? "bg-purple-600 text-white shadow-lg" : "text-greenleaf-muted hover:bg-white"}`}
+                    className={`flex-1 py-2 px-4 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all ${orderType === "TAKEAWAY" ? "bg-purple-600 text-white shadow-sm" : "text-slate-500 hover:bg-white"}`}
                   >
-                    🛍️ Takeaway
+                    Takeaway
                   </button>
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="font-serif text-xl border-b pb-2">Top Menu Items</h3>
-                  <div className="grid grid-cols-1 gap-3">
+                  <h3 className="font-bold text-lg text-slate-900 border-b border-gray-100 pb-2">Menu</h3>
+                  <div className="grid grid-cols-1 gap-2.5">
                     {menu.map(item => (
                       <button
                         key={item._id}
@@ -509,24 +500,24 @@ export default function WaiterPage() {
                             addToCart(item);
                           }
                         }}
-                        className="group flex justify-between items-center p-4 rounded-2xl border border-greenleaf-accent hover:border-greenleaf-primary transition-all hover:bg-greenleaf-accent/30 text-left"
+                        className="group flex justify-between items-center p-3.5 rounded-xl border border-gray-100 hover:border-brand-primary/50 transition-all hover:bg-brand-accent/30 text-left bg-white shadow-sm"
                       >
                         <div className="flex-1">
-                          <p className="font-bold text-greenleaf-text">{item.name}</p>
+                          <p className="font-bold text-slate-800 text-sm">{item.name}</p>
                           {item.measurementType === 'PORTION' ? (
-                            <div className="flex flex-wrap gap-2 mt-1">
+                            <div className="flex flex-wrap gap-1.5 mt-1">
                               {item.portions.map((p, idx) => (
-                                <span key={idx} className="text-[10px] bg-greenleaf-accent px-2 py-0.5 rounded-full font-bold text-greenleaf-primary">
+                                <span key={idx} className="text-[9px] bg-brand-accent px-2 py-0.5 rounded-md font-bold text-brand-primary">
                                   {p.label}: {currency}{p.price}
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <p className="text-xs text-greenleaf-muted font-bold">{currency}{item.price}</p>
+                            <p className="text-xs text-slate-500 font-medium mt-0.5">{currency}{item.price}</p>
                           )}
                         </div>
-                        <span className="bg-greenleaf-accent p-2 rounded-xl text-greenleaf-primary group-hover:bg-greenleaf-primary group-hover:text-white transition-colors ml-4">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        <span className="bg-brand-accent p-2 rounded-lg text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors ml-4">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                         </span>
                       </button>
                     ))}
@@ -535,24 +526,24 @@ export default function WaiterPage() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-serif text-xl border-b pb-2">Current Tray</h3>
+                <h3 className="font-bold text-lg text-slate-900 border-b border-gray-100 pb-2">Current Tray</h3>
                 {cart.length === 0 ? (
-                  <p className="text-greenleaf-muted italic text-sm">Tray is empty</p>
+                  <p className="text-slate-400 italic text-sm">Tray is empty</p>
                 ) : (
                   <div className="space-y-3">
                     {cart.map(c => (
-                      <div key={c._id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
-                        <div className="text-sm font-bold">
-                          {c.name} <span className="text-greenleaf-muted">x{c.quantity}</span>
+                      <div key={c._id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <div className="text-sm font-bold text-slate-700">
+                          {c.name} <span className="text-slate-400 ml-1">×{c.quantity}</span>
                         </div>
-                        <div className="text-sm font-serif">{currency}{Number(c.price) * c.quantity}</div>
+                        <div className="text-sm font-bold text-slate-900">{currency}{Number(c.price) * c.quantity}</div>
                       </div>
                     ))}
-                    <div className="pt-4 border-t-2 border-dashed flex justify-between items-center">
-                      <span className="font-serif text-xl font-bold">Total</span>
-                      <span className="font-serif text-2xl text-greenleaf-primary font-bold">{currency}{cart.reduce((s, i) => s + Number(i.price) * i.quantity, 0)}</span>
+                    <div className="pt-4 border-t-2 border-dashed border-gray-200 flex justify-between items-center">
+                      <span className="font-bold text-slate-600">Total</span>
+                      <span className="text-2xl font-bold text-brand-primary">{currency}{cart.reduce((s, i) => s + Number(i.price) * i.quantity, 0)}</span>
                     </div>
-                    <button onClick={placeWaiterOrder} className="w-full bg-greenleaf-primary text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:brightness-110 active:scale-95 transition-all mt-4">Process Order</button>
+                    <button onClick={placeWaiterOrder} className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white py-4 rounded-xl font-bold text-lg shadow-sm transition-all mt-4">Place Order</button>
                   </div>
                 )}
               </div>
@@ -560,29 +551,28 @@ export default function WaiterPage() {
           </div>
         </div>
       )}
-      {/* Portion Selection Modal */}
       {selectedItemForPortion && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in transition-all duration-300">
-          <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden flex flex-col">
-            <div className="bg-greenleaf-primary p-6 text-white text-center">
-              <h3 className="text-xl font-serif">Select Portion</h3>
-              <p className="text-sm opacity-80">{selectedItemForPortion.name}</p>
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in transition-all duration-300">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="bg-brand-primary p-6 text-white text-center">
+              <h3 className="text-xl font-bold tracking-tight">Select Portion</h3>
+              <p className="text-sm text-brand-accent mt-1 font-medium">{selectedItemForPortion.name}</p>
             </div>
             <div className="p-6 space-y-3">
               {selectedItemForPortion.portions.map((portion, idx) => (
                 <button
                   key={idx}
                   onClick={() => addToCart(selectedItemForPortion, portion)}
-                  className="w-full flex justify-between items-center p-4 rounded-2xl border-2 border-greenleaf-accent hover:border-greenleaf-primary hover:bg-greenleaf-accent/30 transition-all font-bold group"
+                  className="w-full flex justify-between items-center p-4 rounded-xl border border-gray-200 hover:border-brand-primary hover:bg-brand-accent/20 transition-all font-bold group"
                 >
-                  <span className="group-hover:text-greenleaf-primary">{portion.label}</span>
-                  <span className="text-greenleaf-primary">{currency}{portion.price}</span>
+                  <span className="text-slate-700 group-hover:text-brand-primary">{portion.label}</span>
+                  <span className="text-brand-primary">{currency}{portion.price}</span>
                 </button>
               ))}
             </div>
             <button
               onClick={() => setSelectedItemForPortion(null)}
-              className="m-6 mt-0 p-4 rounded-2xl bg-gray-100 text-gray-500 font-bold hover:bg-gray-200 transition-all"
+              className="m-6 mt-0 p-3.5 rounded-xl bg-gray-100 text-gray-500 font-bold hover:bg-gray-200 transition-all text-sm"
             >
               Cancel
             </button>
@@ -591,45 +581,45 @@ export default function WaiterPage() {
       )}
 
       {/* Active Call UI (Floating Toast for calls) */}
-      <div className="fixed bottom-10 left-10 right-10 z-[200] pointer-events-none flex flex-col gap-4 items-center">
+      <div className="fixed bottom-6 left-6 right-6 z-[200] pointer-events-none flex flex-col gap-3 items-center">
         {waiterCalls.map((call) => (
-          <div key={call._id} className="pointer-events-auto bg-red-600 text-white px-8 py-5 rounded-[2rem] shadow-2xl flex items-center justify-between gap-6 animate-in slide-in-from-bottom-10 border-4 border-white w-full max-w-xl">
+          <div key={call._id} className="pointer-events-auto bg-red-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center justify-between gap-6 animate-in slide-in-from-bottom-5 border-2 border-white/20 w-full max-w-lg">
             <div className="flex items-center gap-4">
-              <div className="bg-white/20 p-3 rounded-2xl animate-pulse">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+              <div className="bg-white/20 p-2 rounded-lg animate-pulse">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
               </div>
               <div>
-                <p className="text-xs uppercase font-bold tracking-widest opacity-80">Urgent Assistance</p>
-                <p className="text-xl font-serif font-bold">Table {call.tableNumber} is calling</p>
+                <p className="text-[10px] uppercase font-bold tracking-wider opacity-80">Urgent Assistance</p>
+                <p className="text-base font-bold">Table {call.tableNumber} is calling</p>
               </div>
             </div>
-            <button onClick={() => acknowledgeCall(call._id)} className="bg-white text-red-600 px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-100 shadow-lg">Acknowledge</button>
+            <button onClick={() => acknowledgeCall(call._id)} className="bg-white text-red-600 px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-gray-50 shadow-sm transition-colors shrink-0">Acknowledge</button>
           </div>
         ))}
         {pendingOrders.map((order) => (
-          <div key={order._id} className="pointer-events-auto bg-amber-500 text-white px-8 py-5 rounded-[2rem] shadow-2xl flex items-center justify-between gap-6 animate-in slide-in-from-bottom-10 border-4 border-white w-full max-w-xl">
+          <div key={order._id} className="pointer-events-auto bg-amber-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center justify-between gap-6 animate-in slide-in-from-bottom-5 border-2 border-white/20 w-full max-w-lg">
             <div className="flex items-center gap-4">
-              <div className="bg-white/20 p-3 rounded-2xl animate-pulse">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div className="bg-white/20 p-2 rounded-lg animate-pulse">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               </div>
               <div>
-                <p className="text-xs uppercase font-bold tracking-widest opacity-80">New Order Confirmation</p>
-                <p className="text-xl font-serif font-bold">Table {order.tableNumber} placed a cash order</p>
+                <p className="text-[10px] uppercase font-bold tracking-wider opacity-80">New Cash Order</p>
+                <p className="text-base font-bold">Table {order.tableNumber} needs confirm</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <button
                 onClick={() => {
                   confirmOrder(order._id);
                   setPendingOrders(prev => prev.filter(o => o._id !== order._id));
                 }}
-                className="bg-white text-amber-600 px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-100 shadow-lg"
+                className="bg-white text-amber-600 px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-gray-50 shadow-sm transition-colors"
               >
                 Accept
               </button>
               <button
                 onClick={() => setPendingOrders(prev => prev.filter(o => o._id !== order._id))}
-                className="bg-white/20 text-white px-4 py-2.5 rounded-2xl font-bold text-xs hover:bg-white/30"
+                className="bg-white/20 text-white px-3 py-2 rounded-lg font-bold text-xs hover:bg-white/30 transition-colors"
               >
                 Dismiss
               </button>

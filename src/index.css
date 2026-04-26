@@ -1,31 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter&family=Roboto&family=Poppins&family=Montserrat&family=Open+Sans&family=Raleway&family=Merriweather&family=Nunito&family=Oswald&family=DM+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+:root {
+  --color-primary: #2563eb;
+  --font-main: 'Inter';
+  --font-heading: 'Inter';
+}
+
 @layer base {
   body {
-    @apply bg-greenleaf-bg text-greenleaf-text font-sans antialiased;
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    font-family: var(--font-main), sans-serif;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-serif;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    font-family: var(--font-heading), sans-serif;
   }
 
-  /* Only apply primary color to headings in the main content area if needed, 
-     but let's just remove the forced color for now to allow component overrides */
   .text-primary-headings h2,
   .text-primary-headings h3 {
-    @apply text-greenleaf-primary;
+    color: var(--color-primary);
   }
 }
 
 @layer utilities {
-  .text-shadow-sm {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  .glass-card {
+    @apply bg-white/90 border border-gray-200/50 shadow-card;
   }
 }

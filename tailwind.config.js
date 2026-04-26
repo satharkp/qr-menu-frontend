@@ -3,22 +3,29 @@ export default {
   theme: {
     extend: {
       colors: {
-        greenleaf: {
-          primary: "var(--color-primary, #105c38)", // Deep emerald green
-          secondary: "var(--color-secondary, #C5A059)", // Gold
-          bg: "var(--color-bg, #FDFBF7)", // Soft cream
-          accent: "var(--color-accent, #E8F5E9)", // Light green accent
-          text: "var(--color-text, #1A1A1A)", // Dark text
-          muted: "var(--color-muted, #666666)", // Muted text
+        brand: {
+          primary: "var(--color-primary, #2563eb)", 
+          secondary: "#4b5563",
+          bg: "#f8fafc",
+          accent: "#dbeafe",
+          text: "#0f172a",
+          muted: "#64748b",
         },
+        greenleaf: {
+          primary: "var(--color-primary, #2563eb)", 
+          secondary: "#4b5563",
+          bg: "#f8fafc",
+          accent: "#dbeafe",
+          text: "#0f172a",
+          muted: "#64748b",
+        }
       },
       fontFamily: {
-        serif: ["var(--font-heading, 'Playfair Display')", "serif"],
-        sans: ["var(--font-main, 'Lato')", "sans-serif"],
+        sans: ["var(--font-main, 'Inter')", "system-ui", "sans-serif"],
       },
       boxShadow: {
-        'premium': '0 10px 30px -10px rgba(16, 92, 56, 0.15)',
-        'floating': '0 20px 40px -10px rgba(0, 0, 0, 0.1)',
+        'card': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        'floating': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
       }
     },
   },

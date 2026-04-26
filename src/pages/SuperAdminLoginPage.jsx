@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Lock, Mail, ShieldCheck, ArrowRight } from "lucide-react";
@@ -11,6 +11,14 @@ const SuperAdminLoginPage = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Force default theme for login pages
+    const root = document.documentElement;
+    root.style.setProperty("--color-primary", "#2563eb");
+    root.style.setProperty("--font-main", "Inter");
+    root.style.setProperty("--font-heading", "Inter");
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,103 +45,73 @@ const SuperAdminLoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-[#fafbfc] font-['DM_Sans',sans-serif]">
-      {/* Radiant Mesh Background */}
-      <div className="absolute top-[-20%] left-[-20%] w-[70%] h-[70%] rounded-full bg-indigo-100/50 blur-[90px] animate-[pulse_10s_infinite] mix-blend-multiply"></div>
-      <div className="absolute bottom-[-20%] right-[-20%] w-[70%] h-[70%] rounded-full bg-rose-100/50 blur-[90px] animate-[pulse_12s_infinite_1s] mix-blend-multiply"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] rounded-full bg-emerald-50/40 blur-[120px] animate-[pulse_15s_infinite_2s]"></div>
-      
-      {/* Subtle Noise Texture Overlay */}
-      <div className="absolute inset-0 opacity-[0.015] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] scale-[2]"></div>
-
-      <div className="w-full max-w-sm relative z-10">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 font-sans">
+      <div className="w-full max-w-sm">
         {/* Branding & Welcome */}
-        <div className="text-center mb-10 space-y-4">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-[2.5rem] bg-white border border-slate-200/50 shadow-[0_20px_50px_rgba(0,0,0,0.05)] backdrop-blur-xl mb-3 group cursor-default">
-            <div className="p-3 bg-slate-900 rounded-2xl text-white group-hover:scale-110 transition-transform duration-500 ease-out shadow-lg shadow-slate-900/20">
-              <ShieldCheck size={32} strokeWidth={1.5} />
-            </div>
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-slate-900 shadow-sm mb-4">
+            <ShieldCheck size={32} className="text-white" strokeWidth={1.5} />
           </div>
-          <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Super Admin</h1>
-            <p className="text-[9px] text-slate-500 uppercase tracking-[0.25em] font-semibold">Authorized Personnel Access</p>
-          </div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Super Admin</h1>
+          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-1">Personnel Access Only</p>
         </div>
 
-        {/* Frosted Glass Authentication Card */}
-        <div className="relative group">
-          {/* Decorative Halo */}
-          <div className="absolute -inset-px rounded-[3rem] bg-gradient-to-b from-slate-200/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-          
-          <form
-            onSubmit={handleLogin}
-            className="relative bg-white/60 backdrop-blur-xl border border-white p-10 lg:p-12 space-y-8 rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)]"
-          >
-            <div className="space-y-6">
-              {/* Email Identity */}
-              <div className="space-y-2 group/input">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within/input:text-indigo-600">Identity</label>
+        {/* Authentication Card */}
+        <div className="bg-white border border-gray-200 p-8 rounded-2xl shadow-sm">
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Identity</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-slate-900 transition-colors" size={18} />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                   <input
                     type="email"
-                    placeholder="admin@example.com"
+                    placeholder="admin@system.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl pl-12 pr-4 py-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-300 focus:bg-white transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Password Access Key */}
-              <div className="space-y-2 group/input">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within/input:text-indigo-600">Access Key</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Access Key</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-slate-900 transition-colors" size={18} />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                   <input
                     type="password"
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl pl-12 pr-4 py-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-300 focus:bg-white transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Submit Established Action */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full group/btn relative overflow-hidden rounded-2xl px-6 py-4 font-bold text-sm text-white shadow-xl shadow-slate-900/10 active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-lg text-sm shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              <div className="absolute inset-0 bg-slate-900 group-hover:bg-slate-800 transition-colors duration-500"></div>
-              <div className="relative flex items-center justify-center gap-3">
-                <span>{loading ? "Signing in..." : "Sign In"}</span>
-                {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" strokeWidth={2.5} />}
-              </div>
+              <span>{loading ? "Verifying..." : "Authenticate"}</span>
+              {!loading && <ArrowRight size={18} strokeWidth={2.5} />}
             </button>
 
-            {/* Footer Separator & Status */}
-            <div className="pt-4 flex flex-col items-center gap-5 text-center opacity-60">
-              <div className="flex items-center gap-4 w-full">
-                <div className="h-px flex-1 bg-slate-200"></div>
-                <div className="w-1 h-1 rounded-full bg-slate-400"></div>
-                <div className="h-px flex-1 bg-slate-200"></div>
-              </div>
-              <p className="text-[9px] text-slate-500 uppercase tracking-[0.2em] font-black">
-                Authorized Session • AES-512 Terminal
+            <div className="pt-6 border-t border-gray-100 text-center">
+              <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+                Authorized Session • Encrypted Portal
               </p>
             </div>
           </form>
         </div>
 
-        {/* Global Registry Copyright */}
-        <footer className="mt-16 text-center">
-          <p className="text-[10px] text-slate-300 uppercase tracking-widest font-bold">
-            QR Restaurant Management &copy; 2026 • Secure Admin Panel
+        {/* Footer */}
+        <footer className="mt-12 text-center">
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+            QR Restaurant Management &copy; {new Date().getFullYear()}
           </p>
         </footer>
       </div>

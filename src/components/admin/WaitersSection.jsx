@@ -160,9 +160,9 @@ export default function WaitersSection() {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 bg-gradient-to-br from-gray-50 via-white to-gray-100 p-2 sm:p-4 rounded-[2rem]">
+    <div className="space-y-6 sm:space-y-8 bg-gray-50 p-4 sm:p-6 rounded-xl border border-gray-200">
       {/* Create waiter */}
-      <div className="backdrop-blur-xl bg-white/80 p-4 sm:p-6 rounded-[2rem] shadow-xl border border-white/30 max-w-md w-full">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 max-w-md w-full">
         <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Create Waiter</h2>
 
         <input
@@ -182,26 +182,26 @@ export default function WaitersSection() {
 
         <button
           onClick={createWaiter}
-          className="bg-gray-900 text-white px-4 py-2 sm:py-3 rounded-xl w-full font-semibold"
+          className="bg-brand-primary hover:bg-brand-primary/90 text-white px-4 py-2 sm:py-3 rounded-lg w-full font-semibold transition-colors"
         >
           Create Waiter
         </button>
       </div>
 
       {lastCreated && (
-        <div className="bg-white/80 border border-white/30 p-3 sm:p-4 rounded-2xl max-w-md w-full shadow-md">
-          <p className="font-semibold text-gray-800">Staff Created Successfully</p>
-          <p className="text-sm mt-1">Email: {lastCreated.email}</p>
-          <p className="text-sm">Password: {lastCreated.password}</p>
-          <p className="text-sm capitalize">Role: {lastCreated.role}</p>
-          <p className="text-xs text-gray-600 mt-1">
+        <div className="bg-white border border-gray-200 p-4 rounded-lg max-w-md w-full shadow-sm">
+          <p className="font-semibold text-gray-900">Staff Created Successfully</p>
+          <p className="text-sm mt-1 text-gray-600">Email: {lastCreated.email}</p>
+          <p className="text-sm text-gray-600">Password: {lastCreated.password}</p>
+          <p className="text-sm capitalize text-gray-600">Role: {lastCreated.role}</p>
+          <p className="text-xs text-brand-primary font-medium mt-2">
             (Save this password now — it won’t be shown again)
           </p>
         </div>
       )}
 
       {/* Waiter cards */}
-      <div className="backdrop-blur-xl bg-white/80 p-4 sm:p-6 rounded-[2rem] shadow-xl border border-white/30">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
         <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Waiter List</h2>
 
         {waiters.length === 0 && (
@@ -222,7 +222,7 @@ export default function WaitersSection() {
                 Load: {w.assignedTables?.length || 0} tables
               </p>
               <button
-                className="mt-2 text-sm bg-gray-900 text-white px-3 py-1 rounded-xl"
+                className="mt-4 text-sm bg-brand-primary hover:bg-brand-primary/90 text-white px-4 py-1.5 rounded-lg transition-colors font-medium"
                 onClick={() => {
                   setSelectedWaiter(w._id);
                   setSelectedTables(
@@ -237,14 +237,14 @@ export default function WaitersSection() {
               <div className="flex flex-col sm:flex-row gap-2 mt-2">
                 <button
                   onClick={() => clearWaiterTables(w._id)}
-                  className="text-xs bg-gray-200 text-gray-800 px-3 py-1 rounded-xl w-full sm:w-auto"
+                  className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg w-full sm:w-auto transition-colors"
                 >
                   Clear tables
                 </button>
 
                 <button
                   onClick={() => deleteWaiter(w._id)}
-                  className="text-xs bg-black text-white px-3 py-1 rounded-xl w-full sm:w-auto"
+                  className="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg w-full sm:w-auto transition-colors"
                 >
                   Remove waiter
                 </button>
@@ -276,7 +276,7 @@ export default function WaitersSection() {
       </div>
 
       {/* Assign tables */}
-      <div className="backdrop-blur-xl bg-white/80 p-4 sm:p-6 rounded-[2rem] shadow-xl border border-white/30">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
         <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4">Assign Tables</h2>
 
         <select
@@ -309,15 +309,15 @@ export default function WaitersSection() {
                       : [...prev, t._id]
                   );
                 }}
-                className={`px-3 py-2 sm:py-2.5 rounded-xl border border-gray-200 ${locked
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                className={`px-3 py-2 sm:py-2.5 rounded-lg border border-gray-200 transition-colors ${locked
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : selectedTables.includes(t._id)
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-100 hover:bg-gray-200"
+                      ? "bg-brand-primary text-white border-brand-primary shadow-sm"
+                      : "bg-white hover:bg-gray-50 text-gray-700"
                   }`}
               >
                 Table {t.tableNumber}
-                {locked && <span className="ml-2 text-xs">(assigned)</span>}
+                {locked && <span className="ml-2 text-[10px] font-medium uppercase text-gray-500">(Assigned)</span>}
               </button>
             );
           })}
@@ -328,17 +328,17 @@ export default function WaitersSection() {
             if (!selectedWaiter) return alert("Select a waiter");
             setShowConfirm(true);
           }}
-          className="bg-gray-900 text-white px-4 py-2 sm:py-3 rounded-xl w-full sm:w-auto"
+          className="bg-brand-primary hover:bg-brand-primary/90 text-white px-6 py-2.5 rounded-lg w-full sm:w-auto font-semibold transition-colors shadow-sm"
         >
           Assign Tables
         </button>
       </div>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white/90 backdrop-blur p-4 sm:p-6 rounded-2xl shadow-xl w-[90%] max-w-sm">
-            <h3 className="text-lg font-semibold mb-2">Confirm reassignment</h3>
-            <p className="text-gray-600 mb-3">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-floating w-[90%] max-w-sm border border-gray-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Confirm reassignment</h3>
+            <p className="text-gray-600 mb-4 text-sm">
               The following tables will be assigned:
             </p>
 
@@ -360,10 +360,10 @@ export default function WaitersSection() {
               If these tables belong to another waiter, they will be reassigned.
             </p>
 
-            <div className="flex flex-col sm:flex-row justify-end gap-2">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="px-3 py-2 border rounded"
+                className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium text-sm"
               >
                 Cancel
               </button>
@@ -373,9 +373,9 @@ export default function WaitersSection() {
                   setShowConfirm(false);
                   await confirmAssignTables();
                 }}
-                className="bg-gray-900 text-white px-3 py-2 rounded-xl"
+                className="bg-brand-primary hover:bg-brand-primary/90 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors"
               >
-                Confirm
+                Confirm Reassignment
               </button>
             </div>
           </div>

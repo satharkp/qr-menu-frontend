@@ -174,112 +174,99 @@ export default function MenuPage() {
     });
   };
 
+  useEffect(() => {
+    if (restaurant?.settings) {
+      const { settings } = restaurant;
+      const root = document.documentElement;
+      root.style.setProperty("--color-primary", settings.themeColor || "#4f46e5");
+      root.style.setProperty("--font-main", settings.font || "Inter");
+      root.style.setProperty("--font-heading", settings.font || "Inter");
+    }
+  }, [restaurant?.settings]);
+
+  const settings = restaurant?.settings || {};
+  const categories = ["All", ...new Set(menu.map((item) => item.category))];
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-greenleaf-bg">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-12 w-12 border-4 border-greenleaf-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-greenleaf-primary font-serif">Loading menu...</p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center">
+          <div className="h-10 w-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-slate-500 font-medium text-sm">Loading Menu...</p>
         </div>
       </div>
     );
   }
 
-  const categories = Array.isArray(menu)
-    ? ["All", ...new Set(menu.map((m) => m.category))]
-    : ["All"];
-
-  const settings = restaurant?.settings || {};
-  const dynamicStyles = {
-    "--color-primary": settings.themeColor || "#105c38",
-    "--font-heading": `"${settings.font || "Playfair Display"}", serif`,
-    "--font-main": `"${settings.font || "Lato"}", sans-serif`
-  };
-
   return (
-    <div className="min-h-screen bg-greenleaf-bg pb-32 font-sans selection:bg-greenleaf-secondary/30" style={dynamicStyles}>
-
+    <div className="min-h-screen bg-slate-50 pb-32 font-sans">
       <RestaurantHeader restaurant={restaurant} tableId={resolvedTableId} />
 
-      <div className="max-w-5xl mx-auto px-4 md:px-10 -mt-8 md:-mt-10 relative z-20">
-        {/* Category Quick Links (Sticky) */}
-        <div className="sticky top-4 z-40 mb-6 md:mb-8 relative">
-          <div className="flex gap-2 md:gap-3 overflow-x-auto pb-4 hide-scrollbar scroll-smooth">
+      <div className="max-w-4xl mx-auto px-4 -mt-8 relative z-20">
+        {/* Category Selection */}
+        <div className="sticky top-4 z-40 mb-8">
+          <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap px-4 py-2 md:px-6 md:py-2.5 rounded-xl md:rounded-2xl shadow-sm border text-[10px] md:text-xs uppercase tracking-widest transition-all active:scale-95 shadow-floating font-black shrink-0 ${activeCategory === cat
-                  ? "bg-greenleaf-primary text-white border-greenleaf-primary ring-4 ring-greenleaf-primary/10"
-                  : "bg-white/90 backdrop-blur-md border-greenleaf-accent text-greenleaf-text hover:bg-greenleaf-primary hover:text-white"
+                className={`whitespace-nowrap px-5 py-2.5 rounded-lg shadow-sm border text-[11px] uppercase tracking-wider font-bold transition-all active:scale-95 shrink-0 ${activeCategory === cat
+                  ? "bg-slate-900 text-white border-slate-900 shadow-md"
+                  : "bg-white/90 backdrop-blur-md border-gray-200 text-slate-600 hover:bg-gray-50"
                   }`}
               >
                 {cat}
               </button>
             ))}
           </div>
-          {/* Subtle Right Shadow Mask for Scroll indication */}
-          <div className="absolute top-0 right-0 bottom-4 w-8 bg-gradient-to-l from-greenleaf-bg pointer-events-none md:hidden" />
         </div>
 
         <div className="space-y-12 min-h-[50vh]">
           {activeCategory === "All" ? (
-            // Show grouped by category when "All" is selected
             [...new Set(menu.map(m => m.category))].map((cat) => (
-              <div key={cat} id={`cat-${cat}`} className="animate-in fade-in slide-in-from-bottom-10 duration-700">
-                <MenuCategory title={cat}>
-                  <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
-                    {menu
-                      .filter((item) => item.category === cat)
-                      .sort((a, b) => (b.available === false) - (a.available === false))
-                      .map((item) => (
-                        <MenuItem
-                          key={item._id}
-                          item={item}
-                          getQty={getQty}
-                          onAdd={increaseQty}
-                          onRemove={decreaseQty}
-                          onOpenPortions={setSelectedItemForPortions}
-                          currency={settings.currency || '₹'}
-                        />
-                      ))}
-                  </div>
-                </MenuCategory>
-              </div>
+              <MenuCategory key={cat} title={cat}>
+                {menu
+                  .filter((item) => item.category === cat)
+                  .sort((a, b) => (b.available === false) - (a.available === false))
+                  .map((item) => (
+                    <MenuItem
+                      key={item._id}
+                      item={item}
+                      getQty={getQty}
+                      onAdd={increaseQty}
+                      onRemove={decreaseQty}
+                      onOpenPortions={setSelectedItemForPortions}
+                      currency={settings.currency || '₹'}
+                    />
+                  ))}
+              </MenuCategory>
             ))
           ) : (
-            // Show only the selected category
-            <div className="animate-in fade-in slide-in-from-bottom-10 duration-700">
-              <MenuCategory title={activeCategory}>
-                <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
-                  {menu
-                    .filter((item) => item.category === activeCategory)
-                    .sort((a, b) => (b.available === false) - (a.available === false))
-                    .map((item) => (
-                      <MenuItem
-                        key={item._id}
-                        item={item}
-                        getQty={getQty}
-                        onAdd={increaseQty}
-                        onRemove={decreaseQty}
-                        onOpenPortions={setSelectedItemForPortions}
-                        currency={settings.currency || '₹'}
-                      />
-                    ))}
-                </div>
-              </MenuCategory>
-            </div>
+            <MenuCategory title={activeCategory}>
+              {menu
+                .filter((item) => item.category === activeCategory)
+                .sort((a, b) => (b.available === false) - (a.available === false))
+                .map((item) => (
+                  <MenuItem
+                    key={item._id}
+                    item={item}
+                    getQty={getQty}
+                    onAdd={increaseQty}
+                    onRemove={decreaseQty}
+                    onOpenPortions={setSelectedItemForPortions}
+                    currency={settings.currency || '₹'}
+                  />
+                ))}
+            </MenuCategory>
           )}
 
           {menu.length === 0 && (
-            <div className="text-center py-32 bg-white rounded-[3rem] border border-dashed border-greenleaf-accent">
-              <p className="font-serif text-2xl text-greenleaf-muted italic">The chef is preparing our daily specials. Please check back shortly.</p>
-              <div className="mt-4 text-4xl">🧑‍🍳</div>
+            <div className="text-center py-24 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+              <p className="text-xl text-slate-400 font-medium italic">Our menu is currently being updated.</p>
             </div>
           )}
         </div>
       </div>
-
 
       <CartFloating
         cart={cart}
@@ -295,63 +282,61 @@ export default function MenuPage() {
         restaurantName={restaurant?.restaurantName}
       />
 
-      {/* Ratings Widget */}
       {settings?.features?.ratings && <RatingsWidget restaurantId={restaurant?.restaurantId} />}
 
+      {/* Portion Selection Modal */}
       {selectedItemForPortions && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-300">
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
             onClick={() => setSelectedItemForPortions(null)}
           />
-          <div className="relative w-full max-w-lg bg-white rounded-t-[2.5rem] md:rounded-[2.5rem] shadow-floating border border-greenleaf-accent overflow-hidden animate-in slide-in-from-bottom-20 duration-500">
+          <div className="relative w-full max-w-lg bg-white rounded-t-2xl md:rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-20 duration-400">
             <div className="p-8">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-start mb-8">
                 <div>
-                  <h4 className="text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mb-1">Select Size</h4>
-                  <h3 className="text-3xl font-serif font-black text-greenleaf-text">{selectedItemForPortions.name}</h3>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-1">Customization</p>
+                  <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{selectedItemForPortions.name}</h3>
                 </div>
                 <button
                   onClick={() => setSelectedItemForPortions(null)}
-                  className="w-10 h-10 rounded-full bg-greenleaf-bg flex items-center justify-center text-greenleaf-muted hover:text-greenleaf-primary transition-colors"
+                  className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors border border-gray-100"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
 
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
                 {selectedItemForPortions.portions?.map((portion, index) => {
                   const portionQty = getQty(selectedItemForPortions._id, portion.label);
                   return (
-                    <div key={index} className="flex items-center justify-between bg-greenleaf-bg rounded-2xl p-4 border border-greenleaf-accent transition-all hover:border-greenleaf-primary/20">
-                      <div className="flex flex-col">
-                        <span className="text-lg font-bold text-greenleaf-text">{portion.label}</span>
-                        <span className="text-sm text-greenleaf-primary font-bold">{settings.currency || '₹'}{portion.price}</span>
+                    <div key={index} className="flex items-center justify-between bg-slate-50 rounded-xl p-4 border border-gray-100 transition-all hover:border-brand-primary/20">
+                      <div>
+                        <p className="text-base font-bold text-slate-900">{portion.label}</p>
+                        <p className="text-sm text-brand-primary font-bold">{settings.currency || '₹'}{portion.price}</p>
                       </div>
 
                       {portionQty === 0 ? (
                         <button
                           onClick={() => increaseQty({ ...selectedItemForPortions, selectedPortion: portion })}
-                          className="bg-white border border-greenleaf-primary/20 hover:border-greenleaf-primary/50 text-greenleaf-primary px-6 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-sm"
+                          className="bg-white border border-gray-200 hover:border-brand-primary text-slate-900 px-6 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 shadow-sm"
                         >
                           Add +
                         </button>
                       ) : (
-                        <div className="flex items-center bg-white rounded-2xl p-1.5 border border-greenleaf-primary/10 shadow-sm">
+                        <div className="flex items-center bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
                           <button
                             onClick={() => decreaseQty({ ...selectedItemForPortions, selectedPortion: portion })}
-                            className="w-10 h-10 flex items-center justify-center text-greenleaf-primary font-black text-xl hover:bg-greenleaf-bg rounded-xl transition-colors"
+                            className="w-8 h-8 flex items-center justify-center text-brand-primary font-bold text-lg hover:bg-gray-50 rounded-md transition-colors"
                           >
                             −
                           </button>
-                          <span className="mx-5 font-bold text-greenleaf-primary text-lg min-w-[1.5rem] text-center">
+                          <span className="mx-4 font-bold text-slate-900 text-sm min-w-[1rem] text-center">
                             {portionQty}
                           </span>
                           <button
                             onClick={() => increaseQty({ ...selectedItemForPortions, selectedPortion: portion })}
-                            className="w-10 h-10 flex items-center justify-center bg-greenleaf-primary text-white rounded-xl shadow-sm font-black text-xl"
+                            className="w-8 h-8 flex items-center justify-center bg-brand-primary text-white rounded-md shadow-sm font-bold text-lg"
                           >
                             +
                           </button>
@@ -364,9 +349,9 @@ export default function MenuPage() {
 
               <button
                 onClick={() => setSelectedItemForPortions(null)}
-                className="w-full mt-8 bg-greenleaf-primary hover:bg-greenleaf-primary/90 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-premium active:scale-95 transition-all"
+                className="w-full mt-8 bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-xl font-bold text-xs uppercase tracking-widest shadow-sm active:scale-[0.98] transition-all"
               >
-                Done
+                Continue Ordering
               </button>
             </div>
           </div>

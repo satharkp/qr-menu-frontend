@@ -63,177 +63,153 @@ export default function DashboardSection({ settings }) {
 
   if (loading || !restaurant) {
     return (
-      <div className="bg-white rounded-[2rem] p-12 shadow-floating flex flex-col items-center justify-center border border-greenleaf-accent">
-        <div className="w-12 h-12 border-4 border-greenleaf-primary border-t-transparent rounded-full mb-4"></div>
-        <p className="text-greenleaf-muted font-serif">Synchronizing Asset Data...</p>
+      <div className="bg-white rounded-xl p-12 shadow-sm flex flex-col items-center justify-center border border-gray-100">
+        <div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-500 font-medium text-sm">Syncing Dashboard Data...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8 bg-gradient-to-br from-gray-50 via-white to-gray-100 p-2 sm:p-4 rounded-[2rem]">
+    <div className="space-y-6 bg-slate-50">
       {/* Restaurant Header Card */}
-      <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-8 lg:p-10 shadow-2xl border border-white/30 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-8 opacity-5">
-          <svg width="120" height="120" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" /></svg>
-        </div>
-
+      <div className="bg-white rounded-2xl p-6 sm:p-8 lg:p-10 shadow-sm border border-gray-200 relative overflow-hidden">
         <div className="relative z-10">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-6 mb-6 sm:mb-10">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-8">
             <div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-greenleaf-primary mb-2 block">Premium Enterprise Asset</span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent leading-tight">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Business Profile</p>
+              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
                 {restaurant.name}
               </h2>
             </div>
-            <span className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${restaurant.subscriptionStatus === 'active' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+            <span className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest ${restaurant.subscriptionStatus === 'active' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-amber-100 text-amber-700 border border-amber-200'
               }`}>
-              {restaurant.subscriptionStatus} Sub
+              {restaurant.subscriptionStatus} Subscription
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6 lg:p-8 bg-greenleaf-bg rounded-[2rem] border border-greenleaf-accent text-greenleaf-text">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-slate-50 rounded-xl border border-gray-100">
             <div>
-              <p className="text-[10px] font-black tracking-widest text-greenleaf-muted uppercase mb-1">Operational ID</p>
-              <p className="font-mono text-xs font-bold truncate max-w-[150px]">{restaurant._id}</p>
+              <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-1.5">Restaurant ID</p>
+              <p className="font-mono text-xs font-medium text-slate-600 truncate">{restaurant._id}</p>
             </div>
             <div>
-              <p className="text-[10px] font-black tracking-widest text-greenleaf-muted uppercase mb-1">Public Domain</p>
-              <p className="text-sm font-bold text-greenleaf-primary underline decoration-2 underline-offset-4">{restaurant.domain}</p>
+              <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-1.5">Public Access</p>
+              <p className="text-sm font-semibold text-brand-primary truncate">{restaurant.domain}</p>
             </div>
             <div>
-              <p className="text-[10px] font-black tracking-widest text-greenleaf-muted uppercase mb-1">Commerce Currency</p>
-              <p className="text-sm font-bold">{restaurant.currency || 'INR'} (Global Standard)</p>
+              <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-1.5">Operating Currency</p>
+              <p className="text-sm font-semibold text-slate-700">{restaurant.currency || 'INR'}</p>
             </div>
           </div>
 
-          <div className="mt-6 sm:mt-10 flex flex-wrap gap-3 sm:gap-4">
+          <div className="mt-8 flex flex-wrap gap-4">
             <button
               onClick={() => navigate("/admin/menu")}
-              className="bg-gradient-to-r from-gray-900 to-gray-700 text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg"
+              className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-all shadow-sm active:scale-[0.98]"
             >
-              Config Asset
+              Manage Menu
             </button>
             <button
               onClick={() => window.open(`${window.location.origin}/menu/${restaurant._id}`, '_blank')}
-              className="bg-white/70 backdrop-blur border border-white/30 text-greenleaf-text px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-md"
+              className="bg-white border border-gray-200 text-slate-700 hover:bg-gray-50 px-6 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-all shadow-sm active:scale-[0.98]"
             >
-              View Public Menu
+              Public Preview
             </button>
             <button
               onClick={clearAllOrders}
-              className="bg-red-500/10 border border-red-500/20 text-red-500 px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-md sm:ml-auto"
+              className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-100 px-6 py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-all active:scale-[0.98] sm:ml-auto"
             >
-              Wipe All Orders
+              Purge All Orders
             </button>
           </div>
         </div>
       </div>
 
-      {/* Real Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
-        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
-          <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Total Revenue</p>
-          <p className="text-2xl font-serif font-black text-greenleaf-text">
-            {formatPrice(stats?.totalRevenue || 0, settings?.currency || restaurant.currency)}
-          </p>
-          <p className="text-[10px] font-bold text-gray-700 mt-1">LIFETIME GROWTH</p>
-        </div>
-        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
-          <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Total Orders</p>
-          <p className="text-2xl font-serif font-black text-greenleaf-text">{stats?.orderCount || 0}</p>
-          <p className="text-[10px] font-bold text-gray-700 mt-1">PROCESSED ASSETS</p>
-        </div>
-        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
-          <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Today's Sales</p>
-          <p className="text-2xl font-serif font-black text-greenleaf-text">
-            {formatPrice(stats?.todayRevenue || 0, settings?.currency || restaurant.currency)}
-          </p>
-          <p className="text-[10px] font-bold text-gray-700 mt-1">{stats?.todayOrderCount || 0} ORDERS TODAY</p>
-        </div>
-        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
-          <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Avg Order Value</p>
-          <p className="text-2xl font-serif font-black text-greenleaf-text">
-            {formatPrice(stats?.avgOrderValue || 0, settings?.currency || restaurant.currency)}
-          </p>
-          <p className="text-[10px] font-bold text-gray-700 mt-1">PER TRANSACTION</p>
-        </div>
-        <div className="backdrop-blur-md bg-white/80 rounded-[2rem] p-4 sm:p-6 shadow-lg border border-white/30">
-          <p className="text-[10px] font-black text-greenleaf-muted tracking-widest uppercase mb-1">Avg Rating</p>
-          <p className="text-2xl font-serif font-black text-greenleaf-text">
-            {ratings?.avgRating ? ratings.avgRating.toFixed(1) : "0.0"} ⭐
-          </p>
-          <p className="text-[10px] font-bold text-gray-700 mt-1">
-            {ratings?.total || 0} REVIEWS
-          </p>
-        </div>
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {[
+          { label: "Total Revenue", val: formatPrice(stats?.totalRevenue || 0, settings?.currency || restaurant.currency), sub: "Lifetime" },
+          { label: "Total Orders", val: stats?.orderCount || 0, sub: "Processed" },
+          { label: "Today's Sales", val: formatPrice(stats?.todayRevenue || 0, settings?.currency || restaurant.currency), sub: `${stats?.todayOrderCount || 0} orders` },
+          { label: "Avg Ticket", val: formatPrice(stats?.avgOrderValue || 0, settings?.currency || restaurant.currency), sub: "Per Order" },
+          { label: "Avg Rating", val: `${ratings?.avgRating ? ratings.avgRating.toFixed(1) : "0.0"} ⭐`, sub: `${ratings?.total || 0} reviews` }
+        ].map((m, i) => (
+          <div key={i} className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+            <p className="text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-1">{m.label}</p>
+            <p className="text-xl font-bold text-slate-900">{m.val}</p>
+            <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{m.sub}</p>
+          </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Popular Items */}
-        <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-xl border border-white/30">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-serif font-black text-greenleaf-text italic">Top Performing Curations</h3>
-            <span className="text-[10px] font-bold bg-gray-100 text-gray-700 px-3 py-1 rounded-full">DEMAND ANALYTICS</span>
+        <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-lg font-bold text-slate-900 tracking-tight">Top Performing Items</h3>
+            <span className="text-[9px] font-bold bg-slate-50 text-slate-500 border border-slate-100 px-2 py-1 rounded uppercase">Performance Data</span>
           </div>
-          <div className="space-y-4 text-greenleaf-text">
+          <div className="space-y-3">
             {popularItems.length > 0 ? (
               popularItems.map((item, idx) => (
-                <div key={item._id} className="flex items-center justify-between p-4 bg-greenleaf-bg border border-greenleaf-accent rounded-2xl">
+                <div key={item._id} className="flex items-center justify-between p-4 bg-slate-50 border border-gray-100 rounded-xl hover:border-brand-primary/20 transition-all">
                   <div className="flex items-center gap-4">
-                    <span className="w-8 h-8 flex items-center justify-center bg-white rounded-lg text-xs font-black border border-greenleaf-accent">{idx + 1}</span>
+                    <span className="w-8 h-8 flex items-center justify-center bg-white rounded-lg text-xs font-bold border border-gray-200 text-slate-600 shadow-sm">{idx + 1}</span>
                     <div>
-                      <p className="text-sm font-bold">{item.name || item._id || "Item"}</p>
-                      <p className="text-[10px] text-greenleaf-muted font-black tracking-widest">
-                        {(item.quantitySold ?? item.count ?? 0)} UNITS SOLD
+                      <p className="text-sm font-bold text-slate-900">{item.name || item._id || "Item"}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                        {(item.quantitySold ?? item.count ?? 0)} Sold
                       </p>
                     </div>
                   </div>
-                  <p className="text-sm font-black text-gray-900">
+                  <p className="text-sm font-bold text-slate-900">
                     {formatPrice(item.revenue ?? 0, settings?.currency || restaurant.currency)}
                   </p>
                 </div>
               ))
             ) : (
-              <p className="text-center py-10 text-greenleaf-muted text-sm italic font-serif opacity-60">Insight pending... awaiting first transaction cluster.</p>
+              <div className="py-12 text-center">
+                <p className="text-slate-400 text-sm font-medium italic">No sales data recorded yet.</p>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Operational Pulse */}
-        <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-xl border border-white/30">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-serif font-black text-greenleaf-text italic">Operational Pulse</h3>
-            <span className="text-[10px] font-bold bg-gray-100 text-gray-700 px-3 py-1 rounded-full">REAL-TIME FLOW</span>
+        {/* Operational Flow */}
+        <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-lg font-bold text-slate-900 tracking-tight">System Status</h3>
+            <span className="text-[9px] font-bold bg-slate-50 text-slate-500 border border-slate-100 px-2 py-1 rounded uppercase">Live Feed</span>
           </div>
-          <div className="grid grid-cols-2 gap-4 text-greenleaf-text">
-            <div className="p-6 bg-greenleaf-bg border border-greenleaf-accent rounded-2xl">
-              <p className="text-[9px] font-black text-greenleaf-muted tracking-[0.2em] uppercase mb-4">Traffic Origins</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-5 bg-slate-50 border border-gray-100 rounded-xl">
+              <p className="text-[9px] font-bold text-slate-400 tracking-widest uppercase mb-4">Traffic Origins</p>
               <div className="space-y-3">
                 {operational?.sources.map((s) => (
                   <div key={s._id} className="flex justify-between items-center">
-                    <span className="text-xs font-bold">{s._id} ACCESS</span>
-                    <span className="text-xs font-black text-greenleaf-primary">{s.count}</span>
+                    <span className="text-[11px] font-bold text-slate-600">{s._id} Access</span>
+                    <span className="text-[11px] font-bold text-brand-primary">{s.count}</span>
                   </div>
                 ))}
-                {operational?.sources.length === 0 && <p className="text-[10px] italic opacity-50">No data available</p>}
+                {(!operational || operational.sources.length === 0) && <p className="text-[10px] text-slate-400 italic">No access data</p>}
               </div>
             </div>
-            <div className="p-6 bg-greenleaf-bg border border-greenleaf-accent rounded-2xl">
-              <p className="text-[9px] font-black text-greenleaf-muted tracking-[0.2em] uppercase mb-4">Pipeline Status</p>
+            <div className="p-5 bg-slate-50 border border-gray-100 rounded-xl">
+              <p className="text-[9px] font-bold text-slate-400 tracking-widest uppercase mb-4">Order Pipeline</p>
               <div className="space-y-3">
                 {operational?.statuses.map((s) => (
                   <div key={s._id} className="flex justify-between items-center">
-                    <span className="text-xs font-bold">{s._id.replace('_', ' ')}</span>
-                    <span className="text-xs font-black text-greenleaf-primary">{s.count}</span>
+                    <span className="text-[11px] font-bold text-slate-600 capitalize">{s._id.replace('_', ' ').toLowerCase()}</span>
+                    <span className="text-[11px] font-bold text-brand-primary">{s.count}</span>
                   </div>
                 ))}
-                {operational?.statuses.length === 0 && <p className="text-[10px] italic opacity-50">No data available</p>}
+                {(!operational || operational.statuses.length === 0) && <p className="text-[10px] text-slate-400 italic">No active orders</p>}
               </div>
             </div>
           </div>
-          <div className="mt-6 p-4 bg-greenleaf-primary/5 border border-greenleaf-primary/10 rounded-2xl">
-            <p className="text-[10px] font-serif italic text-greenleaf-primary">SYSTEM NOTE: All metrics are derived from active transaction data and reflect real-time operational state.</p>
+          <div className="mt-8 p-4 bg-slate-900 rounded-xl">
+            <p className="text-[10px] font-medium text-slate-400 italic">System Integrity: Nominal. Metrics are updated in real-time based on active transaction clusters.</p>
           </div>
         </div>
       </div>

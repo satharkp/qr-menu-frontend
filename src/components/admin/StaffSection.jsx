@@ -41,83 +41,102 @@ export default function StaffSection() {
   }, []);
 
   return (
-    <div className="space-y-6 sm:space-y-8 bg-gradient-to-br from-greenleaf-bg via-white to-greenleaf-bg p-2 sm:p-4 rounded-[2rem]">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-gray-900">Staff Management</h2>
-
-      {/* Create Staff Card */}
-      <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] p-4 sm:p-6 max-w-md w-full shadow-xl border border-white/30">
-        <h3 className="text-lg font-semibold mb-4">Create Staff</h3>
-
-        <input
-          className="w-full border border-gray-200 rounded-xl p-2 sm:p-3 mb-3 bg-white/70 focus:outline-none"
-          placeholder="Staff email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          className="w-full border border-gray-200 rounded-xl p-2 sm:p-3 mb-3 bg-white/70 focus:outline-none"
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <select
-          className="w-full border border-gray-200 rounded-xl p-2 sm:p-3 mb-4 bg-white/70 focus:outline-none"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        >
-          <option value="waiter">Waiter</option>
-          <option value="kitchen">Kitchen</option>
-          <option value="admin">Admin</option>
-        </select>
-
-        <button
-          onClick={createStaff}
-          className="w-full bg-gray-900 text-white py-2 sm:py-3 rounded-xl font-semibold"
-        >
-          Create Staff
-        </button>
-      </div>
-
-      {/* Staff List */}
-      <div className="backdrop-blur-xl bg-white/80 rounded-[2rem] shadow-xl border border-white/30 p-4 sm:p-6">
-        <h3 className="text-lg font-semibold mb-4">Staff List</h3>
-
-        {staff.length === 0 && (
-          <p className="text-gray-500">No staff yet.</p>
-        )}
+    <div className="space-y-6 bg-slate-50">
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 max-w-md w-full">
+        <h2 className="text-lg font-bold text-slate-900 mb-6 tracking-tight">Create Staff Account</h2>
 
         <div className="space-y-4">
-          {staff.map((s) => (
-            <div
-              key={s._id}
-              className="bg-white/70 border border-white/30 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-            >
-              <div>
-                <p className="font-semibold">{s.email}</p>
-                <p className="text-sm text-gray-500 capitalize flex items-center gap-2">
-                  Role: {s.role}
-                  {s.isMainAdmin === true && (
-                    <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
-                      👑 Main Admin
-                    </span>
-                  )}
-                </p>
-              </div>
+          <div>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
+            <input
+              className="w-full border border-gray-200 rounded-lg p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all"
+              placeholder="staff@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-              {s.isMainAdmin !== true && (
-                <button
-                  onClick={() => deleteStaff(s._id)}
-                  className="bg-black text-white px-3 py-1 rounded-xl w-full sm:w-auto text-sm"
-                >
-                  Delete
-                </button>
-              )}
-            </div>
-          ))}
+          <div>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Password</label>
+            <input
+              className="w-full border border-gray-200 rounded-lg p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all"
+              placeholder="••••••••"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Assigned Role</label>
+            <select
+              className="w-full border border-gray-200 rounded-lg p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all appearance-none"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="waiter">Waiter</option>
+              <option value="kitchen">Kitchen Staff</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </div>
+
+          <button
+            onClick={createStaff}
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-widest shadow-sm transition-all active:scale-[0.98]"
+          >
+            Generate Account
+          </button>
         </div>
+      </div>
+
+      <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-sm border border-gray-200">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Active Personnel</h2>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{staff.length} Active Accounts</span>
+        </div>
+
+        {staff.length === 0 ? (
+          <div className="text-center py-20 bg-slate-50 rounded-xl border border-gray-100">
+            <p className="text-slate-400 font-medium">No personnel accounts found.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3">
+            {staff.map((s) => (
+              <div
+                key={s._id}
+                className="bg-slate-50 border border-gray-100 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-brand-primary/20 transition-all group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-gray-200 shadow-sm text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900">{s.email}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider capitalize">
+                        {s.role}
+                      </span>
+                      {s.isMainAdmin === true && (
+                        <span className="text-[9px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 flex items-center gap-1">
+                          👑 Main Account
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {s.isMainAdmin !== true && (
+                  <button
+                    onClick={() => deleteStaff(s._id)}
+                    className="bg-white hover:bg-red-50 text-red-500 border border-red-100 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-sm"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

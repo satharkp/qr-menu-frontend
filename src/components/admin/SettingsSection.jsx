@@ -3,9 +3,9 @@ import { fetchSettings, updateSettings } from "../../services/api";
 
 export default function SettingsSection({ onSettingsSaved }) {
   const [settings, setSettings] = useState({
-    name: "Greenleaf Dining",
-    themeColor: "#10b981",
-    font: "Playfair Display",
+    name: "Enterprise Restaurant",
+    themeColor: "#4f46e5",
+    font: "Inter",
     logo: "",
     currency: "INR",
     customCurrency: "",
@@ -28,9 +28,9 @@ export default function SettingsSection({ onSettingsSaved }) {
       const data = await fetchSettings();
       if (data) {
         setSettings({
-          name: data.name || "Greenleaf Dining",
-          themeColor: data.themeColor || "#10b981",
-          font: data.font || "Playfair Display",
+          name: data.name || "Enterprise Restaurant",
+          themeColor: data.themeColor || "#4f46e5",
+          font: data.font || "Inter",
           logo: data.logo || "",
           currency: ["INR","USD","EUR","GBP","AED","SAR"].includes(data.currency) ? data.currency : "CUSTOM",
           customCurrency: ["INR","USD","EUR","GBP","AED","SAR"].includes(data.currency) ? "" : (data.currency || ""),
@@ -42,8 +42,8 @@ export default function SettingsSection({ onSettingsSaved }) {
           },
         });
       }
-    } catch {
-      alert("Failed to load settings");
+    } catch (err) {
+      console.error("Settings load error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -52,19 +52,21 @@ export default function SettingsSection({ onSettingsSaved }) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const finalSettings = {
-        ...settings,
-        currency:
-          settings.currency === "CUSTOM"
-            ? settings.customCurrency
-            : settings.currency,
+      const payload = {
+        name: settings.name,
+        themeColor: settings.themeColor,
+        font: settings.font,
+        logo: settings.logo,
+        currency: settings.currency === "CUSTOM" ? settings.customCurrency : settings.currency,
+        features: settings.features
       };
 
-      await updateSettings(finalSettings);
+      await updateSettings(payload);
       if (onSettingsSaved) onSettingsSaved();
-      alert("Settings updated successfully!");
-    } catch {
-      alert("Failed to update settings");
+      alert("System configuration updated successfully.");
+    } catch (err) {
+      console.error("Settings update error:", err);
+      alert("Failed to save configuration. Please check your connection.");
     } finally {
       setIsSaving(false);
     }
@@ -88,208 +90,201 @@ export default function SettingsSection({ onSettingsSaved }) {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="w-12 h-12 border-4 border-greenleaf-secondary border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   const dynamicStyles = {
     "--color-primary": settings.themeColor,
-    "--font-heading": `"${settings.font}", serif`,
+    "--font-heading": `"${settings.font}", sans-serif`,
     "--font-main": `"${settings.font}", sans-serif`
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 bg-gradient-to-br from-gray-50 via-white to-gray-100 max-w-4xl mx-auto pb-16 sm:pb-20 px-2 sm:px-4 rounded-[2rem]" style={dynamicStyles}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 bg-slate-50 max-w-4xl mx-auto pb-16 px-2 sm:px-4 rounded-2xl" style={dynamicStyles}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black text-gray-900">Restaurant Configuration</h2>
-          <p className="text-sm font-medium text-gray-500 mt-1">
-            Manage your brand identity, currency, and core application features.
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">System Configuration</h2>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+            Core business settings and application feature controls
           </p>
         </div>
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full sm:w-auto bg-gray-900 text-white font-semibold py-2 sm:py-3 px-4 sm:px-8 rounded-xl shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-lg shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 text-xs uppercase tracking-widest"
         >
-          {isSaving ? "Saving..." : "Save Configuration"}
-          {!isSaving && <span>✓</span>}
+          {isSaving ? "Synchronizing..." : "Update Settings"}
+          {!isSaving && <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Brand Identity Card */}
-        <div className="backdrop-blur-xl bg-white/80 p-4 sm:p-6 rounded-[2rem] shadow-xl border border-white/30">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span>🎨</span> Brand Identity
+        <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-bold text-slate-900 mb-6 flex items-center gap-2 uppercase tracking-widest">
+            <span className="p-1.5 bg-slate-100 rounded-md">🎨</span> Brand Identity
           </h3>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-bold text-gray-500 mb-2">Restaurant Name</label>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Restaurant Name</label>
               <input
                 type="text"
                 name="name"
                 value={settings.name}
                 onChange={handleChange}
-                placeholder="Greenleaf Dining"
-                className="w-full p-2 sm:p-3 bg-white/70 border border-gray-200 rounded-xl text-sm focus:outline-none transition-all font-serif font-bold text-lg"
+                placeholder="Enterprise Dining"
+                className="w-full p-3 bg-slate-50 border border-gray-200 rounded-lg text-lg font-bold text-slate-900 focus:bg-white focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all"
               />
             </div>
           
-            <div>
-              <label className="block text-sm font-bold text-gray-500 mb-2">Theme Color</label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="color"
-                  name="themeColor"
-                  value={settings.themeColor}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Brand Color</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    name="themeColor"
+                    value={settings.themeColor}
+                    onChange={handleChange}
+                    className="w-12 h-12 rounded-lg cursor-pointer border-2 border-gray-100 bg-white p-1"
+                  />
+                  <input
+                    type="text"
+                    name="themeColor"
+                    value={settings.themeColor}
+                    onChange={handleChange}
+                    className="flex-1 p-2.5 bg-slate-50 border border-gray-200 rounded-lg font-mono text-xs uppercase focus:bg-white outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Currency System</label>
+                <select
+                  name="currency"
+                  value={settings.currency}
                   onChange={handleChange}
-                  className="w-12 h-12 rounded-xl cursor-pointer border-0 bg-transparent p-0"
-                />
-                <input
-                  type="text"
-                  name="themeColor"
-                  value={settings.themeColor}
-                  onChange={handleChange}
-                  className="flex-1 p-2 sm:p-3 bg-white/70 border border-gray-200 rounded-xl font-mono text-sm uppercase focus:outline-none"
-                />
+                  className="w-full p-3 bg-slate-50 border border-gray-200 rounded-lg text-sm font-bold text-slate-700 focus:bg-white outline-none"
+                >
+                  <option value="INR">INR (₹)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="AED">AED (د.إ)</option>
+                  <option value="SAR">SAR (﷼)</option>
+                  <option value="CUSTOM">Custom</option>
+                </select>
               </div>
             </div>
 
+            {settings.currency === "CUSTOM" && (
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Custom Symbol</label>
+                <input
+                  type="text"
+                  name="customCurrency"
+                  value={settings.customCurrency}
+                  placeholder="Enter symbol (e.g. ₹)"
+                  onChange={(e) =>
+                    setSettings((prev) => ({ ...prev, customCurrency: e.target.value }))
+                  }
+                  className="w-full p-3 bg-slate-50 border border-gray-200 rounded-lg text-sm focus:bg-white outline-none uppercase"
+                />
+              </div>
+            )}
+
             <div>
-              <label className="block text-sm font-bold text-gray-500 mb-2">Typography</label>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Interface Typography</label>
               <select
                 name="font"
                 value={settings.font}
                 onChange={handleChange}
-                className="w-full p-2 sm:p-3 bg-white/70 border border-gray-200 rounded-xl text-sm focus:outline-none transition-all font-sans"
+                className="w-full p-3 bg-slate-50 border border-gray-200 rounded-lg text-sm font-bold text-slate-700 focus:bg-white outline-none"
               >
-                <option value="Playfair Display">Classic Serif (Playfair Display)</option>
                 <option value="Inter">Modern Sans (Inter)</option>
                 <option value="Roboto">Clean Minimal (Roboto)</option>
-                <option value="Lato">Friendly Humanist (Lato)</option>
-                <option value="Poppins">Modern Rounded (Poppins)</option>
-                <option value="Montserrat">Geometric Clean (Montserrat)</option>
-                <option value="Open Sans">Highly Readable (Open Sans)</option>
-                <option value="Raleway">Elegant Thin (Raleway)</option>
-                <option value="Merriweather">Readable Serif (Merriweather)</option>
-                <option value="Nunito">Soft Rounded (Nunito)</option>
-                <option value="Oswald">Condensed Bold (Oswald)</option>
-                <option value="DM Sans">Minimal Modern (DM Sans)</option>
+                <option value="Lato">Professional (Lato)</option>
+                <option value="Poppins">Geometric (Poppins)</option>
+                <option value="Montserrat">Bold Modern (Montserrat)</option>
+                <option value="Open Sans">High Readability (Open Sans)</option>
+                <option value="Raleway">Elegant (Raleway)</option>
+                <option value="Nunito">Soft Modern (Nunito)</option>
+                <option value="Oswald">Condensed (Oswald)</option>
+                <option value="DM Sans">Minimalist (DM Sans)</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-500 mb-2">Logo URL</label>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Brand Asset (Logo URL)</label>
               <input
                 type="text"
                 name="logo"
                 value={settings.logo}
                 onChange={handleChange}
                 placeholder="https://example.com/logo.png"
-                className="w-full p-2 sm:p-3 bg-white/70 border border-gray-200 rounded-xl text-sm focus:outline-none transition-all"
+                className="w-full p-3 bg-slate-50 border border-gray-200 rounded-lg text-xs focus:bg-white outline-none"
               />
               {settings.logo && (
-                <div className="mt-4 p-4 bg-white/70 rounded-xl border border-gray-200 flex justify-center">
-                  <img src={settings.logo} alt="Restaurant Logo preview" className="h-12 sm:h-16 object-contain" onError={(e) => e.target.style.display='none'} />
+                <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-gray-100 flex justify-center">
+                  <img src={settings.logo} alt="Logo preview" className="h-10 object-contain grayscale opacity-70" onError={(e) => e.target.style.display='none'} />
                 </div>
               )}
             </div>
-            
-            <div>
-              <label className="block text-sm font-bold text-gray-500 mb-2">Currency Symbol or Code</label>
-              <select
-                name="currency"
-                value={settings.currency}
-                onChange={handleChange}
-                className="w-full p-2 sm:p-3 bg-white/70 border border-gray-200 rounded-xl text-sm focus:outline-none"
+          </div>
+        </div>
+
+        {/* System Features Card */}
+        <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-sm border border-gray-200">
+          <h3 className="text-sm font-bold text-slate-900 mb-6 flex items-center gap-2 uppercase tracking-widest">
+            <span className="p-1.5 bg-slate-100 rounded-md">⚙️</span> System Capabilities
+          </h3>
+
+          <div className="space-y-4">
+            {[
+              { id: "onlinePayment", label: "Online Transactions", desc: "Enable Razorpay / UPI payments", icon: "💳" },
+              { id: "cashPayment", label: "Cash on Delivery", desc: "Allow settling bills with cash", icon: "💵" },
+              { id: "waiterCall", label: "Service Request", desc: "Digital 'Call Waiter' button for guests", icon: "🛎️" },
+              { id: "ratings", label: "Customer Feedback", desc: "Post-order rating and review widget", icon: "⭐" },
+            ].map((feat) => (
+              <div
+                key={feat.id}
+                onClick={() => handleFeatureToggle(feat.id)}
+                className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-brand-primary/20 hover:bg-slate-50 transition-all cursor-pointer group"
               >
-                <option value="INR">INR (₹)</option>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="AED">AED (د.إ)</option>
-                <option value="SAR">SAR (﷼)</option>
-                <option value="CUSTOM">Custom</option>
-              </select>
-              {settings.currency === "CUSTOM" && (
-                <input
-                  type="text"
-                  name="customCurrency"
-                  value={settings.customCurrency}
-                  placeholder="Enter custom symbol (e.g. ₹, $, €)"
-                  onChange={(e) =>
-                    setSettings((prev) => ({ ...prev, customCurrency: e.target.value }))
-                  }
-                  className="w-full mt-2 p-2 sm:p-3 bg-white/70 border border-gray-200 rounded-xl text-sm focus:outline-none uppercase"
-                />
-              )}
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center text-lg shadow-sm border border-gray-100 group-hover:bg-white transition-colors">
+                    {feat.icon}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">{feat.label}</p>
+                    <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{feat.desc}</p>
+                  </div>
+                </div>
+                <div className={`w-11 h-6 rounded-full transition-all flex items-center px-1 shrink-0 ${settings.features[feat.id] ? "bg-slate-900" : "bg-slate-200"}`}>
+                  <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${settings.features[feat.id] ? "translate-x-5" : "translate-x-0"}`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-dashed border-gray-100">
+            <div className="bg-slate-900 rounded-xl p-5 text-white">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">Technical Insight</p>
+              <p className="text-[11px] leading-relaxed text-slate-300 font-medium italic">
+                Updating these settings will synchronize the interface across all customer devices and operational terminals in real-time.
+              </p>
             </div>
           </div>
         </div>
-
-        {/* Features Card */}
-        <div className="backdrop-blur-xl bg-white/80 p-4 sm:p-6 rounded-[2rem] shadow-xl border border-white/30">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span>⚙️</span> Operational Features
-          </h3>
-          
-          <div className="space-y-4">
-            <FeatureToggle 
-              title="Online Payments" 
-              description="Allow customers to pay via Razorpay."
-              isActive={settings.features.onlinePayment} 
-              onToggle={() => handleFeatureToggle("onlinePayment")} 
-            />
-            
-            <FeatureToggle 
-              title="Cash Payments" 
-              description="Allow customers to place orders without immediate digital payment."
-              isActive={settings.features.cashPayment} 
-              onToggle={() => handleFeatureToggle("cashPayment")} 
-            />
-            
-            <FeatureToggle 
-              title="Waiter Call System" 
-              description="Enable the 'Call Waiter' button on the menu page."
-              isActive={settings.features.waiterCall} 
-              onToggle={() => handleFeatureToggle("waiterCall")} 
-            />
-            
-            <FeatureToggle 
-              title="Customer Ratings" 
-              description="Allow customers to leave a rating/review after their dinner."
-              isActive={settings.features.ratings} 
-              onToggle={() => handleFeatureToggle("ratings")} 
-            />
-          </div>
-        </div>
       </div>
-    </div>
-  );
-}
 
-function FeatureToggle({ title, description, isActive, onToggle }) {
-  return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 bg-white border border-gray-200 rounded-2xl">
-      <div className="pr-0 sm:pr-4">
-        <p className="font-bold text-gray-900 text-sm">{title}</p>
-        <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">{description}</p>
-      </div>
-      <button
-        onClick={onToggle}
-        className={`w-14 sm:w-12 h-7 sm:h-6 flex shrink-0 items-center rounded-full p-1 transition-colors duration-300 ease-in-out ${
-          isActive ? "bg-gray-900" : "bg-gray-300"
-        }`}
-      >
-        <div
-          className={`bg-white w-5 sm:w-4 h-5 sm:h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
-            isActive ? "translate-x-6" : "translate-x-0"
-          }`}
-        ></div>
-      </button>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .animate-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      `}} />
     </div>
   );
 }

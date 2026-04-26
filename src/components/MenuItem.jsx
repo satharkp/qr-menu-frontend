@@ -17,67 +17,59 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = 'â
     : 0;
 
   return (
-    <div className={`group bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm transition-all duration-500 border border-greenleaf-accent flex flex-row md:flex-row mb-4 md:mb-6 animate-in fade-in slide-in-from-bottom-5 ${!item.available ? 'opacity-75 grayscale' : 'hover:shadow-floating'}`}>
+    <div className={`group bg-white rounded-xl overflow-hidden shadow-sm transition-all border border-gray-200 flex flex-row mb-4 animate-in fade-in slide-in-from-bottom-2 ${!item.available ? 'opacity-75 grayscale' : 'hover:border-brand-primary/30'}`}>
       {/* Image Section */}
-      <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:h-auto md:w-40 lg:w-48 shrink-0 overflow-hidden">
+      <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 shrink-0 overflow-hidden bg-gray-100">
         <img
           src={imageUrl}
           alt={item.name}
-          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        {/* Quality Badge */}
         {item.isPopular && (
-          <div className="absolute top-2 left-2 bg-greenleaf-secondary text-white text-[8px] md:text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 md:px-2 md:py-1 rounded-md shadow-lg">
+          <div className="absolute top-2 left-2 bg-brand-secondary text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
             Popular
-          </div>
-        )}
-        {!item.available && (
-          <div className="absolute inset-0 bg-black/5 flex items-center justify-center">
-            <div className="bg-black/80 text-white text-[8px] md:text-[10px] font-black uppercase tracking-tighter px-2 py-1 rounded-md transform -rotate-12">
-              Out of Stock
-            </div>
           </div>
         )}
       </div>
 
       {/* Content Section */}
-      <div className="p-3 md:p-6 flex-1 flex flex-col justify-between min-w-0">
+      <div className="p-4 flex-1 flex flex-col justify-between min-w-0">
         <div>
-          <div className="flex justify-between items-start mb-1 md:mb-3 gap-2">
-            <h3 className="font-serif font-bold text-base md:text-2xl text-greenleaf-text group-hover:text-greenleaf-primary transition-colors leading-tight truncate md:whitespace-normal">
+          <div className="flex justify-between items-start mb-1 gap-4">
+            <h3 className="font-bold text-sm md:text-lg text-slate-900 leading-tight truncate md:whitespace-normal">
               {item.name}
             </h3>
             {!isPortion && (
-              <span className="font-serif font-bold text-sm md:text-xl text-greenleaf-primary whitespace-nowrap">
+              <span className="font-bold text-sm md:text-lg text-brand-primary whitespace-nowrap">
                 {formatPrice(item.price, currency)}
               </span>
             )}
             {isPortion && totalPortionQty > 0 && (
-              <span className="bg-greenleaf-primary text-white text-[8px] md:text-[10px] font-black px-1.5 py-0.5 md:px-2 md:py-1 rounded-lg shrink-0">
+              <span className="bg-brand-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-md">
                 {totalPortionQty} In Cart
               </span>
             )}
           </div>
           {item.description && (
-            <p className="text-greenleaf-muted text-[11px] md:text-sm leading-snug md:leading-relaxed line-clamp-2">
+            <p className="text-slate-500 text-xs leading-snug line-clamp-2">
               {item.description}
             </p>
           )}
         </div>
 
-        <div className="mt-2 md:mt-6 flex items-center justify-end">
+        <div className="mt-3 flex items-center justify-end">
           {!item.available ? (
-            <span className="text-red-500 font-bold text-xs md:text-sm uppercase tracking-widest px-3 py-1 border border-red-200 rounded-lg bg-red-50">
+            <span className="text-slate-400 font-bold text-[10px] uppercase tracking-wider px-2.5 py-1 border border-gray-200 rounded bg-gray-50">
               Unavailable
             </span>
           ) : isPortion ? (
             <button
               onClick={() => onOpenPortions(item)}
-              className="bg-greenleaf-primary hover:bg-greenleaf-primary/90 text-white px-4 py-2 md:px-8 md:py-3 rounded-xl md:rounded-2xl shadow-premium transition-all active:scale-95 font-bold text-xs md:text-sm flex items-center gap-1 md:gap-2 group-hover:translate-y-[-2px]"
+              className="bg-brand-primary hover:bg-brand-primary/90 text-white px-4 py-2 rounded-lg shadow-sm transition-all active:scale-95 font-bold text-xs flex items-center gap-2"
             >
-              <span>{totalPortionQty > 0 ? "Edit" : "Add"}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              <span>{totalPortionQty > 0 ? "Edit Order" : "Add to Cart"}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
             </button>
           ) : (
@@ -85,27 +77,27 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = 'â
               {unitQty === 0 ? (
                 <button
                   onClick={() => onAdd(item)}
-                  className="bg-greenleaf-primary hover:bg-greenleaf-primary/90 text-white px-4 py-2 md:px-8 md:py-3 rounded-xl md:rounded-2xl shadow-premium transition-all active:scale-95 font-bold text-xs md:text-sm flex items-center gap-1 md:gap-2 group-hover:translate-y-[-2px]"
+                  className="bg-brand-primary hover:bg-brand-primary/90 text-white px-4 py-2 rounded-lg shadow-sm transition-all active:scale-95 font-bold text-xs flex items-center gap-2"
                 >
                   <span>Add</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                   </svg>
                 </button>
               ) : (
-                <div className="flex items-center bg-greenleaf-accent/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-1 md:p-1.5 border border-greenleaf-primary/10 shadow-inner">
+                <div className="flex items-center bg-slate-50 rounded-lg p-1 border border-gray-200 shadow-inner">
                   <button
                     onClick={() => onRemove(item)}
-                    className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-white text-greenleaf-primary rounded-lg md:rounded-xl shadow-sm hover:shadow-md transition-all font-black text-lg md:text-xl active:scale-90"
+                    className="w-8 h-8 flex items-center justify-center bg-white text-brand-primary rounded-md shadow-sm border border-gray-100 font-bold text-lg active:scale-90"
                   >
                     âˆ’
                   </button>
-                  <span className="mx-3 md:mx-6 font-bold text-greenleaf-primary font-serif text-sm md:text-lg min-w-[1rem] md:min-w-[1.5rem] text-center">
+                  <span className="mx-4 font-bold text-slate-900 text-sm min-w-[1rem] text-center">
                     {unitQty}
                   </span>
                   <button
                     onClick={() => onAdd(item)}
-                    className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-greenleaf-primary text-white rounded-lg md:rounded-xl shadow-lg hover:bg-greenleaf-primary/90 transition-all font-black text-lg md:text-xl active:scale-90"
+                    className="w-8 h-8 flex items-center justify-center bg-brand-primary text-white rounded-md shadow-sm font-bold text-lg active:scale-90"
                   >
                     +
                   </button>
@@ -115,7 +107,6 @@ const MenuItem = ({ item, getQty, onAdd, onRemove, onOpenPortions, currency = 'â
           )}
         </div>
       </div>
-
     </div>
   );
 };

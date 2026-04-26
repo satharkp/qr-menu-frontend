@@ -54,7 +54,13 @@ export default function AdminPage() {
 
   const loadSettings = () => {
     fetchSettings().then(data => {
-      if (data) setSettings(data);
+      if (data) {
+        setSettings(data);
+        const root = document.documentElement;
+        root.style.setProperty("--color-primary", data.themeColor || "#4f46e5");
+        root.style.setProperty("--font-main", data.font || "Inter");
+        root.style.setProperty("--font-heading", data.font || "Inter");
+      }
     }).catch(console.error);
   };
 
@@ -81,112 +87,105 @@ export default function AdminPage() {
     { key: "settings", label: "Settings", icon: "⚙️" },
   ];
 
-  const dynamicStyles = settings ? {
-    "--color-primary": settings.themeColor || "#105c38",
-    "--font-heading": `"${settings.font || "Playfair Display"}", serif`,
-    "--font-main": `"${settings.font || "Lato"}", sans-serif`
-  } : {};
-
   return (
-    <div className="min-h-screen flex bg-greenleaf-bg font-sans" style={dynamicStyles}>
-      {/* Premium Sidebar - Fixed approach */}
-      <aside className="w-72 lg:w-80 bg-greenleaf-primary text-white p-6 lg:p-8 hidden sm:flex flex-col justify-between shadow-2xl fixed top-0 left-0 h-screen z-30 shrink-0">
-        {/* Background Decoration */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-
+    <div className="min-h-screen flex bg-slate-50 font-sans">
+      {/* Professional Sidebar */}
+      <aside className="w-72 lg:w-80 bg-slate-900 text-white p-6 lg:p-8 hidden sm:flex flex-col justify-between shadow-xl fixed top-0 left-0 h-screen z-30 shrink-0">
         <div className="relative z-10 mb-6 overflow-y-auto pr-1">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-[1rem] bg-greenleaf-secondary/20 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg overflow-hidden">
+          <div className="flex items-center gap-4 mb-10">
+            <div className="w-10 h-10 rounded-lg bg-brand-primary flex items-center justify-center shadow-lg overflow-hidden shrink-0">
               {settings?.logo ? (
                 <img
                   src={settings.logo}
                   alt="Logo"
-                  className="w-full h-full object-contain p-2 max-w-[80%] max-h-[80%] mx-auto"
+                  className="w-full h-full object-contain p-1.5"
                 />
               ) : (
-                <span className="text-2xl">🌿</span>
+                <span className="text-xl">🏪</span>
               )}
             </div>
             <div>
-              <h2 className="text-xl font-serif font-black tracking-tight">{settings?.name || "Your Restaurant"}</h2>
-              <p className="text-[10px] uppercase tracking-widest font-bold opacity-60 text-greenleaf-secondary">Command Center</p>
+              <h2 className="text-lg font-bold tracking-tight leading-tight">{settings?.name || "Restaurant OS"}</h2>
+              <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-0.5">Admin Portal</p>
             </div>
           </div>
 
-          <div className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm mb-10">
+          <div className="p-4 bg-white/5 rounded-xl border border-white/10 mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-greenleaf-secondary flex items-center justify-center font-black text-sm">
+              <div className="w-9 h-9 rounded-full bg-brand-primary flex items-center justify-center font-bold text-sm shadow-sm text-white">
                 {roleLabel[0]}
               </div>
-              <div>
-                <p className="text-xs font-black tracking-widest opacity-60 uppercase">{roleLabel}</p>
-                <p className="text-sm font-bold">{adminLabel}</p>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase truncate">{roleLabel}</p>
+                <p className="text-sm font-medium text-white truncate">{adminLabel.split(' ')[0]}</p>
               </div>
             </div>
           </div>
 
-          <nav className="space-y-2">
+          <nav className="space-y-1">
             {navItems.map((item) => (
               <div
                 key={item.key}
                 onClick={() => navigate(`/admin/${item.key}`)}
-                className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all ${activeSection === item.key
-                  ? "bg-white text-greenleaf-primary shadow-floating scale-[1.02]"
-                  : "hover:bg-white/10 opacity-70 hover:opacity-100"
+                className={`flex items-center gap-3.5 p-3.5 rounded-lg cursor-pointer transition-all ${activeSection === item.key
+                  ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
                   }`}
               >
-                <span className="text-xl">{item.icon}</span>
-                <span className="font-bold text-sm tracking-wide uppercase">{item.label}</span>
+                <span className="text-lg opacity-80">{item.icon}</span>
+                <span className="font-bold text-xs tracking-wider uppercase">{item.label}</span>
                 {activeSection === item.key && (
-                  <div className="ml-auto w-1.5 h-1.5 bg-greenleaf-primary rounded-full"></div>
+                  <div className="ml-auto w-1 h-1 bg-white rounded-full"></div>
                 )}
               </div>
             ))}
           </nav>
         </div>
 
-        <div className="mt-4 sm:mt-6 relative z-10 mb-6">
+        <div className="mt-4 sm:mt-6 relative z-10 mb-4">
           <button
             onClick={() => {
               localStorage.removeItem("token");
               navigate("/login");
             }}
-            className="w-full bg-white/5 hover:bg-red-500/20 border border-white/10 p-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3"
+            className="w-full bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-slate-400 p-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 border border-white/5"
           >
-            <span>Logout</span>
-            <span>🚪</span>
+            <span>Sign Out</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4-4v14" />
+            </svg>
           </button>
         </div>
       </aside>
 
-      {/* Main Content Hub - Responsive Margin for Fixed Sidebar */}
+      {/* Main Content Hub */}
       <div className="flex-1 flex flex-col sm:ml-72 lg:ml-80 min-h-screen">
-        {/* Top Intelligence Bar */}
-        <div className="bg-white/80 backdrop-blur-md px-4 sm:px-6 lg:px-10 py-4 lg:py-6 flex justify-between items-center border-b border-greenleaf-accent sticky top-0 z-20">
+        {/* Top Header */}
+        <div className="bg-white px-6 sm:px-8 lg:px-12 py-5 flex justify-between items-center border-b border-gray-200 sticky top-0 z-20">
           <div>
-            <h1 className="text-3xl font-serif font-black text-greenleaf-primary capitalize">
+            <h1 className="text-2xl font-bold text-slate-900 capitalize tracking-tight">
               {activeSection}
             </h1>
-            <p className="text-[10px] uppercase font-black tracking-widest text-greenleaf-muted mt-1">Operational Overview System • Active</p>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-0.5">Management System • Live Status</p>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-greenleaf-bg rounded-xl border border-greenleaf-accent">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              <span className="text-xs font-bold text-green-700 tracking-tighter uppercase">System Nominal</span>
+          <div className="flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-gray-100">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+              <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">System Online</span>
             </div>
             <div className="text-right">
-              <p className="text-xs font-black text-greenleaf-muted tracking-widest">LOCAL TIME</p>
-              <p className="text-sm font-bold">
-                {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Local Time</p>
+              <p className="text-sm font-bold text-slate-700">
+                {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 lg:p-10 bg-greenleaf-bg flex-1">
+        <div className="p-6 sm:p-8 lg:p-12 bg-slate-50 flex-1">
           <div className="max-w-7xl mx-auto">
-            <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
+            <div className="animate-in fade-in duration-500">
               {activeSection === "dashboard" && <DashboardSection settings={settings} />}
               {activeSection === "analytics" && <AnalyticsSection />}
               {activeSection === "staff" && <StaffSection />}
@@ -199,11 +198,6 @@ export default function AdminPage() {
           </div>
         </div>
       </div>
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@400;700;900&display=swap');
-      `}} />
     </div>
   );
 }

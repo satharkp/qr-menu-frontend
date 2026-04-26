@@ -128,50 +128,52 @@ export default function CashierSection({ settings }) {
 
   if (loading && orders.length === 0) {
     return (
-      <div className="bg-white rounded-[2rem] p-12 shadow-floating flex flex-col items-center justify-center border border-greenleaf-accent">
-        <div className="w-12 h-12 border-4 border-greenleaf-primary border-t-transparent rounded-full mb-4"></div>
-        <p className="text-greenleaf-muted font-serif">Awaiting Transaction Data...</p>
+      <div className="bg-white rounded-xl p-12 shadow-sm flex flex-col items-center justify-center border border-gray-200">
+        <div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-brand-muted font-medium">Awaiting Transaction Data...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6">
       {/* Header & Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-greenleaf-text">Cashier Command</h2>
-          <p className="text-[10px] uppercase font-black tracking-[0.2em] text-greenleaf-muted mt-1">Manage physical currency settlements</p>
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Cashier Command</h2>
+          <p className="text-sm text-slate-500 font-medium mt-1">Manage physical currency settlements and transaction history</p>
         </div>
         
-        <div className="flex flex-wrap bg-white p-1.5 rounded-2xl border border-greenleaf-accent shadow-sm">
-          <button 
-            onClick={() => setFilteringStatus("unpaid")}
-            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${filteringStatus === 'unpaid' ? 'bg-greenleaf-primary text-white shadow-premium' : 'text-greenleaf-muted'}`}
-          >
-            Pending ({orders.filter(o => o.paymentMethod === "CASH" && !o.isPaid).length})
-          </button>
-          <button 
-            onClick={() => setFilteringStatus("all")}
-            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${filteringStatus === 'all' ? 'bg-greenleaf-primary text-white shadow-premium' : 'text-greenleaf-muted'}`}
-          >
-            All Cash History
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-2 mt-3">
-          {["all", "cash", "upi", "card"].map((type) => (
-            <button
-              key={type}
-              onClick={() => setPaymentFilter(type)}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
-                paymentFilter === type
-                  ? "bg-greenleaf-primary text-white shadow-premium"
-                  : "text-greenleaf-muted bg-white"
-              }`}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="inline-flex bg-white p-1 rounded-lg border border-gray-200 shadow-sm h-fit">
+            <button 
+              onClick={() => setFilteringStatus("unpaid")}
+              className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${filteringStatus === 'unpaid' ? 'bg-brand-primary text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
-              {type}
+              Pending ({orders.filter(o => o.paymentMethod === "CASH" && !o.isPaid).length})
             </button>
-          ))}
+            <button 
+              onClick={() => setFilteringStatus("all")}
+              className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${filteringStatus === 'all' ? 'bg-brand-primary text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              History
+            </button>
+          </div>
+          <div className="flex gap-2">
+            {["all", "cash", "upi", "card"].map((type) => (
+              <button
+                key={type}
+                onClick={() => setPaymentFilter(type)}
+                className={`px-3 py-1.5 rounded-md text-xs font-bold border transition-all uppercase ${
+                  paymentFilter === type
+                    ? "bg-slate-800 text-white border-slate-800 shadow-sm"
+                    : "text-slate-500 bg-white border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -179,32 +181,32 @@ export default function CashierSection({ settings }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {filteredOrders.length > 0 ? (
           filteredOrders.map((order) => (
-            <div key={order._id} className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 shadow-floating border border-greenleaf-accent group">
+            <div key={order._id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:border-brand-primary/30 transition-colors group">
               <div className="flex justify-between items-start mb-6">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-greenleaf-primary bg-greenleaf-primary/10 px-3 py-1 rounded-full">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase text-brand-primary bg-brand-primary/10 px-2.5 py-1 rounded-md">
                       Table {order.tableNumber}
                     </span>
                     {order.orderType === "TAKEAWAY" ? (
-                      <span className="text-[10px] font-black uppercase tracking-widest text-purple-700 bg-purple-100 px-3 py-1 rounded-full border border-purple-200 shadow-sm flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
-                        <span>🛍️</span> Takeaway
+                      <span className="text-[10px] font-bold uppercase text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md border border-purple-100 flex items-center gap-1.5">
+                        🛍️ Takeaway
                       </span>
                     ) : (
-                      <span className="text-[10px] font-black uppercase tracking-widest text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 shadow-sm flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
-                        <span>🍽️</span> Dine-In
+                      <span className="text-[10px] font-bold uppercase text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100 flex items-center gap-1.5">
+                        🍽️ Dine-In
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xl font-serif font-black text-greenleaf-text italic">
-                    {order._id.substring(order._id.length - 6).toUpperCase()}
+                  <h3 className="text-lg font-bold text-slate-900 font-mono">
+                    #{order._id.substring(order._id.length - 6).toUpperCase()}
                   </h3>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg sm:text-xl lg:text-2xl font-black text-greenleaf-text">
+                  <p className="text-xl font-bold text-slate-900">
                     {formatPrice(order.total, settings?.currency)}
                   </p>
-                  <p className="text-[10px] font-bold text-greenleaf-muted uppercase tracking-tighter">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
                     {order.paymentMethod}
                   </p>
                 </div>
@@ -223,36 +225,31 @@ export default function CashierSection({ settings }) {
                 ))}
               </div>
 
-              <div className="pt-6 border-t border-greenleaf-bg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="pt-6 border-t border-gray-100 flex items-center justify-between gap-4">
                 <div className="flex flex-col">
-                   <span className="text-[9px] font-black text-greenleaf-muted uppercase tracking-widest mb-1">Status</span>
-                   <span className={`text-[10px] font-black uppercase tracking-widest ${order.isPaid ? 'text-green-600' : 'text-orange-500'}`}>
+                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Status</span>
+                   <span className={`text-[10px] font-bold uppercase ${order.isPaid ? 'text-green-600' : 'text-orange-500'}`}>
                     {order.isPaid ? '✓ Paid' : '● Unpaid'}
                    </span>
                 </div>
                 
-                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-end">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => printBill(order)}
-                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-colors border border-gray-200 shadow-sm whitespace-nowrap"
+                    className="bg-white hover:bg-gray-50 text-slate-700 px-3 py-2 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-colors border border-gray-200 shadow-sm whitespace-nowrap"
                   >
-                    Print Bill
+                    Print
                   </button>
                   {!order.isPaid ? (
                     <button
                       onClick={() => markAsPaid(order._id)}
-                      className="bg-greenleaf-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-premium whitespace-nowrap"
+                      className="bg-brand-primary hover:bg-brand-primary/90 text-white px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-wider shadow-sm transition-colors whitespace-nowrap"
                     >
-                      Mark as Paid
+                      Mark Paid
                     </button>
                   ) : (
-                    <div className="flex flex-col items-end text-[10px] font-bold text-green-700 bg-green-50 px-3 sm:px-4 py-2 rounded-xl border border-green-100 whitespace-nowrap">
-                      <span>
-                        Settled at {new Date(order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
-                      </span>
-                      <span className="text-greenleaf-muted text-[9px] font-medium hidden sm:block">
-                        {new Date(order.updatedAt).toLocaleDateString()}
-                      </span>
+                    <div className="text-[10px] font-bold text-green-700 bg-green-50 px-3 py-2 rounded-lg border border-green-100 whitespace-nowrap">
+                      Settled at {new Date(order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                     </div>
                   )}
                 </div>
@@ -260,10 +257,10 @@ export default function CashierSection({ settings }) {
             </div>
           ))
         ) : (
-          <div className="col-span-full bg-white rounded-[2rem] sm:rounded-[3rem] p-10 sm:p-16 lg:p-20 border-2 border-dashed border-greenleaf-accent flex flex-col items-center justify-center text-center">
-            <div className="w-20 h-20 bg-greenleaf-bg rounded-full flex items-center justify-center text-3xl mb-6">💰</div>
-            <h3 className="text-2xl font-serif font-black text-greenleaf-text mb-2">Clear Records</h3>
-            <p className="text-greenleaf-muted text-sm max-w-md mx-auto font-medium">All physical settlements are currently up to date. No pending cash transactions in the queue.</p>
+          <div className="col-span-full bg-white rounded-xl p-16 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center">
+            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-2xl mb-6">💰</div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Clear Records</h3>
+            <p className="text-slate-500 text-sm max-w-md mx-auto">All physical settlements are currently up to date. No pending cash transactions in the queue.</p>
           </div>
         )}
       </div>
