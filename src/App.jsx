@@ -96,6 +96,14 @@ function App() {
           }
         />
         <Route
+          path="/admin/subscription"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/settings"
           element={
             <ProtectedRoute role="admin">
